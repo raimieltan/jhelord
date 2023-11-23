@@ -1,18 +1,57 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import Logo from '../../assets/images/logo/logo.png'
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation()
 
-  const handleLogin = () => {
-    // Implement your authentication logic here.
+  const handleLogin = async () => {
+    try {
+      // Assume you have an authentication API endpoint
+      const response = await fetch('http://192.168.0.120:8000/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+
+
+      if (!response.ok) {
+        throw new Error('Invalid credentials'); // or handle specific errors from the server
+      }
+
+      // Authentication successful, navigate to the next screen or perform any other action
+      // For example, you can use React Navigation to navigate to another screen
+      // navigation.navigate('Home');
+      Alert.alert('Login Successful', 'You have successfully logged in.');
+      const data = await response.json();
+
+      // Store the JWT token in AsyncStorage
+      await AsyncStorage.setItem('accessToken', data.token);
+      console.log(data.token)
+      // Navigate to the "Map" screen
+      navigation.navigate('Profile');
+
+
+    } catch (error) {
+
+      Alert.alert('Login Failed', error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>LOGIN</Text>
+      <Image source={Logo} />
+
+   
 
       <View style={styles.termsContainer}>
         <Text style={styles.termsText}>
@@ -23,9 +62,9 @@ const Login = () => {
         <Icon name="mail" size={20} style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
         />
       </View>
       <View style={styles.inputContainer}>
@@ -41,6 +80,9 @@ const Login = () => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+
+
+
     </View>
   );
 };
@@ -50,7 +92,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '80%',
+    width: '100%',
+    padding: 20
+
+  },
+  image: {
+    width: '10%',
+    height: '10%',
   
   },
   title: {
@@ -58,6 +106,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: 'bold',
   },
+  greenBackground: {
+    backgroundColor: '#039043',
+    width: '100%',
+    height: 100, // Adjust the height as needed
+  },
+
   termsContainer: {
     justifyContent: 'center',
     alignItems: 'center', // Center text horizontally
