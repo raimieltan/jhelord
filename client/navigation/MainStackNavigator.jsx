@@ -12,7 +12,7 @@ const MainStackNavigator = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="login"
+                name="Login"
                 component={Login}
                 options={{
                     title: 'LOGIN',

@@ -46,7 +46,7 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('accessToken');
-      navigation.navigate('LOGIN');
+      navigation.navigate('Login');
     } catch (error) {
       console.error('Error during logout:', error.message);
       Alert.alert('Error', 'Failed to logout');
