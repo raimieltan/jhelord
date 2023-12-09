@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import userRouter from '../src/routes/userRoutes'
+import operationRouter from './routes/operationRoutes';
 
 
 dotenv.config()
@@ -24,6 +25,8 @@ app.use((req, res, next) => {
 
 
 app.use('/api/users/', userRouter)
+
+app.use('/api/operations', operationRouter)
 
 
 
