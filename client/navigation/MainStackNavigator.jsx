@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 const MainStackNavigator = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen
+            {/* <Stack.Screen
                 name="Login"
                 component={Login}
                 options={{
@@ -26,7 +26,7 @@ const MainStackNavigator = () => {
                     headerTitleAlign: 'center',
                 }}
 
-            />
+            /> */}
             <Stack.Screen
                 name="Map"
                 component={Map}

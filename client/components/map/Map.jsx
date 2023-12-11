@@ -5,11 +5,11 @@ import * as Location from 'expo-location';
 import polyline from '@mapbox/polyline';
 import Taxi from '../../assets/images/icon/taxi.png'; // Assuming you have this asset
 import CarPicker from './CarPicker'; // Assuming you have this component
+import DestinationPicker from './DestinationPicker'; // Assuming you have this component
 
 const carOptions = [
     { id: 1, type: 'Jhelord 4-seater', price: '₱286.00', eta: '9:35AM - 9:49AM' },
     { id: 2, type: 'Jhelord 6-seater', price: '₱346.00', eta: '9:34AM - 9:48AM' },
-    // Add more car options as needed
 ];
 
 const Map = () => {
@@ -17,29 +17,80 @@ const Map = () => {
     const [errorMsg, setErrorMsg] = useState(null);
     const [selectedCar, setSelectedCar] = useState(carOptions[0]);
     const [directions, setDirections] = useState([]);
-    const [destinationLatLng, setDestinationLatLang] = useState()
+    const [destinationLatLng, setDestinationLatLang] = useState();
+    const [destinationAddress, setDestinationAddress] = useState('');
 
-    const fetchDirections = async () => {
-        if (!location) return;
+    const mapViewRef = React.useRef(null);
 
-        const originLatitude = location.coords.latitude;
-        const originLongitude = location.coords.longitude;
-        const destinationAddress = 'festive mall iloilo'; // Replace with actual destination address
+    const handleSetDestination = async (newDestinationAddress) => {
+        if (!newDestinationAddress) return;
+
         const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs'; // Use your actual API key
-
         try {
-            // Step 1: Geocode the destination address
             const geocodeResponse = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(destinationAddress)}&key=${apiKey}`
+                `https://maps.googleapis.com/maps/api/geocode/json?address=${newDestinationAddress}&key=${apiKey}`
             );
             const geocodeJson = await geocodeResponse.json();
+            console.log(geocodeJson)
             if (!geocodeJson.results.length) {
                 setErrorMsg('Geocoding failed');
                 return;
             }
-            const destinationLatLng = geocodeJson.results[0].geometry.location;
-            setDestinationLatLang(destinationLatLng)
-            // Step 2: Compute the route
+
+       
+
+            // Update the map's region to center on the new destination
+            // Assuming you have a ref to your MapView component
+            mapViewRef.current.animateToRegion({
+                latitude: geocodeJson.results[0].geometry.location.lat,
+                longitude: geocodeJson.results[0].geometry.location.lng,
+                latitudeDelta: 0.001, // Smaller value for closer zoom
+                longitudeDelta: 0.001, // Smaller value for closer zoom
+            }, 1000); // 1000 ms for the animation duration
+        } catch (error) {
+            console.log('Geocoding error:', error);
+            setErrorMsg('Failed to geocode destination');
+        }
+    };
+
+
+    const fetchDirections = async (destinationInput) => {
+        if (!location) return;
+
+        const originLatitude = location.coords.latitude;
+        const originLongitude = location.coords.longitude;
+        const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs'; // Use your actual API key
+
+        let destinationLatLng;
+
+        console.log(destinationInput)
+        // Check if destinationInput is an object with lat and lng
+        if (destinationInput && destinationInput.lat && destinationInput.lng) {
+            destinationLatLng = destinationInput;
+            console.log(destinationLatLng)
+        } else {
+            // Geocode the destination address
+            try {
+                const geocodeResponse = await fetch(
+                    `https://maps.googleapis.com/maps/api/geocode/json?address=${destinationInput}&key=${apiKey}`
+                );
+
+                const geocodeJson = await geocodeResponse.json();
+                if (!geocodeJson.results.length) {
+                    console.log("XX")
+                    setErrorMsg('Geocoding failed');
+                    return;
+                }
+                destinationLatLng = geocodeJson.results[0].geometry.location;
+            } catch (error) {
+                console.log('Geocoding error:', error);
+                setErrorMsg('Failed to geocode destination');
+                return;
+            }
+        }
+
+        // Continue with getting directions
+        try {
             const requestBody = {
                 origin: {
                     location: {
@@ -69,6 +120,7 @@ const Map = () => {
                 units: "IMPERIAL",
             };
 
+
             const routeResponse = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
                 method: 'POST',
                 headers: {
@@ -78,15 +130,12 @@ const Map = () => {
                 },
                 body: JSON.stringify(requestBody),
             });
+
             const routeJson = await routeResponse.json();
-            // console.log(routeJson.routes[0])
+            console.log(routeJson)
             if (routeJson.routes && routeJson.routes.length) {
                 const route = routeJson.routes[0];
-                // The Routes API may return the path in a different format than the Directions API
-                // You will need to adjust the following code according to the actual response structure
-
                 const points = polyline.decode(route.polyline.encodedPolyline);
-
                 const coords = points.map(point => ({
                     latitude: point[0],
                     longitude: point[1],
@@ -94,9 +143,15 @@ const Map = () => {
                 setDirections(coords);
             }
         } catch (error) {
-            console.log(error);
+            console.log('Directions error:', error);
             setErrorMsg('Failed to fetch directions');
         }
+    };
+
+    const handleMapLongPress = (event) => {
+        const { latitude, longitude } = event.nativeEvent.coordinate;
+        setDestinationLatLang({ lat: latitude, lng: longitude });
+        fetchDirections({ lat: latitude, lng: longitude });
     };
 
     const fetchLocation = async () => {
@@ -109,26 +164,22 @@ const Map = () => {
         let location = await Location.getCurrentPositionAsync({});
         setLocation(location);
     };
+    const handleRefreshLocation = () => {
+        fetchLocation(); // Re-fetch the location when the button is pressed
+    };
 
     useEffect(() => {
         fetchLocation();
     }, []);
 
-    useEffect(() => {
-        fetchDirections();
-
-    }, [location]); // Fetch directions when location changes
-
-    const handleRefreshLocation = () => {
-        fetchLocation(); // Re-fetch the location when the button is pressed
-    };
-
-
     return (
         <View style={styles.container}>
+            <DestinationPicker onSetDestination={handleSetDestination} />
+
             {location ? (
                 <>
                     <MapView
+                        ref={mapViewRef}
                         style={styles.map}
                         initialRegion={{
                             latitude: location.coords.latitude,
@@ -136,6 +187,7 @@ const Map = () => {
                             latitudeDelta: 0.0922,
                             longitudeDelta: 0.0421,
                         }}
+                        onLongPress={handleMapLongPress}
                     >
                         {/* User's Current Location Marker */}
                         <Marker
@@ -163,7 +215,7 @@ const Map = () => {
                         {directions.length > 0 && (
                             <Polyline
                                 coordinates={directions}
-                                strokeColor="#000" // black
+                                strokeColor="green"
                                 strokeWidth={6}
                             />
                         )}
@@ -186,25 +238,18 @@ const Map = () => {
 
 export default Map;
 
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-
     },
     map: {
         flex: 1,
         height: "100%", width: "100%",
         borderWidth: 2,
         borderColor: 'red'
-    },
-    refreshButton: {
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
     },
     blueCircle: {
         width: 20,
@@ -222,5 +267,4 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: 'white',
     },
-
 });
