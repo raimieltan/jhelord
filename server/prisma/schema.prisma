@@ -13,18 +13,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Define the User model for authentication
-model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      UserRole @default(USER)
-}
 
-// Enum for user roles
 enum UserRole {
   USER
   DRIVER
   ADMIN
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  email         String   @unique
+  password      String
+  role          UserRole
+  phoneNumber   String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  profile       Profile?
+}
+
+model Profile {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime
+  gender        String
+  profileImage  String?
+  User          User     @relation(fields: [userId], references: [id])
 }
