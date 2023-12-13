@@ -5,7 +5,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 // schema.prisma
 
 datasource db {
@@ -13,32 +12,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum UserRole {
   USER
   DRIVER
   ADMIN
 }
 
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  CANCELLED
+  COMPLETED
+}
+
 model User {
-  id            Int      @id @default(autoincrement())
-  username      String   @unique
-  email         String   @unique
-  password      String
-  role          UserRole
-  phoneNumber   String?  @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  profile       Profile?
+  id          Int       @id @default(autoincrement())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  role        UserRole
+  phoneNumber String?   @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  profile     Profile?
+  booking     Booking[]
+}
+
+model Driver {
+  id            Int    @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  licenseNumber String
+  address       String
+  birthdate     String
+
+  unit    Unit[]
+  booking Booking[]
+}
+
+model Unit {
+  id          Int       @id @default(autoincrement())
+  driverId    Int
+  model       String
+  make        String
+  number      String
+  plateNumber String
+  runTime     DateTime?
+  status      String
+
+  driver Driver @relation(fields: [driverId], references: [id])
+}
+
+model Booking {
+  id        Int           @id @default(autoincrement())
+  driverId  Int
+  userId    Int
+  status    BookingStatus
+  location  Json
+  createdAt DateTime      @default(now())
+  User      User          @relation(fields: [userId], references: [id])
+  driver    Driver        @relation(fields: [driverId], references: [id])
 }
 
 model Profile {
-  id            Int      @id @default(autoincrement())
-  userId        Int      @unique
-  firstName     String
-  lastName      String
-  dateOfBirth   DateTime
-  gender        String
-  profileImage  String?
-  User          User     @relation(fields: [userId], references: [id])
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique
+  firstName    String
+  lastName     String
+  dateOfBirth  DateTime
+  gender       String
+  profileImage String?
+  User         User     @relation(fields: [userId], references: [id])
 }

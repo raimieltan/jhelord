@@ -23,7 +23,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('http://192.168.0.120:8000/api/users/profile', {
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -37,7 +37,7 @@ const Profile = () => {
       const userProfile = await response.json();
       setUsername(userProfile.username);
       setEmail(userProfile.email);
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
     }
@@ -47,7 +47,7 @@ const Profile = () => {
     try {
       await AsyncStorage.removeItem('accessToken');
       navigation.navigate('Login');
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error during logout:', error.message);
       Alert.alert('Error', 'Failed to logout');
     }

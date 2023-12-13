@@ -7,7 +7,7 @@ export async function signup(req: Request, res: Response) {
   try {
       const user = await userService.signupUser(req.body);
       res.status(201).json({ userId: user.id, username: user.username });
-  } catch (error) {
+  } catch (error:any) {
       if (error instanceof Error) {
           res.status(400).json({ message: error.message });
       } else {
@@ -21,7 +21,7 @@ export async function login(req: Request, res: Response) {
       const { username, password } = req.body;
       const token = await userService.loginUser(username, password);
       res.status(200).json({ token });
-  } catch (error) {
+  } catch (error:any) {
       if (error instanceof Error) {
           res.status(401).json({ message: error.message });
       } else {
@@ -50,7 +50,7 @@ export async function getUserFromToken(req: any, res: Response): Promise<void> {
       } else {
           res.json(user); // Send back the user profile instead of req.user
       }
-  } catch (error) {
+  } catch (error:any) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
   }

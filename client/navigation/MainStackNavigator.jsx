@@ -1,44 +1,66 @@
 // navigation/MainStackNavigator.js
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Login from '../components/login/Login';
-import Map from '../components/map/Map';
+
+
 import { StyleSheet, View, Image, Text } from 'react-native';
 import Profile from '../components/profile/Profile';
-
+import MapHome from '../components/map/InitialMapScreen';
+import Login from '../components/login/Login';
+import Map from '../components/map/Map';
 const Stack = createStackNavigator();
 
 const MainStackNavigator = () => {
     return (
         <Stack.Navigator>
-            {/* <Stack.Screen
+            <Stack.Screen
                 name="Login"
                 component={Login}
                 options={{
-                    title: 'LOGIN',
+                    title: '',
                     headerStyle: {
-                        backgroundColor: '#039043',
+                        backgroundColor: 'white',
                     },
                     headerTintColor: '#fff',
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
+                    headerShown: false
                 }}
 
-            /> */}
+            />
             <Stack.Screen
-                name="Map"
-                component={Map}
+                name="Home"
+                component={MapHome}
                 options={{
-                    title: 'Map Screen',
+                    title: '',
                     headerStyle: {
                         backgroundColor: '#039043',
+                  
                     },
                     headerTintColor: '#fff',
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
+                    
+                }}
+            />
+            <Stack.Screen
+                name="Map"
+                component={Map}
+                options={{
+                    title: 'Taxis',
+                    headerStyle: {
+                        backgroundColor: '#039043',
+                  
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    headerShown: false
+                    
                 }}
             />
             <Stack.Screen
@@ -54,6 +76,7 @@ const MainStackNavigator = () => {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
+                    headerShown: false
                 }}
             />
         </Stack.Navigator>

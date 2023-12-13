@@ -26,10 +26,16 @@
         "googleMaps": {
           "apiKey": "AIzaSyCmoRd2tCNIaxOzk-wTHQd6DcU7ODn9oO0"
         }
-      }
+      },
+      "package": "com.seanraimiel.taxiapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "29547b31-4afb-4b96-b91d-742b9c3c44c6"
+      }
     }
   }
 }

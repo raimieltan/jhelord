@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Logo from '../../assets/images/logo/logo.png'
@@ -14,7 +14,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       // Assume you have an authentication API endpoint
-      const response = await fetch('http://192.168.0.120:8000/api/users/login', {
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,20 +38,36 @@ const Login = () => {
       await AsyncStorage.setItem('accessToken', data.token);
       console.log(data.token)
       // Navigate to the "Map" screen
-      navigation.navigate('Profile');
+      navigation.navigate('Home');
 
 
-    } catch (error) {
+    } catch (error:any) {
 
       Alert.alert('Login Failed', error.message);
     }
   };
 
+  const fetchUserProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+
+      if (token) {
+        navigation.navigate('Profile');
+        return;
+      }
+    } catch (error:any) {
+      console.error('Error fetching user profile:', error.message);
+     
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Image source={Logo} />
-
-   
 
       <View style={styles.termsContainer}>
         <Text style={styles.termsText}>
@@ -93,7 +109,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    padding: 20
+    padding: 20,
+    backgroundColor: 'white'
 
   },
   image: {

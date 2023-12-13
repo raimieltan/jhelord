@@ -1,26 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import polyline from '@mapbox/polyline';
 import Taxi from '../../assets/images/icon/taxi.png'; // Assuming you have this asset
 import CarPicker from './CarPicker'; // Assuming you have this component
 import DestinationPicker from './DestinationPicker'; // Assuming you have this component
+import DriverInfoModal from './DriverModal';
+import MapHeader from './Header';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import BottomNavBar from '../nav/BottomNav';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
+
+
 
 const carOptions = [
-    { id: 1, type: 'Jhelord 4-seater', price: '₱286.00', eta: '9:35AM - 9:49AM' },
-    { id: 2, type: 'Jhelord 6-seater', price: '₱346.00', eta: '9:34AM - 9:48AM' },
+    { id: 1, type: 'Jhelord 4-seater', price: '₱286.00', eta: '9:35AM - 9:49AM', location: { lat: 10.775542033943118, lng: 122.48200915753841 } },
+    { id: 2, type: 'Jhelord 6-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: { lat: 10.772054046301417, lng: 122.48137280344963 } },
+    { id: 3, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: { "lat": 10.737838008526095, "lng": 122.57533796131611 } },
+    { id: 4, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} }
 ];
 
+const CustomMarker = () => (
+    <Image
+        source={Taxi}
+        style={{ width: 40, height: 40 }} // Adjust the size as needed
+        resizeMode="contain"
+    />
+);
+
+
+
 const Map = () => {
-    const [location, setLocation] = useState(null);
+    const [location, setLocation] = useState({"coords": {"accuracy": 156.89999389648438, "altitude": 89.80000305175781, "altitudeAccuracy": 13.584489822387695, "heading": 0, "latitude": 10.7752659, "longitude": 122.4831714, "speed": 0.0028111569117754698}, "mocked": false, "timestamp": 1702341514824});
     const [errorMsg, setErrorMsg] = useState(null);
     const [selectedCar, setSelectedCar] = useState(carOptions[0]);
     const [directions, setDirections] = useState([]);
     const [destinationLatLng, setDestinationLatLang] = useState();
-    const [destinationAddress, setDestinationAddress] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedDriver, setSelectedDriver] = useState(carOptions[0]);
+
 
     const mapViewRef = React.useRef(null);
+
+    const handleMarkerPress = (driver) => {
+        setSelectedDriver(driver);
+        setIsModalVisible(true);
+    };
 
     const handleSetDestination = async (newDestinationAddress) => {
         if (!newDestinationAddress) return;
@@ -37,7 +63,7 @@ const Map = () => {
                 return;
             }
 
-       
+
 
             // Update the map's region to center on the new destination
             // Assuming you have a ref to your MapView component
@@ -47,7 +73,7 @@ const Map = () => {
                 latitudeDelta: 0.001, // Smaller value for closer zoom
                 longitudeDelta: 0.001, // Smaller value for closer zoom
             }, 1000); // 1000 ms for the animation duration
-        } catch (error) {
+        } catch (error:any) {
             console.log('Geocoding error:', error);
             setErrorMsg('Failed to geocode destination');
         }
@@ -82,7 +108,7 @@ const Map = () => {
                     return;
                 }
                 destinationLatLng = geocodeJson.results[0].geometry.location;
-            } catch (error) {
+            } catch (error:any) {
                 console.log('Geocoding error:', error);
                 setErrorMsg('Failed to geocode destination');
                 return;
@@ -142,7 +168,7 @@ const Map = () => {
                 }));
                 setDirections(coords);
             }
-        } catch (error) {
+        } catch (error:any) {
             console.log('Directions error:', error);
             setErrorMsg('Failed to fetch directions');
         }
@@ -161,10 +187,25 @@ const Map = () => {
             return;
         }
 
-        let location = await Location.getCurrentPositionAsync({});
+        let location = await Location.getCurrentPositionAsync({
+            enableHighAccuracy: true,
+            accuracy: Location.Accuracy.High,
+        });
+        console.log(location)
+
+     
         setLocation(location);
     };
     const handleRefreshLocation = () => {
+     
+        if(location) {
+            mapViewRef.current.animateToRegion({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.005, // Smaller value for closer zoom
+                longitudeDelta: 0.005, // Smaller value for closer zoom
+            }, 1000); // 1000 ms for the animation duration
+        }
         fetchLocation(); // Re-fetch the location when the button is pressed
     };
 
@@ -174,65 +215,130 @@ const Map = () => {
 
     return (
         <View style={styles.container}>
-            <DestinationPicker onSetDestination={handleSetDestination} />
+            <View style={styles.container}>
 
-            {location ? (
-                <>
-                    <MapView
-                        ref={mapViewRef}
-                        style={styles.map}
-                        initialRegion={{
-                            latitude: location.coords.latitude,
-                            longitude: location.coords.longitude,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                        }}
-                        onLongPress={handleMapLongPress}
-                    >
-                        {/* User's Current Location Marker */}
-                        <Marker
-                            coordinate={{
-                                latitude: location.coords.latitude,
-                                longitude: location.coords.longitude,
-                            }}
-                        >
-                            <View style={styles.blueCircle} />
-                        </Marker>
 
-                        {/* Destination Marker */}
-                        {destinationLatLng && (
-                            <Marker
-                                coordinate={{
-                                    latitude: destinationLatLng.lat,
-                                    longitude: destinationLatLng.lng,
+                {location ? (
+                    <>
+                        <View style={{
+
+                            width: '100%'
+                        }}>
+                            <MapHeader title="Pick a taxi" subtext="We have provided taxis near your location." />
+                        </View>
+
+                        {/* <View style={{
+                            margin: 10,
+                            width: '90%',
+                            padding: 10,
+                            borderRadius: 20,
+                            borderWidth: 0.5,
+                            marginTop: -30,
+                            backgroundColor: 'white',
+                            alignItems: 'center'
+                        }}>
+                            <DestinationPicker onSetDestination={handleSetDestination} />
+
+                        </View> */}
+                        <DriverInfoModal
+                            isVisible={isModalVisible}
+                            onClose={() => setIsModalVisible(false)}
+                            driver={selectedDriver}
+                        />
+                     
+                        <View style={{
+                              flex: 1,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: '100%',
+                        }}>
+                               <TouchableOpacity style={{
+                         
+                            alignContent: 'center',
+                            alignItems: 'center',
+                            position: 'absolute',
+                            bottom: 20,
+                            right: 10,
+                            zIndex: 50
+                        }} onPress={handleRefreshLocation}>
+                            <Icon2 name="gps-fixed" size={40} color="blue" />
+
+                        </TouchableOpacity>
+                            <MapView
+                                ref={mapViewRef}
+                                style={styles.map}
+                                initialRegion={{
+                                    latitude: location.coords.latitude,
+                                    longitude: location.coords.longitude,
+                                    latitudeDelta: 0.0922,
+                                    longitudeDelta: 0.0421,
                                 }}
+                                onLongPress={handleMapLongPress}
                             >
-                                <View style={styles.redCircle} />
-                            </Marker>
-                        )}
+                                {/* User's Current Location Marker */}
+                                <Marker
+                                    coordinate={{
+                                        latitude: location.coords.latitude,
+                                        longitude: location.coords.longitude,
+                                    }}
+                                >
+                                    <View style={styles.blueCircle} />
+                                </Marker>
 
-                        {/* Render the polyline for directions */}
-                        {directions.length > 0 && (
-                            <Polyline
-                                coordinates={directions}
-                                strokeColor="green"
-                                strokeWidth={6}
-                            />
-                        )}
-                    </MapView>
+                                {/* Destination Marker */}
+                                {destinationLatLng && (
+                                    <Marker
+                                        coordinate={{
+                                            latitude: destinationLatLng.lat,
+                                            longitude: destinationLatLng.lng,
+                                        }}
+                                    >
+                                        <Icon name="map-pin" size={30} color="#900" />
+                                    </Marker>
+                                )}
 
-                    <Button title="Refresh Location" onPress={handleRefreshLocation} />
-                    <CarPicker
-                        carOptions={carOptions}
-                        selectedCar={selectedCar}
-                        onSelectCar={setSelectedCar}
-                    />
-                </>
-            ) : (
-                <Text>Loading...</Text>
-            )}
-            {errorMsg && <Text>{errorMsg}</Text>}
+                                {/* Render the polyline for directions */}
+                                {directions.length > 0 && (
+                                    <Polyline
+                                        coordinates={directions}
+                                        strokeColor="green"
+                                        strokeWidth={6}
+                                    />
+                                )}
+
+                                {carOptions.map((car) => (
+                                    <Marker
+                                        key={car.id}
+                                        coordinate={{ latitude: car.location.lat, longitude: car.location.lng }}
+                                        onPress={() => handleMarkerPress(car)}
+                                    >
+                                        <CustomMarker />
+                                    </Marker>
+                                ))}
+
+                            </MapView>
+                        </View>
+
+
+
+
+                        {location && <CarPicker
+                            carOptions={carOptions}
+                            selectedCar={selectedCar}
+                            onSelectCar={setSelectedCar}
+                            currentLocation={location} // Your user's current location
+                        />}
+
+                    </>
+                ) : (
+                    <Text>Loading...</Text>
+                )}
+                {errorMsg && <Text>{errorMsg}</Text>}
+
+            </View>
+            <BottomNavBar />
         </View>
+
     );
 };
 
