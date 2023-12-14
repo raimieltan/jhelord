@@ -41,7 +41,7 @@ const Login = () => {
       navigation.navigate('Home');
 
 
-    } catch (error:any) {
+    } catch (error) {
 
       Alert.alert('Login Failed', error.message);
     }
@@ -55,7 +55,7 @@ const Login = () => {
         navigation.navigate('Profile');
         return;
       }
-    } catch (error:any) {
+    } catch (error) {
       console.error('Error fetching user profile:', error.message);
      
     }

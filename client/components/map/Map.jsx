@@ -73,7 +73,7 @@ const Map = () => {
                 latitudeDelta: 0.001, // Smaller value for closer zoom
                 longitudeDelta: 0.001, // Smaller value for closer zoom
             }, 1000); // 1000 ms for the animation duration
-        } catch (error:any) {
+        } catch (error) {
             console.log('Geocoding error:', error);
             setErrorMsg('Failed to geocode destination');
         }
@@ -108,7 +108,7 @@ const Map = () => {
                     return;
                 }
                 destinationLatLng = geocodeJson.results[0].geometry.location;
-            } catch (error:any) {
+            } catch (error) {
                 console.log('Geocoding error:', error);
                 setErrorMsg('Failed to geocode destination');
                 return;
@@ -168,7 +168,7 @@ const Map = () => {
                 }));
                 setDirections(coords);
             }
-        } catch (error:any) {
+        } catch (error) {
             console.log('Directions error:', error);
             setErrorMsg('Failed to fetch directions');
         }

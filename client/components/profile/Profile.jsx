@@ -37,7 +37,7 @@ const Profile = () => {
       const userProfile = await response.json();
       setUsername(userProfile.username);
       setEmail(userProfile.email);
-    } catch (error:any) {
+    } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
     }
@@ -47,7 +47,7 @@ const Profile = () => {
     try {
       await AsyncStorage.removeItem('accessToken');
       navigation.navigate('Login');
-    } catch (error:any) {
+    } catch (error) {
       console.error('Error during logout:', error.message);
       Alert.alert('Error', 'Failed to logout');
     }

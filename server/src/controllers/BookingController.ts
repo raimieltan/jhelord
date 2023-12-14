@@ -49,3 +49,15 @@ export const deleteBooking = async (req: Request, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+export const changeBookingStatus = async (req: Request, res: Response) => {
+    try {
+        const bookingId = parseInt(req.params.id);
+        const { status } = req.body;
+        const updatedBooking = await BookingService.updateBookingStatus(bookingId, status);
+        res.json(updatedBooking);
+    } catch (error: any) {
+        res.status(400).json({ message: error.message });
+    }
+};
