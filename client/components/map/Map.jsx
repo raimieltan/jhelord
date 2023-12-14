@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+
 import * as Location from 'expo-location';
 import polyline from '@mapbox/polyline';
 import Taxi from '../../assets/images/icon/taxi.png'; // Assuming you have this asset
@@ -267,6 +268,7 @@ const Map = () => {
                             <MapView
                                 ref={mapViewRef}
                                 style={styles.map}
+                                provider={PROVIDER_GOOGLE}
                                 initialRegion={{
                                     latitude: location.coords.latitude,
                                     longitude: location.coords.longitude,
