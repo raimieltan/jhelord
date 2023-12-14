@@ -61,6 +61,11 @@ const Login = () => {
     }
   };
 
+
+  const handleNavigateToSignup = () => {
+    navigation.navigate('Signup');
+  };
+
   useEffect(() => {
     fetchUserProfile();
   }, []);
@@ -83,6 +88,7 @@ const Login = () => {
           onChangeText={setUsername}
         />
       </View>
+    
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} style={styles.icon} />
         <TextInput
@@ -95,6 +101,10 @@ const Login = () => {
       </View>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={handleNavigateToSignup}>
+        <Text style={styles.buttonText}>Signup</Text>
       </TouchableOpacity>
 
 

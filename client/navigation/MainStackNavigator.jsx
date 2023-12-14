@@ -8,6 +8,7 @@ import Profile from '../components/profile/Profile';
 import MapHome from '../components/map/InitialMapScreen';
 import Login from '../components/login/Login';
 import Map from '../components/map/Map';
+import Signup from '../components/login/Signup';
 const Stack = createStackNavigator();
 
 const MainStackNavigator = () => {
@@ -16,6 +17,23 @@ const MainStackNavigator = () => {
             <Stack.Screen
                 name="Login"
                 component={Login}
+                options={{
+                    title: '',
+                    headerStyle: {
+                        backgroundColor: 'white',
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    headerTitleAlign: 'center',
+                    headerShown: false
+                }}
+
+            />
+                    <Stack.Screen
+                name="Signup"
+                component={Signup}
                 options={{
                     title: '',
                     headerStyle: {

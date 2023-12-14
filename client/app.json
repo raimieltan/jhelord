@@ -29,6 +29,7 @@
       },
       "package": "com.seanraimiel.taxiapp"
     },
+    
     "web": {
       "favicon": "./assets/favicon.png"
     },

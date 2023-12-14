@@ -90,7 +90,7 @@ const Map = () => {
 
         let destinationLatLng;
 
-        console.log(destinationInput)
+  
         // Check if destinationInput is an object with lat and lng
         if (destinationInput && destinationInput.lat && destinationInput.lng) {
             destinationLatLng = destinationInput;
@@ -158,8 +158,10 @@ const Map = () => {
                 body: JSON.stringify(requestBody),
             });
 
+          
+
             const routeJson = await routeResponse.json();
-            console.log(routeJson)
+        
             if (routeJson.routes && routeJson.routes.length) {
                 const route = routeJson.routes[0];
                 const points = polyline.decode(route.polyline.encodedPolyline);
@@ -170,8 +172,8 @@ const Map = () => {
                 setDirections(coords);
             }
         } catch (error) {
-            console.log('Directions error:', error);
-            setErrorMsg('Failed to fetch directions');
+            console.log("XXXX")
+            setErrorMsg("failed to fetch directions");
         }
     };
 
