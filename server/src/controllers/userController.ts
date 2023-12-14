@@ -5,8 +5,8 @@ import { UserCreateInput, UserProfileUpdateInput } from '../../types/user';
 
 export async function signup(req: Request, res: Response) {
   try {
-      const user = await userService.signupUser(req.body);
-      res.status(201).json({ userId: user.id, username: user.username });
+      const token = await userService.signupUser(req.body);
+      res.status(201).json({ token });
   } catch (error:any) {
       if (error instanceof Error) {
           res.status(400).json({ message: error.message });
