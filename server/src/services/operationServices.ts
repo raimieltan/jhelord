@@ -35,14 +35,22 @@ type OperationData = {
   status: string
 }
 
-export const retrieveOperations = async () => {
+export const retrieveOperations = async (operationId?: number) => {
+  if (operationId) {
+    return await prisma.operation.findMany({
+      where: {
+        id: operationId,
+      },
+      include: {
+        unit: true,
+        customer: true,
+      }
+    })
+  }
+
   return await prisma.operation.findMany({
     include: {
-      unit: {
-        include: {
-          driver: true,
-        }
-      },
+      unit: true,
       customer: true,
     }
   })
