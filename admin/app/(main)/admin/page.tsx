@@ -1,4 +1,4 @@
-import { OperationTable } from "@/app/components/operations/OperationTable";
+import { UnitTable } from "@/app/components/unit/UnitTable";
 
 export default function Admin() {
   return (
@@ -8,7 +8,7 @@ export default function Admin() {
           <button
             className="border border-red-500 w-full text-black bg-gray-300">
             {/* TODO: onclick toggle */}
-            Operations
+            Units
           </button>
           <button className="border border-blue-500 w-full text-black bg-gray-300">
             {/* TODO: onclick toggle */}
@@ -17,7 +17,7 @@ export default function Admin() {
         </div>
 
         <div className="w-full h-100% p-4">
-          <OperationTable />
+          <UnitTable />
         </div>
       </div>
     </div>
