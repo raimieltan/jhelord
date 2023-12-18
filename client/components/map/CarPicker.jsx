@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, LayoutAnimation, Platform, UIManager } from 'react-native';
 import Slider from '@react-native-community/slider'; // or from 'react-native' if you're using the built-in slider
 import DriverInfoModal from './DriverModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Enable LayoutAnimation on Android
 if (
@@ -46,6 +47,7 @@ const CarOption = ({ car, isSelected, onSelect, currentLocation }) => {
     //     car.location.lat, car.location.lng
     // ).toFixed(2); // Round to 2 decimal places
 
+
     return (
         <TouchableOpacity
             onPress={() => onSelect(car)}
@@ -64,13 +66,25 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation }) =>
     const [radius, setRadius] = useState(10); // Default radius of 10 km
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedCarDetails, setSelectedCarDetails] = useState({ id: 1, type: 'Jhelord 4-seater', price: '₱286.00', eta: '9:35AM - 9:49AM', location: { lat: 10.775542033943118, lng: 122.48200915753841 } });
-
+    const [role, setRole] = useState('')
     const toggleExpanded = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setExpanded(!expanded);
     };
 
     const carsWithinRadius = filterCarsWithinRadius(carOptions, currentLocation, radius);
+
+
+    const fetchRole = async () => {
+        const role = await AsyncStorage.getItem("userRole")
+        setRole(role)
+    }
+
+    useEffect(() => {
+        fetchRole()
+        console.log(role)
+    }, [])
+
 
     return (
         <View style={styles.container}>
@@ -88,7 +102,7 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation }) =>
                 
             }}>
             <TouchableOpacity onPress={toggleExpanded} style={styles.header}>
-                <Text style={styles.headerText}>Drivers near me</Text>
+                <Text style={styles.headerText}>{role === 'DRIVER' ? 'Bookings' : 'Drivers near me'}</Text>
             </TouchableOpacity>
             </View>
         

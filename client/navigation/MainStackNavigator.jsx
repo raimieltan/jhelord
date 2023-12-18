@@ -12,47 +12,12 @@ import Signup from '../components/login/Signup';
 import CreateDriverProfile from '../components/profile/CreateDriverProfile';
 import ProfileDriver from '../components/profile/ProfileDriver';
 import CreateEditUnit from '../components/profile/CreateUnit';
+import MainProfile from '../components/profile/MainProfile';
 const Stack = createStackNavigator();
 
 const MainStackNavigator = () => {
 
-    const [userRole, setUserRole] = useState(null);
 
-
-    const fetchUserProfile = async () => {
-        try {
-            const token = await AsyncStorage.getItem('accessToken');
-
-            if (!token) {
-                navigation.navigate('LOGIN');
-                return;
-            }
-
-            const response = await fetch('https://jhelord-backend.onrender.com/api/users/profile', {
-                method: 'GET',
-                headers: {
-                    Authorization: token,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch user profile');
-            }
-
-            const userProfile = await response.json();
-            setUserRole(userProfile.role);
-            console.log(userProfile.role)
-
-        } catch (error) {
-            console.error('Error fetching user profile:', error.message);
-            Alert.alert('Error', 'Failed to fetch user profile');
-        }
-    };
-
-
-    useEffect(() => {
-        fetchUserProfile()
-    }, [])
 
     return (
         <Stack.Navigator>
@@ -125,9 +90,9 @@ const MainStackNavigator = () => {
             />
             <Stack.Screen
                 name="Profile"
-                component={userRole === 'user' ? Profile : ProfileDriver}
+                component={MainProfile}
                 options={{
-                    title: userRole === 'user' ? 'Profile' : userRole === 'driver' ? 'Driver Profile' : '',
+                    title: 'Profile',
                     headerStyle: {
                         backgroundColor: '#039043',
                     },
@@ -136,7 +101,7 @@ const MainStackNavigator = () => {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
-                    headerShown: userRole === 'driver'
+                    headerShown: false
                 }}
             />
             <Stack.Screen
@@ -152,7 +117,7 @@ const MainStackNavigator = () => {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
-                    headerShown: userRole === 'driver'
+                    headerShown: false
                 }}
             />
 
@@ -169,7 +134,7 @@ const MainStackNavigator = () => {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
-                    headerShown: userRole === 'DRIVER',
+                    headerShown: false
                 }}
             />
 

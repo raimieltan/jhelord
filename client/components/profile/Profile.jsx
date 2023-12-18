@@ -38,6 +38,13 @@ const Profile = () => {
       const userProfile = await response.json();
       setUsername(userProfile.username);
       setEmail(userProfile.email);
+
+
+         
+      console.log(userProfile.role) 
+
+      await AsyncStorage.setItem("userRole", userProfile.role)
+      console.log(await AsyncStorage.getItem("userRole"))
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');

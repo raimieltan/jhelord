@@ -32,6 +32,32 @@ export const getBookingById = async (req: Request, res: Response) => {
     }
 };
 
+export const getBookingByUserId = async (req: Request, res: Response) => {
+    try {
+        const booking = await BookingService.getBookingByUserId(parseInt(req.params.id));
+        if (booking) {
+            res.json(booking);
+        } else {
+            res.status(404).json({ message: "Booking not found" });
+        }
+    } catch (error:any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getBookingByDriverId = async (req: Request, res: Response) => {
+    try {
+        const booking = await BookingService.getBookingByUserId(parseInt(req.params.id));
+        if (booking) {
+            res.json(booking);
+        } else {
+            res.status(404).json({ message: "Booking not found" });
+        }
+    } catch (error:any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const updateBooking = async (req: Request, res: Response) => {
     try {
         const updatedBooking = await BookingService.updateBooking(parseInt(req.params.id), req.body);

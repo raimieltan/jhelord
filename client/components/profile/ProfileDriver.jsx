@@ -71,7 +71,7 @@ const ProfileDriver = () => {
       }
 
 
-      await AsyncStorage.setItem("driverId", String(driver.id))
+      await AsyncStorage.setItem("driverId", String(driver.userId))
 
     } catch (error) {
       console.error('Error fetching user profile:', error.message);

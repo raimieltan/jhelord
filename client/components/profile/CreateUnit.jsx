@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectDropdown from 'react-native-select-dropdown';
+import { useNavigation } from '@react-navigation/native';
 
 const CreateEditUnit = () => {
   const [model, setModel] = useState('');
@@ -14,7 +15,10 @@ const CreateEditUnit = () => {
   const [id, setId] = useState()
   const [unit, setUnit] = useState({})
   const [status, setStatus] = useState(unit?.status ?? 'Active');
-  const statuses = ["Active", "Inactive", "Maintenance"];
+  const statuses = ["active", "inactive", "maintenance"];
+  const [driver, setDriver] = useState({})
+
+  const navigation = useNavigation()
 
   const fetchId = async () => {
     const id = await AsyncStorage.getItem('driverId');
@@ -23,7 +27,11 @@ const CreateEditUnit = () => {
   }
 
   useEffect(() => {
-    setStatus(unit.status)
+    setStatus(unit?.status ?? 'active')
+    setMake(unit?.make ?? 'Make')
+    setModel(unit?.model ?? 'Model')
+    setPlateNumber(unit?.plateNumber ?? 'Plate Number')
+    setNumber(unit?.number ?? 'Unit Number')
   },[unit])
 
   useEffect(() => {
@@ -41,6 +49,7 @@ const CreateEditUnit = () => {
     try {
 
       if (id) {
+        console.log(id)
         const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
           method: 'GET',
 
@@ -50,10 +59,8 @@ const CreateEditUnit = () => {
 
 
         if (driver) {
-
           setUnit(driver.unit[0])
-
-
+          setDriver(driver)
         }
       }
 
@@ -74,22 +81,25 @@ const CreateEditUnit = () => {
         return;
       }
 
-
-      const response = await fetch(`https://jhelord-backend.onrender.com/api/units`, {
-        method: 'POST', // Change to 'PUT' and add an ID for editing an existing unit
+      const method = unit ? 'PUT' : 'POST'
+      const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
+        method:  method, // Change to 'PUT' and add an ID for editing an existing unit
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
         },
-        body: JSON.stringify({ model, make, number, plateNumber, runTime: new Date(), status }),
+        body: JSON.stringify({ model, make, number, plateNumber, runTime: new Date(), status, driverId: driver.id}),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create/edit unit');
-      }
 
+  
       const data = await response.json();
-      Alert.alert('Success', 'Unit has been successfully created/updated.');
+      if(data.id) {
+        Alert.alert('Success', 'Unit has been successfully created/updated.');
+        navigation.navigate('Profile')
+        
+      }
+  
     } catch (error) {
       console.error('Error:', error.message);
       Alert.alert('Error', 'Failed to create/edit unit');

@@ -10,8 +10,18 @@ export const getAllBookings = async () => {
 };
 
 export const getBookingById = async (id: number) => {
-    return prisma.booking.findUnique({ where: { id } });
+    return prisma.booking.findMany({ where: { id  } });
 };
+
+export const getBookingByUserId = async (id: number) => {
+    return prisma.booking.findMany({ where: { userId: id  } });
+};
+
+
+export const getBookingByDriverId = async (id: number) => {
+    return prisma.booking.findMany({ where: { driverId: id  } });
+};
+
 
 export const updateBooking = async (id: number, data: any) => {
     return prisma.booking.update({ where: { id }, data });
