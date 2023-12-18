@@ -48,17 +48,14 @@ const Login = () => {
   };
 
   const fetchUserProfile = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
 
-      if (token) {
-        navigation.navigate('Profile');
-        return;
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error.message);
-     
+    const token = await AsyncStorage.getItem('accessToken');
+
+    if (token) {
+      navigation.navigate('Profile');
+      return;
     }
+
   };
 
 
@@ -88,7 +85,7 @@ const Login = () => {
           onChangeText={setUsername}
         />
       </View>
-    
+
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} style={styles.icon} />
         <TextInput
@@ -126,7 +123,7 @@ const styles = StyleSheet.create({
   image: {
     width: '10%',
     height: '10%',
-  
+
   },
   title: {
     fontSize: 24,

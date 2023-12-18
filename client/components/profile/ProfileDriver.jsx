@@ -4,16 +4,23 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
+import CreateEditUnit from './CreateUnit';
 
 const ProfileDriver = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('')
+  const [id, setId] = useState('')
+  const [profile, setProfile] = useState({})
   const navigation = useNavigation();
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
+
+  useEffect( () => {
+    fetchDriverProfile()
+  }, [id])
 
   const fetchUserProfile = async () => {
     try {
@@ -30,18 +37,39 @@ const ProfileDriver = () => {
           Authorization: token,
         },
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch user profile');
-      }
-
       const userProfile = await response.json();
+
       setUsername(userProfile.username);
       setEmail(userProfile.email);
       setRole(userProfile.role)
+      setId(userProfile.id)
+
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
+    }
+  };
+
+
+  const fetchDriverProfile = async () => {
+    try {
+
+      const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
+        method: 'GET',
+
+      });
+
+      const driver = await response.json();
+
+      if(driver){
+        setProfile(driver)
+      }
+
+
+      await AsyncStorage.setItem("driverId", String(driver.id))
+
+    } catch (error) {
+      console.error('Error fetching user profile:', error.message);
     }
   };
 
@@ -77,15 +105,39 @@ const ProfileDriver = () => {
           <Text style={styles.email}>{role}</Text>
         </View>
       </View>
+
+      {profile.id && (
+        <View style={styles.profileInfo}>
+          <Text style={styles.profileText}>First Name: {profile.firstName}</Text>
+          <Text style={styles.profileText}>Last Name: {profile.lastName}</Text>
+          <Text style={styles.profileText}>License Number: {profile.licenseNumber}</Text>
+          <Text style={styles.profileText}>Address: {profile.address}</Text>
+          <Text style={styles.profileText}>Birthdate: {profile.birthdate}</Text>
+        </View>
+      )}
+
+
       <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
         <Text style={styles.mapButtonText}>Go to Map</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToCreateDriver}>
-        <Text style={styles.mapButtonText}>Create Profile</Text>
+      {!profile.id && (
+        <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToCreateDriver}>
+          <Text style={styles.mapButtonText}>Create Profile</Text>
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity style={styles.mapButton} onPress={() => {
+            navigation.navigate('ManageUnit');
+      }}>
+        <Text style={styles.mapButtonText}>Manage Unit</Text>
       </TouchableOpacity>
+
+
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
+
+
     </View>
   );
 };
@@ -134,6 +186,15 @@ const styles = StyleSheet.create({
   logoutButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  profileInfo: {
+    padding: 10,
+    marginBottom: 20,
+  },
+  profileText: {
+    fontSize: 16,
+    color: 'black',
+    marginBottom: 5,
   },
 });
 

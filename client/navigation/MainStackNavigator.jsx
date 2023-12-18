@@ -11,6 +11,7 @@ import Map from '../components/map/Map';
 import Signup from '../components/login/Signup';
 import CreateDriverProfile from '../components/profile/CreateDriverProfile';
 import ProfileDriver from '../components/profile/ProfileDriver';
+import CreateEditUnit from '../components/profile/CreateUnit';
 const Stack = createStackNavigator();
 
 const MainStackNavigator = () => {
@@ -143,6 +144,23 @@ const MainStackNavigator = () => {
                 component={CreateDriverProfile}
                 options={{
                     title: 'Create Profle',
+                    headerStyle: {
+                        backgroundColor: '#039043',
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    headerTitleAlign: 'center',
+                    headerShown: userRole === 'driver'
+                }}
+            />
+
+            <Stack.Screen
+                name="ManageUnit"
+                component={CreateEditUnit}
+                options={{
+                    title: 'Manage Unit',
                     headerStyle: {
                         backgroundColor: '#039043',
                     },

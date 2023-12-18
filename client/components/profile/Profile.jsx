@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
+import CreateEditUnit from './CreateUnit';
 
 const Profile = () => {
   const [username, setUsername] = useState('');
@@ -77,6 +78,8 @@ const Profile = () => {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
+
+   
     </View>
   );
 };

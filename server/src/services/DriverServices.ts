@@ -15,8 +15,14 @@ export const getAllDrivers = async () => {
 
 
 export const getDriverById = async (id: number) => {
-    return prisma.driver.findUnique({ where: { id } });
+    return prisma.driver.findUnique({
+        where: { id },
+        include: {
+            unit: true
+        }
+    });
 };
+
 
 export const updateDriver = async (id: number, data: Driver) => {
     return prisma.driver.update({ where: { id }, data });
