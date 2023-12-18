@@ -19,7 +19,13 @@ const carOptions = [
     { id: 1, type: 'Jhelord 4-seater', price: '₱286.00', eta: '9:35AM - 9:49AM', location: { lat: 10.775542033943118, lng: 122.48200915753841 } },
     { id: 2, type: 'Jhelord 6-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: { lat: 10.772054046301417, lng: 122.48137280344963 } },
     { id: 3, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: { "lat": 10.737838008526095, "lng": 122.57533796131611 } },
-    { id: 4, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} }
+    { id: 4, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} },
+        // { id: 5, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} },
+        // { id: 6, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} },
+        // { id: 7, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} },
+        // { id: 8, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} },
+        // { id: 9, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} },
+        // { id: 10, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} }
 ];
 
 const CustomMarker = () => (
@@ -89,6 +95,7 @@ const Map = () => {
         const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs'; // Use your actual API key
 
         let destinationLatLng;
+        console.log(destinationInput)
 
   
         // Check if destinationInput is an object with lat and lng
@@ -104,7 +111,6 @@ const Map = () => {
 
                 const geocodeJson = await geocodeResponse.json();
                 if (!geocodeJson.results.length) {
-                    console.log("XX")
                     setErrorMsg('Geocoding failed');
                     return;
                 }
@@ -331,6 +337,7 @@ const Map = () => {
                             selectedCar={selectedCar}
                             onSelectCar={setSelectedCar}
                             currentLocation={location} // Your user's current location
+                            fetchDirections={fetchDirections}
                         />}
 
                     </>

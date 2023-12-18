@@ -62,7 +62,7 @@ const CarOption = ({ car, isSelected, onSelect, currentLocation }) => {
 };
 
 
-const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation }) => {
+const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation, fetchDirections }) => {
     const [expanded, setExpanded] = useState(false);
     const [radius, setRadius] = useState(10); // Default radius of 10 km
     const [modalVisible, setModalVisible] = useState(false);
@@ -112,7 +112,7 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation }) =>
 
                     {
                         role === 'DRIVER' ? (
-                            <BookingList />
+                            <BookingList fetchDirections={fetchDirections} />
                         ) : (<>
 
                             <Slider
