@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList, LayoutAnimation, Pl
 import Slider from '@react-native-community/slider'; // or from 'react-native' if you're using the built-in slider
 import DriverInfoModal from './DriverModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BookingList from '../profile/Bookings';
 
 // Enable LayoutAnimation on Android
 if (
@@ -98,45 +99,54 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation }) =>
             <View style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-     
-                
+
+
             }}>
-            <TouchableOpacity onPress={toggleExpanded} style={styles.header}>
-                <Text style={styles.headerText}>{role === 'DRIVER' ? 'Bookings' : 'Drivers near me'}</Text>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={toggleExpanded} style={styles.header}>
+                    <Text style={styles.headerText}>{role === 'DRIVER' ? 'Bookings' : 'Drivers near me'}</Text>
+                </TouchableOpacity>
             </View>
-        
+
             {expanded && (
                 <>
-                    <Slider
-                        style={{ width: '100%', height: 50, borderWidth: 2, borderColor: 'red' }}
-                        minimumValue={1}
-                        maximumValue={50}
-                        step={1}
-                        value={radius}
-                        onValueChange={(value) => setRadius(value)}
-                        minimumTrackTintColor="#0000FF"
-                        maximumTrackTintColor="#000000"
-                        thumbTintColor="#0000FF"
-                    />
-                    <Text style={styles.sliderText}>Search Radius: {radius} km</Text>
-                 
-                    <FlatList
-                        data={carsWithinRadius}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <CarOption
-                                car={item}
-                                isSelected={item.id === selectedCar.id}
-                                onSelect={() => {
-                                    setSelectedCarDetails(item);
-                                    setModalVisible(true);
-                                }}
-                                currentLocation={currentLocation}
+
+                    {
+                        role === 'DRIVER' ? (
+                            <BookingList />
+                        ) : (<>
+
+                            <Slider
+                                style={{ width: '100%', height: 50, borderWidth: 2, borderColor: 'red' }}
+                                minimumValue={1}
+                                maximumValue={50}
+                                step={1}
+                                value={radius}
+                                onValueChange={(value) => setRadius(value)}
+                                minimumTrackTintColor="#0000FF"
+                                maximumTrackTintColor="#000000"
+                                thumbTintColor="#0000FF"
                             />
-                        )}
-                        style={styles.list}
-                    />
+                            <Text style={styles.sliderText}>Search Radius: {radius} km</Text>
+
+                            <FlatList
+                                data={carsWithinRadius}
+                                keyExtractor={(item) => item.id.toString()}
+                                renderItem={({ item }) => (
+                                    <CarOption
+                                        car={item}
+                                        isSelected={item.id === selectedCar.id}
+                                        onSelect={() => {
+                                            setSelectedCarDetails(item);
+                                            setModalVisible(true);
+                                        }}
+                                        currentLocation={currentLocation}
+                                    />
+                                )}
+                                style={styles.list}
+                            />
+                        </>)
+                    }
+
                 </>
             )}
         </View>
@@ -151,22 +161,22 @@ const styles = StyleSheet.create({
 
         overflow: 'hidden', // This keeps child views within the rounded border
         width: '100%',
-        
+
     },
     header: {
         paddingHorizontal: 15,
         paddingVertical: 10,
         backgroundColor: '#039043',
-        textAlign:'center',
-      
+        textAlign: 'center',
+
         width: '100%',
-     
+
     },
     headerText: {
         fontSize: 16,
         fontWeight: 'bold',
         color: 'white',
-        textAlign:'center'
+        textAlign: 'center'
     },
     list: {
         backgroundColor: '#F8F8F8',

@@ -47,7 +47,7 @@ export const getBookingByUserId = async (req: Request, res: Response) => {
 
 export const getBookingByDriverId = async (req: Request, res: Response) => {
     try {
-        const booking = await BookingService.getBookingByUserId(parseInt(req.params.id));
+        const booking = await BookingService.getBookingByDriverId(parseInt(req.params.id));
         if (booking) {
             res.json(booking);
         } else {
