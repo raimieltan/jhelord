@@ -22,6 +22,10 @@ const ProfileDriver = () => {
     fetchDriverProfile()
   }, [id])
 
+  useEffect(() => {
+
+  }, [profile])
+
   const fetchUserProfile = async () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
@@ -63,6 +67,7 @@ const ProfileDriver = () => {
 
       if(driver){
         setProfile(driver)
+        console.log(profile)
       }
 
 

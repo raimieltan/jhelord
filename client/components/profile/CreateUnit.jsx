@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MapHeader from '../map/Header';
+import SelectDropdown from 'react-native-select-dropdown';
 
 const CreateEditUnit = () => {
   const [model, setModel] = useState('');
@@ -10,19 +10,60 @@ const CreateEditUnit = () => {
   const [number, setNumber] = useState('');
   const [plateNumber, setPlateNumber] = useState('');
 
-  const [status, setStatus] = useState('');
-  const [id, setId] = useState()
 
+  const [id, setId] = useState()
+  const [unit, setUnit] = useState({})
+  const [status, setStatus] = useState(unit?.status ?? 'Active');
+  const statuses = ["Active", "Inactive", "Maintenance"];
 
   const fetchId = async () => {
     const id = await AsyncStorage.getItem('driverId');
     setId(id)
-    console.log(id)
+
   }
 
   useEffect(() => {
+    setStatus(unit.status)
+  },[unit])
+
+  useEffect(() => {
     fetchId()
+
+
   }, [])
+
+  useEffect(() => {
+    fetchDriverProfile()
+  }, [id])
+
+
+  const fetchDriverProfile = async () => {
+    try {
+
+      if (id) {
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
+          method: 'GET',
+
+        });
+
+        const driver = await response.json();
+
+
+        if (driver) {
+
+          setUnit(driver.unit[0])
+
+
+        }
+      }
+
+
+    } catch (error) {
+      console.error('Error fetching user profile:', error.message);
+    }
+  };
+
+
 
   const handleCreateEditUnit = async () => {
     try {
@@ -57,69 +98,83 @@ const CreateEditUnit = () => {
 
   return (
     <View style={styles.container2}>
-        
 
-    <View style={styles.container}>
-      
-      {/* Add Input fields for each unit attribute */}
-      {/* Example for 'model' */}
-      <View style={styles.inputContainer}>
+
+      <View style={styles.container}>
+
+        {/* Add Input fields for each unit attribute */}
+        {/* Example for 'model' */}
+        <View style={styles.inputContainer}>
+          <Icon name="car" size={20} style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder={unit?.model ?? 'Model'}
+            value={model}
+            onChangeText={setModel}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Icon name="car" size={20} style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder={unit?.make ?? 'Make'}
+            value={make}
+            onChangeText={setMake}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Icon name="car" size={20} style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder={unit?.number ?? 'Unit Number'}
+            value={number}
+            onChangeText={setNumber}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Icon name="car" size={20} style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder={unit?.plateNumber ?? 'Plate Number'}
+            value={plateNumber}
+            onChangeText={setPlateNumber}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
         <Icon name="car" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Model"
-          value={model}
-          onChangeText={setModel}
-        />
+          <SelectDropdown
+            data={statuses}
+            onSelect={(selectedItem, index) => {
+              setStatus(selectedItem);
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item;
+            }}
+            buttonStyle={styles.dropdownButtonStyle}
+            buttonTextStyle={styles.dropdownButtonTextStyle}
+            renderDropdownIcon={() => {
+              return (
+                <Text style={styles.dropdownIcon}>▼</Text>
+              );
+            }}
+            dropdownIconPosition={"right"}
+            defaultButtonText={status}
+          />
+        </View>
+
+
+
+        <TouchableOpacity style={styles.button} onPress={handleCreateEditUnit}>
+          <Text style={styles.buttonText}>Save Unit</Text>
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.inputContainer}>
-        <Icon name="car" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Make"
-          value={make}
-          onChangeText={setMake}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Icon name="car" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Unit Number"
-          value={number}
-          onChangeText={setNumber}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Icon name="car" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Plate Number"
-          value={plateNumber}
-          onChangeText={setPlateNumber}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Icon name="car" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Status"
-          value={status}
-          onChangeText={setStatus}
-        />
-      </View>
-
-   
-      {/* Repeat similar blocks for 'make', 'number', 'plateNumber', 'runTime', and 'status' */}
-
-      <TouchableOpacity style={styles.button} onPress={handleCreateEditUnit}>
-        <Text style={styles.buttonText}>Save Unit</Text>
-      </TouchableOpacity>
-    </View>
     </View>
 
   );
@@ -148,6 +203,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginVertical: 10,
   },
+  inputContainer2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    borderColor: 'gray',
+    marginVertical: 10,
+    justifyContent: 'space-around'
+  },
+
   icon: {
     marginRight: 10,
   },
@@ -163,6 +227,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: '100%',
     marginTop: 20,
+    zIndex: 10
+  },
+  button2: {
+    backgroundColor: '#039043',
+    padding: 10,
+    borderRadius: 5,
+    width: '30%',
+    marginTop: 20,
+    zIndex: 10
   },
   buttonText: {
     color: 'white',

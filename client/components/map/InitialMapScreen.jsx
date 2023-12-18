@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import Taxi from '../../assets/images/icon/taxi.png'
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -12,9 +12,9 @@ const MapHome = () => {
 
     const handleNavigateToMap = () => {
         navigation.navigate('Map');
-      };
+    };
 
-  
+
     return (
         <View style={styles.container}>
             <MapHeader title="Let's find you a driver" subtext="We will ensure your safety with our trusted drivers" />
@@ -22,14 +22,14 @@ const MapHome = () => {
                 <Icon name="map-pin" size={30} color="#900" />
                 <Text style={styles.destinationText}>Where to?</Text>
                 <View style={{
-              
+
                     width: '50%',
                     alignItems: 'flex-end'
 
                 }}>
-                <Icon name="arrow-right" size={30} color="#039043" />
+                    <Icon name="arrow-right" size={30} color="#039043" />
                 </View>
-             
+
             </TouchableOpacity>
             <ScrollView>
 
@@ -74,6 +74,8 @@ const MapHome = () => {
                         <Text style={styles.moreWaysDescription}>Coming Soon!</Text>
                     </TouchableOpacity>
                 </View>
+
+
             </ScrollView>
 
 
