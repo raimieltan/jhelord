@@ -169,7 +169,7 @@ const MainStackNavigator = () => {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
-                    headerShown: userRole === 'driver'
+                    headerShown: userRole === 'DRIVER',
                 }}
             />
 

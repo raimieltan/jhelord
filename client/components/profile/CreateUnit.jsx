@@ -57,7 +57,7 @@ const CreateEditUnit = () => {
 
   return (
     <View style={styles.container2}>
-         <MapHeader title="Manage Unit" subtext={"Mange your unit"} />
+        
 
     <View style={styles.container}>
       
@@ -113,15 +113,7 @@ const CreateEditUnit = () => {
         />
       </View>
 
-      <View style={styles.inputContainer}>
-        <Icon name="car" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Model"
-          value={model}
-          onChangeText={setModel}
-        />
-      </View>
+   
       {/* Repeat similar blocks for 'make', 'number', 'plateNumber', 'runTime', and 'status' */}
 
       <TouchableOpacity style={styles.button} onPress={handleCreateEditUnit}>

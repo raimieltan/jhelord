@@ -64,7 +64,6 @@ model Unit {
   plateNumber String
   runTime     DateTime?
   status      String
-  location    Json?
 
   driver Driver @relation(fields: [driverId], references: [id])
 }
