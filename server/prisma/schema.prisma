@@ -37,6 +37,8 @@ model User {
   profile     Profile?
   booking     Booking[]
   driverReview DriverReview[]
+  driver Driver? 
+  
 }
 
 model Driver {
@@ -50,6 +52,8 @@ model Driver {
   unit    Unit[]
   booking Booking[]
   driverReview DriverReview[]
+  userId Int @unique
+  User  User? @relation(fields: [userId], references: [id])
 }
 
 model Unit {
