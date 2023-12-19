@@ -12,19 +12,44 @@ import MapHeader from './Header';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BottomNavBar from '../nav/BottomNav';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-const carOptions =  [
-        {
-            "id": 1,
-            "firstName": "hannah",
-            "lastName": "casquite",
-            "licenseNumber": "a1213sz9",
-            "address": "iloilo city",
-            "birthdate": "09-18-99",
-            "userId": 1,
-            "unit": [   {
+const carOptions = [
+    {
+        "id": 1,
+        "firstName": "hannah",
+        "lastName": "casquite",
+        "licenseNumber": "a1213sz9",
+        "address": "iloilo city",
+        "birthdate": "09-18-99",
+        "userId": 1,
+        "unit": [{
+            "id": 12,
+            "driverId": 2,
+            "model": "Loading",
+            "make": "Loading",
+            "number": "Unit Number11",
+            "plateNumber": "Plate Number11",
+            "runTime": "2023-12-19T10:45:59.688Z",
+            "status": "active",
+            "location": {
+                "latitude": 10.76345280577066,
+                "longitude": 122.4944525957108
+            }
+        }]
+    },
+    {
+        "id": 2,
+        "firstName": "hannah 2",
+        "lastName": "tan",
+        "licenseNumber": "123123",
+        "address": "Iloilo city 2",
+        "birthdate": "09-19-99",
+        "userId": 3,
+        "unit": [
+            {
                 "id": 12,
                 "driverId": 2,
                 "model": "Loading",
@@ -34,38 +59,14 @@ const carOptions =  [
                 "runTime": "2023-12-19T10:45:59.688Z",
                 "status": "active",
                 "location": {
-                    "latitude": 10.76345280577066,
-                    "longitude": 122.4944525957108
+                    "latitude": 10.7752659,
+                    "longitude": 122.4831714
                 }
-            }]
-        },
-        {
-            "id": 2,
-            "firstName": "hannah 2",
-            "lastName": "tan",
-            "licenseNumber": "123123",
-            "address": "Iloilo city 2",
-            "birthdate": "09-19-99",
-            "userId": 3,
-            "unit": [
-                {
-                    "id": 12,
-                    "driverId": 2,
-                    "model": "Loading",
-                    "make": "Loading",
-                    "number": "Unit Number11",
-                    "plateNumber": "Plate Number11",
-                    "runTime": "2023-12-19T10:45:59.688Z",
-                    "status": "active",
-                    "location": {
-                        "latitude": 10.7752659,
-                        "longitude": 122.4831714
-                    }
-                }
-            ]
-        }
-    ]
-;
+            }
+        ]
+    }
+]
+    ;
 
 const CustomMarker = () => (
     <Image
@@ -80,13 +81,13 @@ const CustomMarker = () => (
 const Map = () => {
     const [location, setLocation] = useState({ "coords": { "accuracy": 156.89999389648438, "altitude": 89.80000305175781, "altitudeAccuracy": 13.584489822387695, "heading": 0, "latitude": 10.7752659, "longitude": 122.4831714, "speed": 0.0028111569117754698 }, "mocked": false, "timestamp": 1702341514824 });
     const [errorMsg, setErrorMsg] = useState(null);
-    const [selectedCar, setSelectedCar] = useState( carOptions[0] );
+    const [selectedCar, setSelectedCar] = useState(carOptions[0]);
     const [directions, setDirections] = useState([]);
     const [destinationLatLng, setDestinationLatLang] = useState();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedDriver, setSelectedDriver] = useState(carOptions[0]);
     const [drivers, setDrivers] = useState(carOptions)
-
+    const [role, setRole] = useState(null)
 
     const mapViewRef = React.useRef(null);
 
@@ -96,6 +97,15 @@ const Map = () => {
     };
 
 
+    const fetchRole = async () => {
+        const role = await AsyncStorage.getItem("userRole")
+        setRole(role)
+    }
+
+    useEffect(() => {
+        fetchRole()
+    }, [])
+
 
     const fetchDrivers = async () => {
         try {
@@ -104,10 +114,10 @@ const Map = () => {
 
             });
             const driversData = await response.json();
-    
+
             if (driversData) {
                 setDrivers(driversData.filter((driver) => {
-                    if(driver.unit.length >= 1) {
+                    if (driver.unit.length >= 1) {
                         return true
                     }
                 }))
@@ -120,16 +130,16 @@ const Map = () => {
 
 
     useEffect(() => {
-    
 
-            // Set up the interval
-    const intervalId = setInterval(() => {
-        fetchDrivers()
-        console.log("fetched drivers")
-      }, 30000);
-    
-      // Clear the interval when the component unmounts or dependencies change
-      return () => clearInterval(intervalId);
+
+        // Set up the interval
+        const intervalId = setInterval(() => {
+            fetchDrivers()
+            console.log("fetched drivers")
+        }, 10000);
+
+        // Clear the interval when the component unmounts or dependencies change
+        return () => clearInterval(intervalId);
     }, [])
 
 
@@ -362,8 +372,8 @@ const Map = () => {
                                     />
                                 )}
 
-                                {drivers?.map((car, index) => (
-                                    
+                                { role ==='USER' && drivers?.map((car, index) => (
+
                                     <Marker
                                         key={index}
                                         coordinate={{ latitude: car.unit[0]?.location?.latitude, longitude: car.unit[0]?.location?.longitude }}

@@ -18,9 +18,16 @@ const ProfileDriver = () => {
     fetchUserProfile();
   }, []);
 
-  useEffect( () => {
-    fetchDriverProfile()
-  }, [id])
+  useEffect(() => {
+    // Function that sets up the interval
+    const interval = setInterval(() => {
+        fetchDriverProfile();
+    }, 5000); // Set the interval time in milliseconds (e.g., 1000ms = 1 second)
+
+    // Cleanup function to clear the interval
+    return () => clearInterval(interval);
+}, [id]); // Dependencies array, the interval will reset if `id` changes
+
 
   useEffect(() => {
 
@@ -67,7 +74,7 @@ const ProfileDriver = () => {
 
       if(driver){
         setProfile(driver)
-        console.log(profile)
+       
       }
 
 
