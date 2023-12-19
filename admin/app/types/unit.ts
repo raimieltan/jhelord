@@ -10,4 +10,5 @@ export interface Unit {
   plateNumber: string,
   runTime: Date,
   status: string,
+  location: any,
 }

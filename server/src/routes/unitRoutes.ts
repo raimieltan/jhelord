@@ -3,6 +3,6 @@ import { getAllUnits, getUnitById } from '../controllers/unitController';
 const unitRouter = express.Router();
 
 unitRouter.get('/', getAllUnits)
-unitRouter.get('/:id', getUnitById)
+unitRouter.get('/get-unit/:id', getUnitById)
 
 export default unitRouter;
