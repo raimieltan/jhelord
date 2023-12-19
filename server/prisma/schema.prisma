@@ -48,6 +48,7 @@ model Unit {
   plateNumber String
   runTime     DateTime?
   status      String
+  location    Json
 
   operations Operation[]
   driver Driver @relation(fields: [driverId], references: [id])
@@ -66,7 +67,6 @@ model Operation {
   id         Int    @id @default(autoincrement())
   unitId     Int
   customerId Int
-  location   String?
   status     String
 
   customer Customer @relation(fields: [customerId], references: [id])
