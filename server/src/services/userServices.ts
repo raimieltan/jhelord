@@ -19,9 +19,7 @@ export async function signupUser(userData: UserCreateInput) {
           password: hashedPassword,
       },
   });
-  const token = jwt.sign({ userId: newUser.id, username: newUser.username }, process.env.JWT_SECRET as string, {
-    expiresIn: '1h',
-});
+  const token = jwt.sign({ userId: newUser.id, username: newUser.username }, process.env.JWT_SECRET as string);
   return token;
 }
 

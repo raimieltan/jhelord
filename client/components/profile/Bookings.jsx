@@ -1,10 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import * as Location from 'expo-location';
 
-const BookingList = ({ fetchDirections }) => {
+const BookingList = ({ fetchDirections, setDirections }) => {
   const [bookings, setBookings] = useState([]);
   const [driver, setDriver] = useState(null)
+
+
+
+
+
 
   const fetchUserProfile = async () => {
     try {
@@ -55,56 +61,86 @@ const BookingList = ({ fetchDirections }) => {
   }, [])
 
   useEffect(() => {
+    // Initial fetch
     fetchBookings();
+  
+    // Set up interval to fetch every 5 seconds
+    const intervalId = setInterval(() => {
+      fetchBookings();
+    }, 5000);
+  
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, [driver]);
 
 
-  const handleCreateEditUnit = async () => {
+  const handleChangeUnitLocation = async () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
-
       if (!token) {
-        Alert.alert('Error', 'You must be logged in');
+        Alert.alert('Error', 'You must be logged in to perform this action');
         return;
       }
+  
+      let location = await Location.getCurrentPositionAsync({
+        enableHighAccuracy: true,
+        accuracy: Location.Accuracy.High,
+      });
 
-      const method = unit ? 'PUT' : 'POST'
-      if (location?.coords) {
-
-        const newlocation = {
-          latitude: location?.coords.latitude,
-          longitude: location?.coords.longitude
-        }
-
-
-        console.log(newlocation)
-        const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
-          method: method, // Change to 'PUT' and add an ID for editing an existing unit
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-          body: JSON.stringify({ model, make, number, plateNumber, runTime: new Date(), status, driverId: driver.id, location: newlocation }),
-        });
-
-
-
-
-        const data = await response.json();
-        if (data.id) {
-          console.log(data)
-          Alert.alert('Success', 'Unit has been successfully created/updated.');
-          navigation.navigate('Profile')
-
-        }
-
+          const newlocation = {
+            latitude: location?.coords.latitude,
+            longitude: location?.coords.longitude
+          }
+      
+      const response = await fetch(`https://jhelord-backend.onrender.com/api/units/${driver?.unit[0].id}/location`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+        body: JSON.stringify({ location: newlocation }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update unit location');
       }
+  
+      const updatedUnit = await response.json();
 
+  
+   
     } catch (error) {
-      console.error('Error:', error.message);
-      Alert.alert('Error', 'Failed to create/edit unit');
+      console.error('Error updating unit location:', error);
+
     }
   };
+
+  useEffect(() => {
+    // Assuming `driver.unitId` is available and valid
+  
+  
+    // Function to update the unit's location
+  
+
+  
+      const updateLocation = async () => {
+          
+          await handleChangeUnitLocation();
+        
+      }
+    
+ 
+  
+    // Set up the interval
+    const intervalId = setInterval(() => {
+      updateLocation();
+
+    }, 10000);
+  
+    // Clear the interval when the component unmounts or dependencies change
+    return () => clearInterval(intervalId);
+  }, [driver]); // Dependencies array
+  
 
 
   const fetchBookings = async () => {
@@ -148,7 +184,7 @@ const BookingList = ({ fetchDirections }) => {
       }
 
       const updatedBooking = await response.json();
-      console.log(updatedBooking)
+     
       if (updatedBooking.status === "ACCEPTED") {
         const location = {
 
@@ -202,7 +238,10 @@ const BookingList = ({ fetchDirections }) => {
             <>
               <TouchableOpacity
                 style={styles.rejectButton}
-                onPress={() => changeBookingStatus(item.id, 'COMPLETED')}>
+                onPress={() => {
+                  setDirections([])
+                  changeBookingStatus(item.id, 'COMPLETED')
+                  }}>
                 <Text style={styles.buttonText}>Complete</Text>
               </TouchableOpacity>
             </>
@@ -227,6 +266,7 @@ const BookingList = ({ fetchDirections }) => {
           marginVertical: 10
         }}>
           <Text>No pending Bookings</Text>
+    
         </View>
       ) : (
         <FlatList

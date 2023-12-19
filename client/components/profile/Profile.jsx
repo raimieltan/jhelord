@@ -36,6 +36,8 @@ const Profile = () => {
       }
 
       const userProfile = await response.json();
+      console.log(userProfile)
+      await AsyncStorage.setItem("userId", userProfile.id+"")
       setUsername(userProfile.username);
       setEmail(userProfile.email);
 

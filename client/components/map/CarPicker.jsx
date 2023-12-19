@@ -29,7 +29,7 @@ const filterCarsWithinRadius = (carOptions, currentLocation, radius) => {
     return carOptions.filter(car => {
         const distance = calculateDistance(
             currentLocation.coords.latitude, currentLocation.coords.longitude,
-            car.location.lat, car.location.lng
+            car.unit[0]?.location?.latitude, car.unit[0]?.location?.longitude
         );
         return distance <= radius; // 10 km radius
     });
@@ -37,11 +37,12 @@ const filterCarsWithinRadius = (carOptions, currentLocation, radius) => {
 
 const CarOption = ({ car, isSelected, onSelect, currentLocation }) => {
 
+    console.log(car)
     const distance = calculateDistance(
         parseFloat(currentLocation.coords.latitude),
         parseFloat(currentLocation.coords.longitude),
-        parseFloat(car.location.lat),
-        parseFloat(car.location.lng)
+        parseFloat(car.unit[0].location.latitude),
+        parseFloat(car.unit[0].location.longitude)
     ).toFixed(2); // Round to 2 decimal places
     // const distance = calculateDistance(
     //     currentLocation.coords.latitude, currentLocation.coords.latitude,
@@ -55,18 +56,18 @@ const CarOption = ({ car, isSelected, onSelect, currentLocation }) => {
             style={[styles.carOption]}
 
         >
-            <Text style={styles.carType}>{car.type}</Text>
+            <Text style={styles.carType}>{car.unit[0].model + " " + car.unit[0].make}</Text>
             <Text style={styles.carDistance}>{distance} km away</Text>
         </TouchableOpacity>
     );
 };
 
 
-const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation, fetchDirections }) => {
+const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation, fetchDirections, setDirections }) => {
     const [expanded, setExpanded] = useState(false);
     const [radius, setRadius] = useState(10); // Default radius of 10 km
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedCarDetails, setSelectedCarDetails] = useState({ id: 1, type: 'Jhelord 4-seater', price: '₱286.00', eta: '9:35AM - 9:49AM', location: { lat: 10.775542033943118, lng: 122.48200915753841 } });
+    const [selectedCarDetails, setSelectedCarDetails] = useState();
     const [role, setRole] = useState('')
     const toggleExpanded = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -112,7 +113,7 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation, fetc
 
                     {
                         role === 'DRIVER' ? (
-                            <BookingList fetchDirections={fetchDirections} />
+                            <BookingList fetchDirections={fetchDirections} setDirections={setDirections} />
                         ) : (<>
 
                             <Slider

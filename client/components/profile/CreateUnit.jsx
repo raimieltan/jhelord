@@ -81,7 +81,7 @@ const CreateEditUnit = ({ route }) => {
     try {
 
       if (id) {
-        console.log(id)
+     
         const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
           method: 'GET',
 

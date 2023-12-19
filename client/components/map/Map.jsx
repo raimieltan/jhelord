@@ -15,12 +15,57 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 
 
 
-const carOptions = [
-    { id: 1, type: 'Jhelord 4-seater', price: '₱286.00', eta: '9:35AM - 9:49AM', location: { lat: 10.775542033943118, lng: 122.48200915753841 } },
-    { id: 2, type: 'Jhelord 6-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: { lat: 10.772054046301417, lng: 122.48137280344963 } },
-    { id: 3, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: { "lat": 10.737838008526095, "lng": 122.57533796131611 } },
-    { id: 4, type: 'Jhelord 2-seater', price: '₱346.00', eta: '9:34AM - 9:48AM', location: {"lat": 37.42340727703753, "lng": -122.08627738058568} },
-];
+const carOptions =  [
+        {
+            "id": 1,
+            "firstName": "hannah",
+            "lastName": "casquite",
+            "licenseNumber": "a1213sz9",
+            "address": "iloilo city",
+            "birthdate": "09-18-99",
+            "userId": 1,
+            "unit": [   {
+                "id": 12,
+                "driverId": 2,
+                "model": "Loading",
+                "make": "Loading",
+                "number": "Unit Number11",
+                "plateNumber": "Plate Number11",
+                "runTime": "2023-12-19T10:45:59.688Z",
+                "status": "active",
+                "location": {
+                    "latitude": 10.76345280577066,
+                    "longitude": 122.4944525957108
+                }
+            }]
+        },
+        {
+            "id": 2,
+            "firstName": "hannah 2",
+            "lastName": "tan",
+            "licenseNumber": "123123",
+            "address": "Iloilo city 2",
+            "birthdate": "09-19-99",
+            "userId": 3,
+            "unit": [
+                {
+                    "id": 12,
+                    "driverId": 2,
+                    "model": "Loading",
+                    "make": "Loading",
+                    "number": "Unit Number11",
+                    "plateNumber": "Plate Number11",
+                    "runTime": "2023-12-19T10:45:59.688Z",
+                    "status": "active",
+                    "location": {
+                        "latitude": 10.7752659,
+                        "longitude": 122.4831714
+                    }
+                }
+            ]
+        }
+    ]
+;
 
 const CustomMarker = () => (
     <Image
@@ -33,13 +78,14 @@ const CustomMarker = () => (
 
 
 const Map = () => {
-    const [location, setLocation] = useState({"coords": {"accuracy": 156.89999389648438, "altitude": 89.80000305175781, "altitudeAccuracy": 13.584489822387695, "heading": 0, "latitude": 10.7752659, "longitude": 122.4831714, "speed": 0.0028111569117754698}, "mocked": false, "timestamp": 1702341514824});
+    const [location, setLocation] = useState({ "coords": { "accuracy": 156.89999389648438, "altitude": 89.80000305175781, "altitudeAccuracy": 13.584489822387695, "heading": 0, "latitude": 10.7752659, "longitude": 122.4831714, "speed": 0.0028111569117754698 }, "mocked": false, "timestamp": 1702341514824 });
     const [errorMsg, setErrorMsg] = useState(null);
-    const [selectedCar, setSelectedCar] = useState(carOptions[0]);
+    const [selectedCar, setSelectedCar] = useState( carOptions[0] );
     const [directions, setDirections] = useState([]);
     const [destinationLatLng, setDestinationLatLang] = useState();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedDriver, setSelectedDriver] = useState(carOptions[0]);
+    const [drivers, setDrivers] = useState(carOptions)
 
 
     const mapViewRef = React.useRef(null);
@@ -50,7 +96,41 @@ const Map = () => {
     };
 
 
+
+    const fetchDrivers = async () => {
+        try {
+            const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers`, {
+                method: 'GET',
+
+            });
+            const driversData = await response.json();
     
+            if (driversData) {
+                setDrivers(driversData.filter((driver) => {
+                    if(driver.unit.length >= 1) {
+                        return true
+                    }
+                }))
+
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    useEffect(() => {
+    
+
+            // Set up the interval
+    const intervalId = setInterval(() => {
+        fetchDrivers()
+        console.log("fetched drivers")
+      }, 30000);
+    
+      // Clear the interval when the component unmounts or dependencies change
+      return () => clearInterval(intervalId);
+    }, [])
 
 
     const fetchDirections = async (destinationInput) => {
@@ -63,7 +143,7 @@ const Map = () => {
         let destinationLatLng;
         console.log(destinationInput)
 
-  
+
         // Check if destinationInput is an object with lat and lng
         if (destinationInput && destinationInput.lat && destinationInput.lng) {
             destinationLatLng = destinationInput;
@@ -130,10 +210,10 @@ const Map = () => {
                 body: JSON.stringify(requestBody),
             });
 
-          
+
 
             const routeJson = await routeResponse.json();
-        
+
             if (routeJson.routes && routeJson.routes.length) {
                 const route = routeJson.routes[0];
                 const points = polyline.decode(route.polyline.encodedPolyline);
@@ -168,12 +248,12 @@ const Map = () => {
         });
         console.log(location)
 
-     
+
         setLocation(location);
     };
     const handleRefreshLocation = () => {
-     
-        if(location) {
+
+        if (location) {
             mapViewRef.current.animateToRegion({
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
@@ -220,25 +300,25 @@ const Map = () => {
                             onClose={() => setIsModalVisible(false)}
                             driver={selectedDriver}
                         />
-                     
-                        <View style={{
-                              flex: 1,
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              width: '100%',
-                        }}>
-                               <TouchableOpacity style={{
-                         
-                            alignContent: 'center',
-                            alignItems: 'center',
-                            position: 'absolute',
-                            bottom: 20,
-                            right: 10,
-                            zIndex: 50
-                        }} onPress={handleRefreshLocation}>
-                            <Icon2 name="gps-fixed" size={40} color="blue" />
 
-                        </TouchableOpacity>
+                        <View style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                        }}>
+                            <TouchableOpacity style={{
+
+                                alignContent: 'center',
+                                alignItems: 'center',
+                                position: 'absolute',
+                                bottom: 20,
+                                right: 10,
+                                zIndex: 50
+                            }} onPress={handleRefreshLocation}>
+                                <Icon2 name="gps-fixed" size={40} color="blue" />
+
+                            </TouchableOpacity>
                             <MapView
                                 ref={mapViewRef}
                                 style={styles.map}
@@ -282,10 +362,11 @@ const Map = () => {
                                     />
                                 )}
 
-                                {carOptions.map((car) => (
+                                {drivers?.map((car, index) => (
+                                    
                                     <Marker
-                                        key={car.id}
-                                        coordinate={{ latitude: car.location.lat, longitude: car.location.lng }}
+                                        key={index}
+                                        coordinate={{ latitude: car.unit[0]?.location?.latitude, longitude: car.unit[0]?.location?.longitude }}
                                         onPress={() => handleMarkerPress(car)}
                                     >
                                         <CustomMarker />
@@ -299,11 +380,12 @@ const Map = () => {
 
 
                         {location && <CarPicker
-                            carOptions={carOptions}
+                            carOptions={drivers}
                             selectedCar={selectedCar}
                             onSelectCar={setSelectedCar}
                             currentLocation={location} // Your user's current location
                             fetchDirections={fetchDirections}
+                            setDirections={setDirections}
                         />}
 
                     </>
