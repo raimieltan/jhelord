@@ -16,8 +16,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning>
-        <div className="flex h-screen w-screen flex-row bg-yellow-200 p-8 justify-start">
-          <div className='flex h-auto flex-col w-full'>
+        <div className="flex h-full w-full flex-row bg-white p-8 justify-start">
+          <div className='flex flex-col w-full'>
             <Topbar />
             {children}
           </div>
