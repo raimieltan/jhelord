@@ -15,8 +15,9 @@ import CreateEditUnit from '../components/profile/CreateUnit';
 import MainProfile from '../components/profile/MainProfile';
 const Stack = createStackNavigator();
 
-const MainStackNavigator = () => {
+const MainStackNavigator = ( {location}) => {
 
+  
 
 
     return (
@@ -124,6 +125,7 @@ const MainStackNavigator = () => {
             <Stack.Screen
                 name="ManageUnit"
                 component={CreateEditUnit}
+                initialParams={{ location: location }}
                 options={{
                     title: 'Manage Unit',
                     headerStyle: {
@@ -134,7 +136,7 @@ const MainStackNavigator = () => {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
-                    headerShown: false
+                    headerShown: true
                 }}
             />
 

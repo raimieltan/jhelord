@@ -62,8 +62,9 @@ model Unit {
   make        String
   number      String
   plateNumber String
-  runTime     DateTime?
+  runTime     DateTime?     @default(now())
   status      String
+  location    Json?
 
   driver Driver @relation(fields: [driverId], references: [id])
 }

@@ -5,7 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectDropdown from 'react-native-select-dropdown';
 import { useNavigation } from '@react-navigation/native';
 
-const CreateEditUnit = () => {
+const CreateEditUnit = ({route}) => {
+  const { location } = route.params;
+
   const [model, setModel] = useState('');
   const [make, setMake] = useState('');
   const [number, setNumber] = useState('');
