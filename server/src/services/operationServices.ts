@@ -31,28 +31,36 @@ type Unit = {
 type OperationData = {
   unitId: number
   customerId: number
-  location: string
+  location: JSON
   status: string
 }
 
 export const retrieveOperations = async (operationId?: number) => {
   if (operationId) {
-    return await prisma.operation.findMany({
+    return await prisma.operation.findUnique({
       where: {
         id: operationId,
       },
       include: {
-        unit: true,
+        unit: {
+          include: {
+            driver: true,
+          },
+        },
         customer: true,
-      }
+      },
     })
   }
 
   return await prisma.operation.findMany({
     include: {
-      unit: true,
+      unit: {
+        include: {
+          driver: true,
+        },
+      },
       customer: true,
-    }
+    },
   })
 }
 
@@ -61,7 +69,6 @@ export const createOperation = async (operationData: OperationData) => {
     data: {
       unitId: operationData.unitId,
       customerId: operationData.customerId,
-      location: operationData.location,
       status: 'In Progress',
     },
   })

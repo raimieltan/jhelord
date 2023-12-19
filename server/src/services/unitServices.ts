@@ -36,8 +36,9 @@ type OperationData = {
 }
 
 export const retrieveUnits = async (unitId?: number) => {
+  
   if (unitId) {
-    return await prisma.unit.findMany({
+    return await prisma.unit.findUnique({
       where: {
         id: unitId,
       },
@@ -47,6 +48,7 @@ export const retrieveUnits = async (unitId?: number) => {
       }
     })
   }
+
   return await prisma.unit.findMany({
     include: {
       driver: true,
