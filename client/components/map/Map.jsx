@@ -49,36 +49,8 @@ const Map = () => {
         setIsModalVisible(true);
     };
 
-    const handleSetDestination = async (newDestinationAddress) => {
-        if (!newDestinationAddress) return;
 
-        const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs'; // Use your actual API key
-        try {
-            const geocodeResponse = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?address=${newDestinationAddress}&key=${apiKey}`
-            );
-            const geocodeJson = await geocodeResponse.json();
-            console.log(geocodeJson)
-            if (!geocodeJson.results.length) {
-                setErrorMsg('Geocoding failed');
-                return;
-            }
-
-
-
-            // Update the map's region to center on the new destination
-            // Assuming you have a ref to your MapView component
-            mapViewRef.current.animateToRegion({
-                latitude: geocodeJson.results[0].geometry.location.lat,
-                longitude: geocodeJson.results[0].geometry.location.lng,
-                latitudeDelta: 0.001, // Smaller value for closer zoom
-                longitudeDelta: 0.001, // Smaller value for closer zoom
-            }, 1000); // 1000 ms for the animation duration
-        } catch (error) {
-            console.log('Geocoding error:', error);
-            setErrorMsg('Failed to geocode destination');
-        }
-    };
+    
 
 
     const fetchDirections = async (destinationInput) => {

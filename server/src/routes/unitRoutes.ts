@@ -8,5 +8,8 @@ router.get('/', UnitController.getAllUnits);
 router.get('/:id', UnitController.getUnitById);
 router.put('/:id', UnitController.updateUnit);
 router.delete('/:id', UnitController.deleteUnit);
+// In routes/unitRoutes.ts
+
+router.patch('/:id/location', UnitController.updateUnitLocation);
 
 export default router;

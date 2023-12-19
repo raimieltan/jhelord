@@ -20,3 +20,13 @@ export const updateUnit = async (id: number, data: any) => {
 export const deleteUnit = async (id: number) => {
     return prisma.unit.delete({ where: { id } });
 };
+// In services/unitServices.ts
+
+export const updateUnitLocation = async (id: number, location: any) => {
+    return prisma.unit.update({
+        where: { id },
+        data: { location },
+    });
+};
+
+

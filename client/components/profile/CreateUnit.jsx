@@ -5,13 +5,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectDropdown from 'react-native-select-dropdown';
 import { useNavigation } from '@react-navigation/native';
 
-const CreateEditUnit = ({route}) => {
-  const { location } = route.params;
+const CreateEditUnit = ({ route }) => {
+
 
   const [model, setModel] = useState('');
   const [make, setMake] = useState('');
   const [number, setNumber] = useState('');
   const [plateNumber, setPlateNumber] = useState('');
+  const [location, setLocation] = useState({ "coords": { "accuracy": 156.89999389648438, "altitude": 89.80000305175781, "altitudeAccuracy": 13.584489822387695, "heading": 0, "latitude": 10.7752659, "longitude": 122.4831714, "speed": 0.0028111569117754698 }, "mocked": false, "timestamp": 1702341514824 });
 
 
   const [id, setId] = useState()
@@ -28,13 +29,42 @@ const CreateEditUnit = ({route}) => {
 
   }
 
+
+
+  const fetchLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({
+      enableHighAccuracy: true,
+      accuracy: Location.Accuracy.High,
+    });
+
+
+
+    setLocation(location);
+  };
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+
+      fetchLocation()
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+
   useEffect(() => {
     setStatus(unit?.status ?? 'active')
     setMake(unit?.make ?? 'Make')
     setModel(unit?.model ?? 'Model')
     setPlateNumber(unit?.plateNumber ?? 'Plate Number')
     setNumber(unit?.number ?? 'Unit Number')
-  },[unit])
+  }, [unit])
 
   useEffect(() => {
     fetchId()
@@ -83,25 +113,46 @@ const CreateEditUnit = ({route}) => {
         return;
       }
 
+      // "location": {
+      //   "latitude": 37.420996474542356,
+      //   "longitude": -122.08617378026247
+      // }
+
+
+
+
       const method = unit ? 'PUT' : 'POST'
-      const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
-        method:  method, // Change to 'PUT' and add an ID for editing an existing unit
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-        body: JSON.stringify({ model, make, number, plateNumber, runTime: new Date(), status, driverId: driver.id}),
-      });
+      if (location?.coords) {
+
+        const newlocation = {
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude
+        }
 
 
-  
-      const data = await response.json();
-      if(data.id) {
-        Alert.alert('Success', 'Unit has been successfully created/updated.');
-        navigation.navigate('Profile')
-        
+        console.log(newlocation)
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
+          method: method, // Change to 'PUT' and add an ID for editing an existing unit
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          body: JSON.stringify({ model, make, number, plateNumber, runTime: new Date(), status, driverId: driver.id, location: newlocation }),
+        });
+
+
+
+
+        const data = await response.json();
+        if (data.id) {
+          console.log(data)
+          Alert.alert('Success', 'Unit has been successfully created/updated.');
+          navigation.navigate('Profile')
+
+        }
+
       }
-  
+
     } catch (error) {
       console.error('Error:', error.message);
       Alert.alert('Error', 'Failed to create/edit unit');
@@ -157,7 +208,7 @@ const CreateEditUnit = ({route}) => {
         </View>
 
         <View style={styles.inputContainer}>
-        <Icon name="car" size={20} style={styles.icon} />
+          <Icon name="car" size={20} style={styles.icon} />
           <SelectDropdown
             data={statuses}
             onSelect={(selectedItem, index) => {

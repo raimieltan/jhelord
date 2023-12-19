@@ -125,7 +125,7 @@ const MainStackNavigator = ( {location}) => {
             <Stack.Screen
                 name="ManageUnit"
                 component={CreateEditUnit}
-                initialParams={{ location: location }}
+       
                 options={{
                     title: 'Manage Unit',
                     headerStyle: {

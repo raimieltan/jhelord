@@ -49,3 +49,19 @@ export const deleteUnit = async (req: Request, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// In controllers/UnitController.ts
+
+export const updateUnitLocation = async (req: Request, res: Response) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { location } = req.body;
+        const updatedUnit = await UnitService.updateUnitLocation(id, location);
+        res.json(updatedUnit);
+    } catch (error: any) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+
+

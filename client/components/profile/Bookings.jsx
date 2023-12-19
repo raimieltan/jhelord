@@ -38,6 +38,7 @@ const BookingList = ({ fetchDirections }) => {
         const driverProfile = await response.json();
 
         setDriver(driverProfile)
+        console.log(driver)
       }
 
 
@@ -50,11 +51,61 @@ const BookingList = ({ fetchDirections }) => {
 
   useEffect(() => {
     fetchUserProfile()
+  
   }, [])
 
   useEffect(() => {
     fetchBookings();
   }, [driver]);
+
+
+  const handleCreateEditUnit = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+
+      if (!token) {
+        Alert.alert('Error', 'You must be logged in');
+        return;
+      }
+
+      const method = unit ? 'PUT' : 'POST'
+      if (location?.coords) {
+
+        const newlocation = {
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude
+        }
+
+
+        console.log(newlocation)
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
+          method: method, // Change to 'PUT' and add an ID for editing an existing unit
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          body: JSON.stringify({ model, make, number, plateNumber, runTime: new Date(), status, driverId: driver.id, location: newlocation }),
+        });
+
+
+
+
+        const data = await response.json();
+        if (data.id) {
+          console.log(data)
+          Alert.alert('Success', 'Unit has been successfully created/updated.');
+          navigation.navigate('Profile')
+
+        }
+
+      }
+
+    } catch (error) {
+      console.error('Error:', error.message);
+      Alert.alert('Error', 'Failed to create/edit unit');
+    }
+  };
+
 
   const fetchBookings = async () => {
     try {
