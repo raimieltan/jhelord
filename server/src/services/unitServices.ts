@@ -1,7 +1,7 @@
 import { PrismaClient, Unit } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export const createUnit = async (data: Unit) => {
+export const createUnit = async (data: any) => {
     return prisma.unit.create({ data });
 };
 
@@ -13,7 +13,7 @@ export const getUnitById = async (id: number) => {
     return prisma.unit.findUnique({ where: { id } });
 };
 
-export const updateUnit = async (id: number, data: Unit) => {
+export const updateUnit = async (id: number, data: any) => {
     return prisma.unit.update({ where: { id }, data });
 };
 
