@@ -19,7 +19,7 @@ export const UnitRow = ({
   return (
     <>
       <tr 
-        className="flex w-full border-b text-white text-center hover:bg-gray-700"
+        className="flex w-full border-b text-black text-center hover:bg-green-900"
         onClick={() => router.push(`/admin/unit/${unit.id}`)}
       >
         <td className="w-1/4">
@@ -29,7 +29,7 @@ export const UnitRow = ({
           {unit.number} - {unit.plateNumber}
         </td>
         <td className="w-1/4">
-          {/* TODO: time */}
+          {unit.make} {unit.model}
         </td>
         <td className={statusClass()}>
           {unit.status}

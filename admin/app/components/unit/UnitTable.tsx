@@ -9,14 +9,19 @@ import UnitRow from "./UnitRow";
 interface ExpandedRows {
   [key: number]: boolean | undefined;
 }
+interface UnitTableProps {
+  units: Unit[];
+}
 
 const ITEMS_PER_PAGE = 10;
 
-export const UnitTable = () => {
+const UnitTable = ({ 
+  units 
+}: UnitTableProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [units, setUnits] = useState<Unit[]>([]);
+  // const [units, setUnits] = useState<Unit[]>([]);
   const [currentPage, setCurrentPage] = useState(
     Number(searchParams.get("page") ?? "1")
   );
@@ -24,26 +29,13 @@ export const UnitTable = () => {
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const totalPages = Math.ceil(units.length / ITEMS_PER_PAGE);
 
-  const fetchUnits = async () => {
-    try {
-      const response = await fetch(`http://localhost:8000/api/units`)
-      const data = await response.json()
-      setUnits(data);
-
-    } catch (error: any) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    fetchUnits();
-  }, [])
+  
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
+    <section className=" bg-green-700 rounded-lg">
       <div className="mx-auto">
         <div className="overflow-x-auto">
-          <table className="flex flex-col w-full h-full mt-4 p-4">
+          <table className="flex flex-col w-full h-full p-4 text-black">
             <thead>
               <tr className="flex text-center">
                 <th className="font-bold w-1/4">
@@ -53,7 +45,7 @@ export const UnitTable = () => {
                   Unit
                 </th>
                 <th className="font-bold  w-1/4">
-                  Runtime
+                  Model
                 </th>
                 <th className="font-bold  w-1/4">
                   Status
@@ -80,3 +72,5 @@ export const UnitTable = () => {
     </section>
   );
 };
+
+export default UnitTable;

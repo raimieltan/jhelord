@@ -42,7 +42,7 @@ const Pagination = ({
   return (
     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between py-4 mx-4">
       <div>
-        <p className="text-sm text-gray-700">
+        <p className="text-sm text-black">
           Showing
           <span className="font-medium"> {indexOfFirstItem + 1} </span>
           to
