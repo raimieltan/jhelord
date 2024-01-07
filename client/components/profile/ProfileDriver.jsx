@@ -6,14 +6,32 @@ import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 import CreateEditUnit from './CreateUnit';
 
-const Profile = () => {
+const ProfileDriver = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState('')
+  const [id, setId] = useState('')
+  const [profile, setProfile] = useState({})
   const navigation = useNavigation();
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
+
+  useEffect(() => {
+    // Function that sets up the interval
+    const interval = setInterval(() => {
+        fetchDriverProfile();
+    }, 5000); // Set the interval time in milliseconds (e.g., 1000ms = 1 second)
+
+    // Cleanup function to clear the interval
+    return () => clearInterval(interval);
+}, [id]); // Dependencies array, the interval will reset if `id` changes
+
+
+  useEffect(() => {
+
+  }, [profile])
 
   const fetchUserProfile = async () => {
     try {
@@ -30,26 +48,40 @@ const Profile = () => {
           Authorization: token,
         },
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch user profile');
-      }
-
       const userProfile = await response.json();
-      console.log(userProfile)
-      await AsyncStorage.setItem("userId", userProfile.id+"")
+
       setUsername(userProfile.username);
       setEmail(userProfile.email);
+      setRole(userProfile.role)
+      setId(userProfile.id)
 
-
-         
-      console.log(userProfile.role) 
-
-      await AsyncStorage.setItem("userRole", userProfile.role)
-      console.log(await AsyncStorage.getItem("userRole"))
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
+    }
+  };
+
+
+  const fetchDriverProfile = async () => {
+    try {
+
+      const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
+        method: 'GET',
+
+      });
+
+      const driver = await response.json();
+
+      if(driver){
+        setProfile(driver)
+       
+      }
+
+
+      await AsyncStorage.setItem("driverId", String(driver.userId))
+
+    } catch (error) {
+      console.error('Error fetching user profile:', error.message);
     }
   };
 
@@ -66,6 +98,9 @@ const Profile = () => {
   const handleNavigateToMap = () => {
     navigation.navigate('Map');
   };
+  const handleNavigateToCreateDriver = () => {
+    navigation.navigate('CreateProfile');
+  };
 
   return (
     <View style={styles.container}>
@@ -79,16 +114,42 @@ const Profile = () => {
         <View style={styles.userInfo}>
           <Text style={styles.username}>{username}</Text>
           <Text style={styles.email}>{email}</Text>
+          <Text style={styles.email}>{role}</Text>
         </View>
       </View>
+
+      {profile.id && (
+        <View style={styles.profileInfo}>
+          <Text style={styles.profileText}>First Name: {profile.firstName}</Text>
+          <Text style={styles.profileText}>Last Name: {profile.lastName}</Text>
+          <Text style={styles.profileText}>License Number: {profile.licenseNumber}</Text>
+          <Text style={styles.profileText}>Address: {profile.address}</Text>
+          <Text style={styles.profileText}>Birthdate: {profile.birthdate}</Text>
+        </View>
+      )}
+
+
       <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
         <Text style={styles.mapButtonText}>Go to Map</Text>
       </TouchableOpacity>
+      {!profile.id && (
+        <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToCreateDriver}>
+          <Text style={styles.mapButtonText}>Create Profile</Text>
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity style={styles.mapButton} onPress={() => {
+            navigation.navigate('ManageUnit');
+      }}>
+        <Text style={styles.mapButtonText}>Manage Unit</Text>
+      </TouchableOpacity>
+
+
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
 
-   
+
     </View>
   );
 };
@@ -138,6 +199,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  profileInfo: {
+    padding: 10,
+    marginBottom: 20,
+  },
+  profileText: {
+    fontSize: 16,
+    color: 'black',
+    marginBottom: 5,
+  },
 });
 
-export default Profile;
+export default ProfileDriver;

@@ -5,6 +5,7 @@ export const authenticateToken = (req: any, res: Response, next: NextFunction) =
 
   const token = req.headers['authorization']
 
+
   if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
@@ -13,6 +14,9 @@ export const authenticateToken = (req: any, res: Response, next: NextFunction) =
       return res.sendStatus(403)};
 
     req.user = user as any;
+ 
     next();
   });
 };
+
+

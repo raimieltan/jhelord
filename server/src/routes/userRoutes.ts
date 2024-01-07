@@ -1,11 +1,14 @@
 import express from 'express';
-import { registerUser, loginUser, getUserFromToken } from '../controllers/userController';
-import { authenticateToken } from '../middlewares/authMiddleware';
+import * as userController from '../controllers/userController';
+import * as authMiddleware from  '../middlewares/authMiddleware'
+
 const router = express.Router();
 
-// Define routes for user registration and login
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.get('/profile', authenticateToken, getUserFromToken);
-
+router.post('/signup', userController.signup);
+router.post('/login', userController.login);
+router.post('/users', userController.createUser);
+router.get('/:userId/profile', authMiddleware.authenticateToken, userController.getUserProfile);
+router.put('/users/:userId/profile', authMiddleware.authenticateToken, userController.updateUserProfile);
+router.delete('/users/:userId', authMiddleware.authenticateToken, userController.deleteUser);
+router.get('/profile', authMiddleware.authenticateToken, userController.getUserFromToken);
 export default router;

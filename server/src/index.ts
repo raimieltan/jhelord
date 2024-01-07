@@ -1,18 +1,19 @@
-import express from 'express'
-
+import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import userRouter from '../src/routes/userRoutes'
-import operationRouter from './routes/operationRoutes';
-import unitRouter from './routes/unitRoutes';
 
+// Importing the route modules
+import userRouter from '../src/routes/userRoutes';
+import bookingRouter from '../src/routes/bookingRoutes'; // Assuming this is the path to your booking routes
+import driverRouter from '../src/routes/driverRoutes'; // Assuming this is the path to your driver routes
+import unitRouter from '../src/routes/unitRoutes'; // Assuming this is the path to your unit routes
+import reviewRouter from '../src/routes/driverReviewRoutes';
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
-const port = process.env.PORT || 8000
-
+const app = express();
+const port = process.env.PORT || 8000;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -24,15 +25,13 @@ app.use((req, res, next) => {
   next();
 }).use(cors());
 
-
-app.use('/api/users/', userRouter)
-
-app.use('/api/operations', operationRouter)
-
+// Using the route modules
+app.use('/api/users', userRouter);
+app.use('/api/bookings', bookingRouter);
+app.use('/api/drivers', driverRouter);
 app.use('/api/units', unitRouter);
-
-
+app.use('/api/reviews', reviewRouter)
 
 app.listen(port, () => {
-  console.log(`Server started on port ${port}`)
-})
+  console.log(`Server started on port ${port}`);
+});

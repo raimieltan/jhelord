@@ -1,86 +1,72 @@
-import { PrismaClient, User as PrismaUser, UserRole } from '@prisma/client';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { PrismaClient, UserRole } from '@prisma/client';
+import { UserCreateInput, UserProfileUpdateInput } from '../../types/user';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
 dotenv.config()
+
 const prisma = new PrismaClient();
 
-// Types
-interface User extends PrismaUser {}
+const saltRounds = 10; // for bcrypt
 
-// Function to create a new user
-async function createUser(username: string, email: string, password: string, role: UserRole): Promise<User> {
-  // Hash the password before storing it
-  const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Call Prisma to create the user
-  const user = await prisma.user.create({
-    data: {
-      username,
-      email,
-      password: hashedPassword,
-      role,
-    },
+export async function signupUser(userData: UserCreateInput) {
+  const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+  const newUser = await prisma.user.create({
+      data: {
+          ...userData,
+          password: hashedPassword,
+      },
   });
-
-  return user;
+  const token = jwt.sign({ userId: newUser.id, username: newUser.username }, process.env.JWT_SECRET as string);
+  return token;
 }
 
-// Function to find a user by their ID
-async function findUserById(userId: number): Promise<User | null> {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-  return user;
-}
-
-// Function to find a user by their username
-async function findUserByUsername(username: string): Promise<User | null> {
-  const user = await prisma.user.findUnique({
-    where: {
-      username,
-    },
-  });
-  return user;
-}
-
-// Function to find a user by their email
-async function findUserByEmail(email: string): Promise<User | null> {
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-  return user;
-}
-
-// Function to authenticate and generate a JWT token for a user
-async function loginUserService(username: string, password: string): Promise<string> {
-  // Find the user by username
-  const user = await findUserByUsername(username);
+export async function loginUser(username: string, password: string): Promise<string> {
+  const user = await prisma.user.findUnique({ where: { username } });
 
   if (!user) {
-    throw new Error('Invalid username or password');
+      throw new Error('Invalid username or password');
   }
 
-  // Compare the provided password with the hashed password in the database
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
-    throw new Error('Invalid username or password');
+      throw new Error('Invalid username or password');
   }
 
-  console.log(process.env.JWT_SECRET)
-
-  // Generate a JWT token
   const token = jwt.sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET as string, {
-    expiresIn: '1h', // Token expiration time
+      expiresIn: '1h',
   });
 
   return token;
 }
 
-export { createUser, findUserById, findUserByUsername, findUserByEmail, loginUserService, User };
+
+export async function createUser(userData: UserCreateInput) {
+    return await prisma.user.create({
+        data: userData,
+    });
+}
+
+export async function getUserProfile(userId: number) {
+
+    return await prisma.user.findUnique({
+        where: { id: userId },
+        
+    });
+}
+
+export async function updateUserProfile(userId: number, profileData: UserProfileUpdateInput) {
+    return await prisma.profile.update({
+        where: { userId },
+        data: profileData,
+    });
+}
+
+export async function deleteUser(userId: number) {
+    return await prisma.user.delete({
+        where: { id: userId },
+    });
+}

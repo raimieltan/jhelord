@@ -1,59 +1,32 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { PrismaClient, Unit } from '@prisma/client';
+const prisma = new PrismaClient();
 
-type Customer = {
-  id: number
-  firstName: string
-  lastName: string
-  address: string
-}
+export const createUnit = async (data: any) => {
+    return prisma.unit.create({ data });
+};
 
-type Driver = {
-  id: number
-  firstName: string
-  lastName: string
-  licenseNumber: string
-  address: string
-  birthdate: string
-}
+export const getAllUnits = async () => {
+    return prisma.unit.findMany();
+};
 
-type Unit = {
-  id: number
-  model: String
-  make: String
-  number: String
-  plateNumber: String
-  runTime?: Date
-  status: String
-  driver: Driver
-}
+export const getUnitById = async (id: number) => {
+    return prisma.unit.findUnique({ where: { id } });
+};
 
-type OperationData = {
-  unitId: number
-  customerId: number
-  location: string
-  status: string
-}
+export const updateUnit = async (id: number, data: any) => {
+    return prisma.unit.update({ where: { id }, data });
+};
 
-export const retrieveUnits = async (unitId?: number) => {
-  
-  if (unitId) {
-    return await prisma.unit.findUnique({
-      where: {
-        id: unitId,
-      },
-      include: {
-        operations: true,
-        driver: true,
-      }
-    })
-  }
+export const deleteUnit = async (id: number) => {
+    return prisma.unit.delete({ where: { id } });
+};
+// In services/unitServices.ts
 
-  return await prisma.unit.findMany({
-    include: {
-      driver: true,
-    }
-  })
-}
+export const updateUnitLocation = async (id: number, location: any) => {
+    return prisma.unit.update({
+        where: { id },
+        data: { location },
+    });
+};
 
-//TODO: update, create, delete units
+

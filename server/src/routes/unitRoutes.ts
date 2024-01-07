@@ -1,8 +1,15 @@
 import express from 'express';
-import { getAllUnits, getUnitById } from '../controllers/unitController';
-const unitRouter = express.Router();
+import * as UnitController from '../controllers/UnitController';
 
-unitRouter.get('/', getAllUnits)
-unitRouter.get('/get-unit/:id', getUnitById)
+const router = express.Router();
 
-export default unitRouter;
+router.post('/', UnitController.createUnit);
+router.get('/', UnitController.getAllUnits);
+router.get('/:id', UnitController.getUnitById);
+router.put('/:id', UnitController.updateUnit);
+router.delete('/:id', UnitController.deleteUnit);
+// In routes/unitRoutes.ts
+
+router.patch('/:id/location', UnitController.updateUnitLocation);
+
+export default router;
