@@ -83,10 +83,14 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation, fetc
     }
 
     useEffect(() => {
-        fetchRole()
-        console.log(role)
-    }, [])
-
+        // Function that sets up the interval
+        const interval = setInterval(() => {
+            fetchRole()
+        }, 5000); // Set the interval time in milliseconds (e.g., 1000ms = 1 second)
+    
+        // Cleanup function to clear the interval
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <View style={styles.container}>

@@ -10,7 +10,7 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [role, setRole] = useState('')
+
 
   const navigation = useNavigation();
 
@@ -23,7 +23,7 @@ const Signup = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, email, phoneNumber, role, password }),
+        body: JSON.stringify({ username, email, phoneNumber, role: 'USER', password }),
       });
 
       Alert.alert('Signup Successful', 'You have successfully signed up.');
@@ -56,7 +56,7 @@ const Signup = () => {
         </Text>
       </View>
       <View style={styles.inputContainer}>
-        <Icon name="mail" size={20} style={styles.icon} />
+        <Icon name="user" size={20} style={styles.icon} />
         <TextInput
           style={styles.input}
           placeholder="Username"
@@ -75,7 +75,7 @@ const Signup = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Icon name="mail" size={20} style={styles.icon} />
+        <Icon name="mobile1" size={20} style={styles.icon} />
         <TextInput
           style={styles.input}
           placeholder="Phone number"
@@ -84,29 +84,10 @@ const Signup = () => {
         />
       </View>
       <View style={styles.inputContainer}>
-        <Icon name="mail" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Role"
-          value={role}
-          onChangeText={setRole}
-        />
-      </View>
-      <View style={styles.inputContainer}>
         <Icon name="lock" size={20} style={styles.icon} />
         <TextInput
           style={styles.input}
           placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Icon name="lock" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
