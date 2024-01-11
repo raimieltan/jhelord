@@ -1,271 +1,45 @@
-[
-    {
-        "address_components": [
-            [Object
+{
+    "_bodyBlob": {
+        "_data": {
+            "__collector": [Object
             ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "QF9Q+2WW, Iloilo City - Aleosan Rd, San Miguel, Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "ROOFTOP",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJu8vwT4L7rjMR_J63i877X4w",
-        "types": [
-            "premise"
-        ]
+            "blobId": "028a4928-960a-4679-86e5-f6c1016efe2a",
+            "offset": 0,
+            "size": 227
+        }
     },
-    {
-        "address_components": [
-            [Object
+    "_bodyInit": {
+        "_data": {
+            "__collector": [Object
             ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "QF8R+P7 San Miguel, Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "GEOMETRIC_CENTER",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "GhIJokCfyJOIJUARj2yummefXkA",
-        "plus_code": {
-            "compound_code": "QF8R+P7 San Miguel, Iloilo, Philippines",
-            "global_code": "7Q24QF8R+P7"
-        },
-        "types": [
-            "plus_code"
-        ]
+            "blobId": "028a4928-960a-4679-86e5-f6c1016efe2a",
+            "offset": 0,
+            "size": 227
+        }
     },
-    {
-        "address_components": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "Iloilo City - Aleosan Rd, San Miguel, Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "GEOMETRIC_CENTER",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJhw33ioL7rjMRqG4lcms-Tkw",
-        "types": [
-            "route"
-        ]
+    "bodyUsed": false,
+    "headers": {
+        "map": {
+            "access-control-allow-credentials": "true",
+            "access-control-allow-headers": "Origin, X-Requested-With, Content-Type, Accept",
+            "access-control-allow-origin": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "843e74a2f98332c1-HKG",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Thu, 11 Jan 2024 16:14:56 GMT",
+            "etag": "W/\"e3-DCur9V8qkMsT+oCwrjwItIBB9ow\"",
+            "rndr-id": "247ecec5-ede0-489c",
+            "server": "cloudflare",
+            "set-cookie": "_cfuvid=Nrz45egOnwQJf26nputowIf2IOKP0TLTipXm.WSARVI-1704989696715-0-604800000; path=/; domain=.onrender.com; HttpOnly; Secure; SameSite=None",
+            "vary": "Accept-Encoding",
+            "x-powered-by": "Express",
+            "x-render-origin-server": "Render"
+        }
     },
-    {
-        "address_components": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "San Jose, Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "APPROXIMATE",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJJQ72Anj7rjMRh4t1WsPBfso",
-        "types": [
-            "administrative_area_level_5",
-            "political"
-        ]
-    },
-    {
-        "address_components": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "San Jose, San Miguel, Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "APPROXIMATE",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJ-WQFVIL7rjMRVuO6gz-m65E",
-        "types": [
-            "neighborhood",
-            "political"
-        ]
-    },
-    {
-        "address_components": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "San Miguel, Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "APPROXIMATE",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJD2uXNQj8rjMRdRKs07pcGkU",
-        "types": [
-            "locality",
-            "political"
-        ]
-    },
-    {
-        "address_components": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "San Miguel, Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "APPROXIMATE",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJEy6i-g78rjMRWchWT9rg3GU",
-        "types": [
-            "administrative_area_level_3",
-            "political"
-        ]
-    },
-    {
-        "address_components": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "Iloilo, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "APPROXIMATE",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJ5U7fSWoarzMRuTcyIKdzQPI",
-        "types": [
-            "administrative_area_level_2",
-            "political"
-        ]
-    },
-    {
-        "address_components": [
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "formatted_address": "Western Visayas, Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "APPROXIMATE",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJ0d8NVSkRrDMREkWBAgvaxSI",
-        "types": [
-            "administrative_area_level_1",
-            "political"
-        ]
-    },
-    {
-        "address_components": [
-            [Object
-            ]
-        ],
-        "formatted_address": "Philippines",
-        "geometry": {
-            "bounds": [Object
-            ],
-            "location": [Object
-            ],
-            "location_type": "APPROXIMATE",
-            "viewport": [Object
-            ]
-        },
-        "place_id": "ChIJY96HXyFTQDIRV9opeu-QR3g",
-        "types": [
-            "country",
-            "political"
-        ]
-    }
-]
+    "ok": false,
+    "status": 400,
+    "statusText": "",
+    "type": "default",
+    "url": "https://jhelord-backend.onrender.com/api/bookings"
+}

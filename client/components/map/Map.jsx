@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import BottomNavBar from '../nav/BottomNav';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import BookingModal from './BookingModal'
 
 
 const carOptions = [
@@ -243,26 +243,27 @@ const Map = () => {
     const handleMapLongPress = async (event) => {
         const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs';
         const { latitude, longitude } = event.nativeEvent.coordinate;
-        setPickupLocation({ lat: latitude, lng: longitude });
-        try {
-            const geocodeResponse = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
-            );
+        if (role === 'USER') {
+            setPickupLocation({ lat: latitude, lng: longitude });
 
-            const geocodeJson = await geocodeResponse.json();
-            if (!geocodeJson.results.length) {
-                setErrorMsg('Geocoding failed');
+            try {
+                const geocodeResponse = await fetch(
+                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+                );
+
+                const geocodeJson = await geocodeResponse.json();
+                if (!geocodeJson.results.length) {
+                    setErrorMsg('Geocoding failed');
+                    return;
+                }
+                setPickUpAddress(geocodeJson.results[0].formatted_address)
+
+
+            } catch (error) {
+                console.log('Geocoding error:', error);
+                setErrorMsg('Failed to geocode destination');
                 return;
             }
-
-            console.log(geocodeJson.results[0].address_components)
-
-            setPickUpAddress(geocodeJson.results[0].formatted_address)
-
-        } catch (error) {
-            console.log('Geocoding error:', error);
-            setErrorMsg('Failed to geocode destination');
-            return;
         }
     };
 
@@ -310,15 +311,28 @@ const Map = () => {
 
                             width: '100%'
                         }}>
-                            <MapHeader title="Book a taxi" subtext="We have provided taxis near your location. Tap and hold an area in the map to ch0ose your pickup location" />
+                            <MapHeader title={role === 'USER' ? "Book a taxi" : "Bookings"} subtext={role === 'USER' ? "We have provided taxis near your location. Tap and hold an area in the map to choose your pickup location" : "Wait for bookings at the bookings tab. Please accept only one booking at a time"} />
                         </View>
 
-
+                        {/* 
                         <DriverInfoModal
                             isVisible={isModalVisible}
                             onClose={() => setIsModalVisible(false)}
                             driver={selectedDriver}
-                        />
+                        /> */}
+
+
+                        {
+                            pickupLocation && pickupAddress && <BookingModal
+                                isVisible={isModalVisible}
+                                onClose={() => setIsModalVisible(false)}
+
+                                pickupLocation={pickupLocation}
+                                pickupAddress={`Near ${pickupAddress.split(",").slice(0, 2)}`}
+                            />
+                        }
+
+
 
                         <View style={{
                             flex: 1,
@@ -397,7 +411,7 @@ const Map = () => {
                                     <Marker
                                         key={index}
                                         coordinate={{ latitude: car.unit[0]?.location?.latitude, longitude: car.unit[0]?.location?.longitude }}
-                                        onPress={() => handleMarkerPress(car)}
+
                                     >
                                         <CustomMarker />
                                     </Marker>
@@ -407,7 +421,7 @@ const Map = () => {
                         </View>
 
                         {
-                            pickupLocation && (
+                            pickupLocation && pickupAddress && role === 'USER' && (
                                 <View style={{
                                     backgroundColor: 'white',
                                     width: '100%'
@@ -425,10 +439,10 @@ const Map = () => {
                                             color: 'white',
                                             fontSize: 18
                                         }}>
-                                           Near {pickupAddress.split(",")[0]}
+                                            Near {pickupAddress.split(",").slice(0, 2)}
                                         </Text>
                                         <Text>
-                                        {pickupAddress}
+                                            {pickupAddress}
                                         </Text>
                                     </View>
 
@@ -437,15 +451,17 @@ const Map = () => {
                                         justifyContent: 'center',
                                         alignItems: 'center'
                                     }}>
-                                        <TouchableOpacity style={{
-                                            backgroundColor: 'green',
-                                            margin: 10,
-                                            width: '90%',
-                                            padding: 10,
-                                            alignItems: 'center',
-                                            borderRadius: 10
+                                        <TouchableOpacity
+                                            onPress={() => setIsModalVisible(true)}
+                                            style={{
+                                                backgroundColor: 'green',
+                                                margin: 10,
+                                                width: '90%',
+                                                padding: 10,
+                                                alignItems: 'center',
+                                                borderRadius: 10
 
-                                        }}>
+                                            }}>
                                             <Text style={{
                                                 color: 'white'
                                             }}>
@@ -461,14 +477,14 @@ const Map = () => {
 
 
 
-                        {/* {location && <CarPicker
+                        {location && role === 'DRIVER' && <CarPicker
                             carOptions={drivers}
                             selectedCar={selectedCar}
                             onSelectCar={setSelectedCar}
                             currentLocation={location} // Your user's current location
                             fetchDirections={fetchDirections}
                             setDirections={setDirections}
-                        />} */}
+                        />}
 
                     </>
                 ) : (

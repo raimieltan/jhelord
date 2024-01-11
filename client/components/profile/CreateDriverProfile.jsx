@@ -77,7 +77,7 @@ const CreateDriverProfile = () => {
   }, [])
   return (
     <View style={styles.container2}>
-         <MapHeader title="Driver's Profile" subtext={"Complete your driver's profile"} />
+         
     <View style={styles.container}>
        
       <View style={styles.inputContainer}>
