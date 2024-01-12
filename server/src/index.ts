@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import multer from 'multer';
+import path from 'path';
 
 // Importing the route modules
 import userRouter from '../src/routes/userRoutes';
@@ -54,6 +55,7 @@ app.use('/api/bookings', bookingRouter);
 app.use('/api/drivers', driverRouter);
 app.use('/api/units', unitRouter);
 app.use('/api/reviews', reviewRouter)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
