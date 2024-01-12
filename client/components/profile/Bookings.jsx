@@ -7,11 +7,6 @@ const BookingList = ({ fetchDirections, setDirections }) => {
   const [bookings, setBookings] = useState([]);
   const [driver, setDriver] = useState(null)
 
-
-
-
-
-
   const fetchUserProfile = async () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
@@ -188,8 +183,8 @@ const BookingList = ({ fetchDirections, setDirections }) => {
       if (updatedBooking.status === "ACCEPTED") {
         const location = {
 
-          lat: updatedBooking.location.latitude,
-          lng: updatedBooking.location.longitude
+          lat: updatedBooking.location.lat,
+          lng: updatedBooking.location.lng
 
         }
 
@@ -257,8 +252,8 @@ const BookingList = ({ fetchDirections, setDirections }) => {
     <>
     {
       bookings.filter((booking) => {
-        return booking.status !== 'COMPLETED'
-      }).length <= 0 ? (
+        return booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED'
+      }).length <= 0 ? ( 
         <View style={{
         
           justifyContent: 'center',
@@ -271,7 +266,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
       ) : (
         <FlatList
         data={bookings.filter((booking) => {
-          return booking.status !== 'COMPLETED'
+          return booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED'
         })}
         renderItem={renderBooking}
         keyExtractor={item => item.id.toString()}

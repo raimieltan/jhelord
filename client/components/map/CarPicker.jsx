@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, LayoutAnimation, Platform, UIManager } from 'react-native';
-import Slider from '@react-native-community/slider'; // or from 'react-native' if you're using the built-in slider
+ // or from 'react-native' if you're using the built-in slider
 import DriverInfoModal from './DriverModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BookingList from '../profile/Bookings';
@@ -83,10 +83,14 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation, fetc
     }
 
     useEffect(() => {
-        fetchRole()
-        console.log(role)
-    }, [])
+        // Function that sets up the interval
+        const interval = setInterval(() => {
+            fetchRole()
+        }, 5000); // Set the interval time in milliseconds (e.g., 1000ms = 1 second)
 
+        // Cleanup function to clear the interval
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -104,49 +108,16 @@ const CarPicker = ({ carOptions, selectedCar, onSelectCar, currentLocation, fetc
 
             }}>
                 <TouchableOpacity onPress={toggleExpanded} style={styles.header}>
-                    <Text style={styles.headerText}>{role === 'DRIVER' ? 'Bookings' : 'Drivers near me'}</Text>
+                    <Text style={styles.headerText}>Bookings</Text>
                 </TouchableOpacity>
             </View>
 
             {expanded && (
                 <>
 
-                    {
-                        role === 'DRIVER' ? (
-                            <BookingList fetchDirections={fetchDirections} setDirections={setDirections} />
-                        ) : (<>
 
-                            <Slider
-                                style={{ width: '100%', height: 50, borderWidth: 2, borderColor: 'red' }}
-                                minimumValue={1}
-                                maximumValue={50}
-                                step={1}
-                                value={radius}
-                                onValueChange={(value) => setRadius(value)}
-                                minimumTrackTintColor="#0000FF"
-                                maximumTrackTintColor="#000000"
-                                thumbTintColor="#0000FF"
-                            />
-                            <Text style={styles.sliderText}>Search Radius: {radius} km</Text>
+                    <BookingList fetchDirections={fetchDirections} setDirections={setDirections} />
 
-                            <FlatList
-                                data={carsWithinRadius}
-                                keyExtractor={(item) => item.id.toString()}
-                                renderItem={({ item }) => (
-                                    <CarOption
-                                        car={item}
-                                        isSelected={item.id === selectedCar.id}
-                                        onSelect={() => {
-                                            setSelectedCarDetails(item);
-                                            setModalVisible(true);
-                                        }}
-                                        currentLocation={currentLocation}
-                                    />
-                                )}
-                                style={styles.list}
-                            />
-                        </>)
-                    }
 
                 </>
             )}

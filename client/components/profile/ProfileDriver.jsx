@@ -13,6 +13,7 @@ const ProfileDriver = () => {
   const [id, setId] = useState('')
   const [profile, setProfile] = useState({})
   const navigation = useNavigation();
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     fetchUserProfile();
@@ -54,6 +55,7 @@ const ProfileDriver = () => {
       setEmail(userProfile.email);
       setRole(userProfile.role)
       setId(userProfile.id)
+      setUser(userProfile)
 
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
@@ -118,13 +120,11 @@ const ProfileDriver = () => {
         </View>
       </View>
 
-      {profile.id && (
+      {profile.id && user && (
         <View style={styles.profileInfo}>
-          <Text style={styles.profileText}>First Name: {profile.firstName}</Text>
-          <Text style={styles.profileText}>Last Name: {profile.lastName}</Text>
+          <Text style={styles.profileText}>First Name: {user.firstName}</Text>
+          <Text style={styles.profileText}>Last Name: {user.lastName}</Text>
           <Text style={styles.profileText}>License Number: {profile.licenseNumber}</Text>
-          <Text style={styles.profileText}>Address: {profile.address}</Text>
-          <Text style={styles.profileText}>Birthdate: {profile.birthdate}</Text>
         </View>
       )}
 

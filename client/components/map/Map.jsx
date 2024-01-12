@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import BottomNavBar from '../nav/BottomNav';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import BookingModal from './BookingModal'
 
 
 const carOptions = [
@@ -88,7 +88,8 @@ const Map = () => {
     const [selectedDriver, setSelectedDriver] = useState(carOptions[0]);
     const [drivers, setDrivers] = useState(carOptions)
     const [role, setRole] = useState(null)
-
+    const [pickupLocation, setPickupLocation] = useState(null)
+    const [pickupAddress, setPickUpAddress] = useState(null)
     const mapViewRef = React.useRef(null);
 
     const handleMarkerPress = (driver) => {
@@ -239,10 +240,31 @@ const Map = () => {
         }
     };
 
-    const handleMapLongPress = (event) => {
+    const handleMapLongPress = async (event) => {
+        const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs';
         const { latitude, longitude } = event.nativeEvent.coordinate;
-        setDestinationLatLang({ lat: latitude, lng: longitude });
-        fetchDirections({ lat: latitude, lng: longitude });
+        if (role === 'USER') {
+            setPickupLocation({ lat: latitude, lng: longitude });
+
+            try {
+                const geocodeResponse = await fetch(
+                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+                );
+
+                const geocodeJson = await geocodeResponse.json();
+                if (!geocodeJson.results.length) {
+                    setErrorMsg('Geocoding failed');
+                    return;
+                }
+                setPickUpAddress(geocodeJson.results[0].formatted_address)
+
+
+            } catch (error) {
+                console.log('Geocoding error:', error);
+                setErrorMsg('Failed to geocode destination');
+                return;
+            }
+        }
     };
 
     const fetchLocation = async () => {
@@ -289,27 +311,28 @@ const Map = () => {
 
                             width: '100%'
                         }}>
-                            <MapHeader title="Pick a taxi" subtext="We have provided taxis near your location." />
+                            <MapHeader title={role === 'USER' ? "Book a taxi" : "Bookings"} subtext={role === 'USER' ? "We have provided taxis near your location. Tap and hold an area in the map to choose your pickup location" : "Wait for bookings at the bookings tab. Please accept only one booking at a time"} />
                         </View>
 
-                        {/* <View style={{
-                            margin: 10,
-                            width: '90%',
-                            padding: 10,
-                            borderRadius: 20,
-                            borderWidth: 0.5,
-                            marginTop: -30,
-                            backgroundColor: 'white',
-                            alignItems: 'center'
-                        }}>
-                            <DestinationPicker onSetDestination={handleSetDestination} />
-
-                        </View> */}
+                        {/* 
                         <DriverInfoModal
                             isVisible={isModalVisible}
                             onClose={() => setIsModalVisible(false)}
                             driver={selectedDriver}
-                        />
+                        /> */}
+
+
+                        {
+                            pickupLocation && pickupAddress && <BookingModal
+                                isVisible={isModalVisible}
+                                onClose={() => setIsModalVisible(false)}
+
+                                pickupLocation={pickupLocation}
+                                pickupAddress={`Near ${pickupAddress.split(",").slice(0, 2)}`}
+                            />
+                        }
+
+
 
                         <View style={{
                             flex: 1,
@@ -363,6 +386,17 @@ const Map = () => {
                                     </Marker>
                                 )}
 
+                                {pickupLocation && (
+                                    <Marker
+                                        coordinate={{
+                                            latitude: pickupLocation.lat,
+                                            longitude: pickupLocation.lng,
+                                        }}
+                                    >
+                                        <Icon name="map-pin" size={30} color="#900" />
+                                    </Marker>
+                                )}
+
                                 {/* Render the polyline for directions */}
                                 {directions.length > 0 && (
                                     <Polyline
@@ -372,12 +406,12 @@ const Map = () => {
                                     />
                                 )}
 
-                                { role ==='USER' && drivers?.map((car, index) => (
+                                {role === 'USER' && drivers?.map((car, index) => (
 
                                     <Marker
                                         key={index}
                                         coordinate={{ latitude: car.unit[0]?.location?.latitude, longitude: car.unit[0]?.location?.longitude }}
-                                        onPress={() => handleMarkerPress(car)}
+
                                     >
                                         <CustomMarker />
                                     </Marker>
@@ -386,10 +420,64 @@ const Map = () => {
                             </MapView>
                         </View>
 
+                        {
+                            pickupLocation && pickupAddress && role === 'USER' && (
+                                <View style={{
+                                    backgroundColor: 'white',
+                                    width: '100%'
+                                }}>
+
+                                    <View style={{
+                                        backgroundColor: '#a1a1a1',
+                                        marginVertical: 10,
+                                        marginHorizontal: 10,
+                                        padding: 10,
+                                        borderRadius: 10,
+                                        color: 'white'
+                                    }}>
+                                        <Text style={{
+                                            color: 'white',
+                                            fontSize: 18
+                                        }}>
+                                            Near {pickupAddress.split(",").slice(0, 2)}
+                                        </Text>
+                                        <Text>
+                                            {pickupAddress}
+                                        </Text>
+                                    </View>
+
+                                    <View style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <TouchableOpacity
+                                            onPress={() => setIsModalVisible(true)}
+                                            style={{
+                                                backgroundColor: 'green',
+                                                margin: 10,
+                                                width: '90%',
+                                                padding: 10,
+                                                alignItems: 'center',
+                                                borderRadius: 10
+
+                                            }}>
+                                            <Text style={{
+                                                color: 'white'
+                                            }}>
+                                                Confirm Pickup Location
+                                            </Text>
+
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
+                            )
+                        }
 
 
 
-                        {location && <CarPicker
+                        {location && role === 'DRIVER' && <CarPicker
                             carOptions={drivers}
                             selectedCar={selectedCar}
                             onSelectCar={setSelectedCar}
@@ -423,8 +511,6 @@ const styles = StyleSheet.create({
     map: {
         flex: 1,
         height: "100%", width: "100%",
-        borderWidth: 2,
-        borderColor: 'red'
     },
     blueCircle: {
         width: 20,

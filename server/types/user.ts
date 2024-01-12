@@ -6,8 +6,12 @@ export interface UserCreateInput {
     password: string;
     role: UserRole; // Or use an enum for UserRole
     phoneNumber?: string;
+    firstName :   string
+    lastName  :   string
+    profileImage? : string
   }
-  
+
+
 export interface UserProfileUpdateInput {
     firstName?: string;
     lastName?: string;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -81,7 +81,7 @@ const CreateEditUnit = ({ route }) => {
     try {
 
       if (id) {
-     
+
         const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
           method: 'GET',
 
@@ -167,70 +167,76 @@ const CreateEditUnit = ({ route }) => {
 
         {/* Add Input fields for each unit attribute */}
         {/* Example for 'model' */}
-        <View style={styles.inputContainer}>
-          <Icon name="car" size={20} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder={unit?.model ?? 'Model'}
-            value={model}
-            onChangeText={setModel}
-          />
-        </View>
 
-        <View style={styles.inputContainer}>
-          <Icon name="car" size={20} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder={unit?.make ?? 'Make'}
-            value={make}
-            onChangeText={setMake}
-          />
-        </View>
+        <ScrollView style={{
+          width: '100%'
+        }}>
+          <View style={styles.inputContainer}>
+            <Icon name="car" size={20} style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder={unit?.model ?? 'Model'}
+              value={model}
+              onChangeText={setModel}
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Icon name="car" size={20} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder={unit?.number ?? 'Unit Number'}
-            value={number}
-            onChangeText={setNumber}
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Icon name="car" size={20} style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder={unit?.make ?? 'Make'}
+              value={make}
+              onChangeText={setMake}
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Icon name="car" size={20} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder={unit?.plateNumber ?? 'Plate Number'}
-            value={plateNumber}
-            onChangeText={setPlateNumber}
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Icon name="car" size={20} style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder={unit?.number ?? 'Unit Number'}
+              value={number}
+              onChangeText={setNumber}
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Icon name="car" size={20} style={styles.icon} />
-          <SelectDropdown
-            data={statuses}
-            onSelect={(selectedItem, index) => {
-              setStatus(selectedItem);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item;
-            }}
-            buttonStyle={styles.dropdownButtonStyle}
-            buttonTextStyle={styles.dropdownButtonTextStyle}
-            renderDropdownIcon={() => {
-              return (
-                <Text style={styles.dropdownIcon}>▼</Text>
-              );
-            }}
-            dropdownIconPosition={"right"}
-            defaultButtonText={status}
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Icon name="car" size={20} style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder={unit?.plateNumber ?? 'Plate Number'}
+              value={plateNumber}
+              onChangeText={setPlateNumber}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Icon name="car" size={20} style={styles.icon} />
+            <SelectDropdown
+              data={statuses}
+              onSelect={(selectedItem, index) => {
+                setStatus(selectedItem);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item;
+              }}
+              buttonStyle={styles.dropdownButtonStyle}
+              buttonTextStyle={styles.dropdownButtonTextStyle}
+              renderDropdownIcon={() => {
+                return (
+                  <Text style={styles.dropdownIcon}>▼</Text>
+                );
+              }}
+              dropdownIconPosition={"right"}
+              defaultButtonText={status}
+            />
+          </View>
+        </ScrollView>
+
 
 
 

@@ -109,7 +109,7 @@ const MainStackNavigator = ( {location}) => {
                 name="CreateProfile"
                 component={CreateDriverProfile}
                 options={{
-                    title: 'Create Profle',
+                    title: 'Driver\'s Profile',
                     headerStyle: {
                         backgroundColor: '#039043',
                     },
@@ -118,7 +118,7 @@ const MainStackNavigator = ( {location}) => {
                         fontWeight: 'bold',
                     },
                     headerTitleAlign: 'center',
-                    headerShown: false
+                    headerShown: true
                 }}
             />
 

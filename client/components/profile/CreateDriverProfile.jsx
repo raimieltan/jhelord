@@ -58,11 +58,10 @@ const CreateDriverProfile = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ firstName, lastName, licenseNumber, address, birthdate, userId: userId }),
+        body: JSON.stringify({ licenseNumber, userId: userId }),
       });
 
-  
-      console.log({ firstName, lastName, licenseNumber, address, birthdate, userId: userId})
+
       const data = await response.json();
       console.log(data)
       Alert.alert('Profile Created', 'Your driver profile has been successfully created.');
@@ -77,27 +76,9 @@ const CreateDriverProfile = () => {
   }, [])
   return (
     <View style={styles.container2}>
-         <MapHeader title="Driver's Profile" subtext={"Complete your driver's profile"} />
+         
     <View style={styles.container}>
        
-      <View style={styles.inputContainer}>
-        <Icon name="user" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Icon name="user" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-        />
-      </View>
       <View style={styles.inputContainer}>
         <Icon name="idcard" size={20} style={styles.icon} />
         <TextInput
@@ -107,25 +88,7 @@ const CreateDriverProfile = () => {
           onChangeText={setLicenseNumber}
         />
       </View>
-      <View style={styles.inputContainer}>
-        <Icon name="home" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Address"
-          value={address}
-          onChangeText={setAddress}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Icon name="calendar" size={20} style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Birthdate"
-          value={birthdate}
-        
-          onChangeText={setBirthdate}
-        />
-      </View>
+
 
       <TouchableOpacity style={styles.button} onPress={handleCreateProfile}>
         <Text style={styles.buttonText}>Create Profile</Text>
