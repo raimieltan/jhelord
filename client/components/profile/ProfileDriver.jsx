@@ -14,6 +14,7 @@ const ProfileDriver = () => {
   const [profile, setProfile] = useState({})
   const navigation = useNavigation();
   const [user, setUser] = useState(null)
+  const [imageUrl, setImageUrl] = useState('')
 
   useEffect(() => {
     fetchUserProfile();
@@ -56,6 +57,7 @@ const ProfileDriver = () => {
       setRole(userProfile.role)
       setId(userProfile.id)
       setUser(userProfile)
+      setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
 
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
@@ -110,7 +112,7 @@ const ProfileDriver = () => {
         <Avatar
           size="large"
           rounded
-          source={{ uri: 'https://placekitten.com/200/200' }} // Replace with the user's profile picture URL
+          source={{ uri: imageUrl }} // Replace with the user's profile picture URL
           containerStyle={styles.avatar}
         />
         <View style={styles.userInfo}>

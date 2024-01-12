@@ -71,7 +71,7 @@ const Signup = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:8000/api/users/signup', {
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -100,7 +100,10 @@ const Signup = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={Logo} />
+      <Image style={{
+        width: 200,
+        height: 200
+      }} source={Logo} />
 
       <View style={styles.termsContainer}>
         <Text style={styles.termsText}>

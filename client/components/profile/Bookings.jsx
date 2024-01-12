@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import * as Location from 'expo-location';
 
 const BookingList = ({ fetchDirections, setDirections }) => {
@@ -39,7 +39,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         const driverProfile = await response.json();
 
         setDriver(driverProfile)
-        console.log(driver)
+  
       }
 
 
@@ -52,18 +52,18 @@ const BookingList = ({ fetchDirections, setDirections }) => {
 
   useEffect(() => {
     fetchUserProfile()
-  
+
   }, [])
 
   useEffect(() => {
     // Initial fetch
     fetchBookings();
-  
+
     // Set up interval to fetch every 5 seconds
     const intervalId = setInterval(() => {
       fetchBookings();
     }, 5000);
-  
+
     // Clean up the interval on component unmount
     return () => clearInterval(intervalId);
   }, [driver]);
@@ -76,17 +76,17 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         Alert.alert('Error', 'You must be logged in to perform this action');
         return;
       }
-  
+
       let location = await Location.getCurrentPositionAsync({
         enableHighAccuracy: true,
         accuracy: Location.Accuracy.High,
       });
 
-          const newlocation = {
-            latitude: location?.coords.latitude,
-            longitude: location?.coords.longitude
-          }
-      
+      const newlocation = {
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude
+      }
+
       const response = await fetch(`https://jhelord-backend.onrender.com/api/units/${driver?.unit[0].id}/location`, {
         method: 'PATCH',
         headers: {
@@ -95,15 +95,15 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         },
         body: JSON.stringify({ location: newlocation }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update unit location');
       }
-  
+
       const updatedUnit = await response.json();
 
-  
-   
+
+
     } catch (error) {
       console.error('Error updating unit location:', error);
 
@@ -112,36 +112,36 @@ const BookingList = ({ fetchDirections, setDirections }) => {
 
   useEffect(() => {
     // Assuming `driver.unitId` is available and valid
-  
-  
-    // Function to update the unit's location
-  
 
-  
-      const updateLocation = async () => {
-          
-          await handleChangeUnitLocation();
-        
-      }
-    
- 
-  
+
+    // Function to update the unit's location
+
+
+
+    const updateLocation = async () => {
+
+      await handleChangeUnitLocation();
+
+    }
+
+
+
     // Set up the interval
     const intervalId = setInterval(() => {
       updateLocation();
 
     }, 10000);
-  
+
     // Clear the interval when the component unmounts or dependencies change
     return () => clearInterval(intervalId);
   }, [driver]); // Dependencies array
-  
+
 
 
   const fetchBookings = async () => {
     try {
 
-      if(driver){
+      if (driver) {
         const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/driver/${driver?.id}`);
         if (!response.ok) {
           throw new Error('Error fetching bookings');
@@ -149,7 +149,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         const data = await response.json();
         setBookings(data);
       }
-     
+
     } catch (error) {
       console.error('Error fetching bookings:', error);
     }
@@ -179,7 +179,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
       }
 
       const updatedBooking = await response.json();
-     
+
       if (updatedBooking.status === "ACCEPTED") {
         const location = {
 
@@ -212,9 +212,15 @@ const BookingList = ({ fetchDirections, setDirections }) => {
   const renderBooking = ({ item }) => (
     <TouchableOpacity>
       <View style={styles.itemContainer}>
-        <Text style={styles.itemText}>Name: {item.User.username}</Text>
-        <Text style={styles.itemText}>Phone Number: {item.User.phoneNumber}</Text>
-        <Text style={styles.itemText}>Status: {item.status}</Text>
+        <Image
+          source={{ uri:`https://jhelord-backend.onrender.com/uploads/${item.User.profileImage.split("/")[2]}` }} // Replace with the actual user profile image URI
+          style={styles.profileImage}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.nameText}>{item.User.firstName + " " +item.User.lastName }</Text>
+          <Text style={styles.phoneText}>Phone Number: {item.User.phoneNumber}</Text>
+          <Text style={styles.statusText}>{item.status}</Text>
+        </View>
         <View style={styles.buttonContainer}>
           {item.status !== 'ACCEPTED' ? (
             <>
@@ -230,55 +236,53 @@ const BookingList = ({ fetchDirections, setDirections }) => {
               </TouchableOpacity>
             </>
           ) : (
-            <>
-              <TouchableOpacity
-                style={styles.rejectButton}
-                onPress={() => {
-                  setDirections([])
-                  changeBookingStatus(item.id, 'COMPLETED')
-                  }}>
-                <Text style={styles.buttonText}>Complete</Text>
-              </TouchableOpacity>
-            </>
+            <TouchableOpacity
+              style={styles.completeButton}
+              onPress={() => {
+                setDirections([]);
+                changeBookingStatus(item.id, 'COMPLETED');
+              }}>
+              <Text style={styles.buttonText}>Complete</Text>
+            </TouchableOpacity>
           )}
-
         </View>
       </View>
     </TouchableOpacity>
+
   );
 
   return (
 
     <>
-    {
-      bookings.filter((booking) => {
-        return booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED'
-      }).length <= 0 ? ( 
-        <View style={{
-        
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginVertical: 10
-        }}>
-          <Text>No pending Bookings</Text>
-    
-        </View>
-      ) : (
-        <FlatList
-        data={bookings.filter((booking) => {
+      {
+        bookings.filter((booking) => {
           return booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED'
-        })}
-        renderItem={renderBooking}
-        keyExtractor={item => item.id.toString()}
-        contentContainerStyle={styles.listContainer}
-      />
-      )
-    }
-      
+        }).length <= 0 ? (
+          <View style={{
+
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginVertical: 10
+          }}>
+            <Text>No pending Bookings</Text>
+
+          </View>
+        ) : (
+          <FlatList
+            data={bookings.filter((booking) => {
+              return booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED'
+            })}
+            renderItem={renderBooking}
+            keyExtractor={item => item.id.toString()}
+            contentContainerStyle={styles.listContainer}
+          />
+        )
+      }
+
 
     </>
 
- 
+
 
 
 
@@ -287,33 +291,60 @@ const BookingList = ({ fetchDirections, setDirections }) => {
 
 const styles = StyleSheet.create({
   itemContainer: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    marginVertical: 20
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#f0f0f0f0',
+    borderRadius: 10,
+    marginBottom: 10,
   },
+  profileImage: {
+    width: 50, // Set the image size as needed
+    height: 50, // Set the image size as needed
+    borderRadius: 25, // Makes the image round
+    marginRight: 10,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  nameText: {
+    fontWeight: 'bold',
+  },
+  phoneText: {
+    color: 'grey',
+  },
+  statusText: {
+    color: 'blue', // or any color that indicates status
+  },
+
   itemText: {
     fontSize: 16,
     marginBottom: 5
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+    alignItems: 'center',
   },
   acceptButton: {
-    backgroundColor: 'green',
+    backgroundColor: 'green', // Color for the accept button
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 5,
+  },
+  rejectButton: {
+    backgroundColor: 'red', // Color for the reject button
     padding: 10,
     borderRadius: 5,
   },
-  rejectButton: {
-    backgroundColor: 'red',
+  completeButton: {
+    backgroundColor: 'blue', // Color for the complete button
     padding: 10,
     borderRadius: 5,
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   listContainer: {
 

@@ -38,7 +38,7 @@ const Rating = ({
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <Image
-          source={{ uri: 'https://c8.alamy.com/zooms/9/80d94c5b96c54446b2dc609a62b9f61b/2c5xkmf.jpg' }} // Replace with actual image link
+          source={{ uri: `https://jhelord-backend.onrender.com/uploads/${driver.User.profileImage.split("/")[2]}` }} // Replace with actual image link
           style={styles.profileImage}
         />
         <Text>

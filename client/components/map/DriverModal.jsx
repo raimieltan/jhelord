@@ -12,7 +12,7 @@ const DriverInfoModal = ({ isVisible, onClose, driver }) => {
         const fetchBookingStatus = async () => {
             try {
                 if (bookingId) {
-                    console.log(bookingId)
+          
                     const token = 'yourAuthToken'; // Replace with the actual authentication token
                     const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${bookingId}`, {
                         method: 'GET',

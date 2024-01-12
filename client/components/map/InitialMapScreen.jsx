@@ -17,7 +17,7 @@ const MapHome = () => {
 
     return (
         <View style={styles.container}>
-            <MapHeader title="Let's find you a driver" subtext="We will ensure your safety with our trusted drivers" />
+            <MapHeader title="Jhelord Taxi Connect" subtext="We will ensure your safety with our trusted drivers" />
             <TouchableOpacity style={styles.whereToContainer} onPress={handleNavigateToMap}>
                 <Icon name="map-pin" size={30} color="#900" />
                 <Text style={styles.destinationText}>Where to?</Text>

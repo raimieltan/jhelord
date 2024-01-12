@@ -9,6 +9,7 @@ import CreateEditUnit from './CreateUnit';
 const Profile = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [imageUrl, setImageUrl] = useState('')
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -36,17 +37,16 @@ const Profile = () => {
       }
 
       const userProfile = await response.json();
-      console.log(userProfile)
+   
       await AsyncStorage.setItem("userId", userProfile.id+"")
       setUsername(userProfile.username);
       setEmail(userProfile.email);
 
-
-         
-      console.log(userProfile.role) 
+ 
+      setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
 
       await AsyncStorage.setItem("userRole", userProfile.role)
-      console.log(await AsyncStorage.getItem("userRole"))
+   
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
@@ -73,7 +73,7 @@ const Profile = () => {
         <Avatar
           size="large"
           rounded
-          source={{ uri: 'https://placekitten.com/200/200' }} // Replace with the user's profile picture URL
+          source={{ uri: imageUrl }} // Replace with the user's profile picture URL
           containerStyle={styles.avatar}
         />
         <View style={styles.userInfo}>

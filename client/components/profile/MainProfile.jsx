@@ -31,7 +31,7 @@ const MainProfile = () => {
             setUserRole(userProfile.role);
 
 
-            console.log(userProfile.role)
+      
 
             await AsyncStorage.setItem("userRole", userProfile.role)
 

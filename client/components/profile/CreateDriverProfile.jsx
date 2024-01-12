@@ -63,7 +63,7 @@ const CreateDriverProfile = () => {
 
 
       const data = await response.json();
-      console.log(data)
+
       Alert.alert('Profile Created', 'Your driver profile has been successfully created.');
     } catch (error) {
       console.error('Error creating driver profile:', error.message);
