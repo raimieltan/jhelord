@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
-import CreateEditUnit from './CreateUnit';
+
 
 const Profile = () => {
   const [username, setUsername] = useState('');
@@ -81,12 +81,18 @@ const Profile = () => {
           <Text style={styles.email}>{email}</Text>
         </View>
       </View>
+   
       <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
         <Text style={styles.mapButtonText}>Go to Map</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.mapButton} onPress={() => navigation.navigate('FareCalculator')}>
+        <Text style={styles.mapButtonText}>Fare Calculator</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
+
+
 
    
     </View>
