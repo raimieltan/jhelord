@@ -10,6 +10,9 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [profileImage, setProfileImage] = useState('')
 
 
   const navigation = useNavigation();
@@ -23,7 +26,7 @@ const Signup = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, email, phoneNumber, role: 'USER', password }),
+        body: JSON.stringify({ firstName, lastName, profileImage, username, email, phoneNumber, role: 'USER', password }),
       });
 
       Alert.alert('Signup Successful', 'You have successfully signed up.');
@@ -55,6 +58,26 @@ const Signup = () => {
           By signing up you are agreeing to our Terms and privacy policy
         </Text>
       </View>
+
+      <View style={styles.inputContainer}>
+        <Icon name="user" size={20} style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Firstname"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Icon name="user" size={20} style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Lastname"
+          value={lastName}
+          onChangeText={setLastName}
+        />
+      </View>
       <View style={styles.inputContainer}>
         <Icon name="user" size={20} style={styles.icon} />
         <TextInput
@@ -64,6 +87,7 @@ const Signup = () => {
           onChangeText={setUsername}
         />
       </View>
+
       <View style={styles.inputContainer}>
         <Icon name="mail" size={20} style={styles.icon} />
         <TextInput
