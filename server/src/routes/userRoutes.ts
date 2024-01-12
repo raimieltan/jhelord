@@ -1,10 +1,22 @@
 import express from 'express';
 import * as userController from '../controllers/userController';
 import * as authMiddleware from  '../middlewares/authMiddleware'
+import multer from 'multer';
 
 const router = express.Router();
+const storage = multer.diskStorage({
+    destination: function (req: any, file: any, cb: any) {
+      cb(null, 'src/uploads'); // Make sure this folder exists
+    },
+    filename: function (req: any, file: any, cb: any) {
+      cb(null, Date.now() + '-' + file.originalname);
+    }
+  });
+  
+  const upload = multer({ storage: storage });
 
-router.post('/signup', userController.signup);
+
+router.post('/signup', upload.single('image'), userController.signup);
 router.post('/login', userController.login);
 router.post('/users', userController.createUser);
 router.get('/:userId/profile', authMiddleware.authenticateToken, userController.getUserProfile);

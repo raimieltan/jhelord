@@ -20,75 +20,79 @@ const Signup = () => {
 
 
   const handleImagePick = async () => {
-    // Request permission to access media library
+    // Request permission to access the media library
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
-    if (permissionResult.granted === false) {
+
+    if (!permissionResult.granted) {
       Alert.alert("Permission Required", "You need to grant permission to access your photos.");
       return;
     }
-  
+
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
-  
-    if (pickerResult.cancelled === true) {
+
+    if (pickerResult.canceled) {
       return;
     }
-  
-    // Set the image URI state
-    setProfileImage(pickerResult.uri);
+
+    // Assuming only one image is picked, access the first asset
+    const imageUri = pickerResult.assets && pickerResult.assets[0].uri;
+
+    if (imageUri) {
+      setProfileImage(imageUri);
+    }
   };
 
-const handleSignup = async () => {
-  if (!firstName || !lastName || !username || !email || !phoneNumber || !password) {
-    Alert.alert('Error', 'Please fill all the fields');
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('firstName', firstName);
-  formData.append('lastName', lastName);
-  formData.append('username', username);
-  formData.append('email', email);
-  formData.append('phoneNumber', phoneNumber);
-  formData.append('password', password);
-  formData.append('role', 'USER');
-  // Append the profile image if it has been picked
-  if (profileImage) {
-    formData.append('profileImage', {
-      uri: profileImage,
-      type: 'image/jpeg', // or your image type
-      name: profileImage.split('/').pop(),
-    });
-  }
-
-  try {
-    setIsLoading(true);
-    const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to sign up');
+  const handleSignup = async () => {
+    if (!firstName || !lastName || !username || !email || !phoneNumber || !password) {
+      Alert.alert('Error', 'Please fill all the fields');
+      return;
     }
 
-    await AsyncStorage.setItem('accessToken', data.token);
-    navigation.navigate('Profile');
-  } catch (error) {
-    Alert.alert('Signup Failed', error.message);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    const formData = new FormData();
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('password', password);
+    formData.append('role', 'USER');
+    // Append the profile image if it has been picked
+    if (profileImage) {
+      formData.append('profileImage', {
+        uri: profileImage,
+        type: 'image/jpeg', // or your image type
+        name: profileImage.split('/').pop(),
+      });
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to sign up');
+      }
+
+      await AsyncStorage.setItem('accessToken', data.token);
+      navigation.navigate('Profile');
+    } catch (error) {
+      Alert.alert('Signup Failed', error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleNavigateToLogin = () => {
     navigation.navigate('Login');
@@ -109,9 +113,21 @@ const handleSignup = async () => {
         width: '100%'
       }}>
 
-<TouchableOpacity style={styles.button} onPress={handleImagePick}>
-      <Text style={styles.buttonText}>Pick Profile Image</Text>
-    </TouchableOpacity>
+        {
+          profileImage && (
+            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Image
+                source={{ uri: profileImage }}
+                style={styles.pickedImage}
+              />
+            </View>
+
+          )
+        }
+
+        <TouchableOpacity style={styles.button} onPress={handleImagePick}>
+          <Text style={styles.buttonText}>Pick Profile Image</Text>
+        </TouchableOpacity>
 
         <View style={styles.inputContainer}>
           <Icon name="user" size={20} style={styles.icon} />
@@ -173,24 +189,24 @@ const handleSignup = async () => {
         </View>
       </ScrollView>
 
-{
-  !isLoading ? (
-    <>
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
+      {
+        !isLoading ? (
+          <>
+            <TouchableOpacity style={styles.button} onPress={handleSignup}>
+              <Text style={styles.buttonText}>Sign Up</Text>
+            </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleNavigateToLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-    </>
-  ) : (
-    <>
-    <ActivityIndicator size={"large"} color={'blue'} />
-    </>
-  )
-}
-    
+            <TouchableOpacity style={styles.button} onPress={handleNavigateToLogin}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <ActivityIndicator size={"large"} color={'blue'} />
+          </>
+        )
+      }
+
     </View>
   );
 };
@@ -260,7 +276,13 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
-  }
+  },
+  pickedImage: {
+    width: 100, // You can adjust the width
+    height: 100, // You can adjust the height
+    borderRadius: 100, // Adjust for round image
+    marginTop: 20, // Add some space above the image
+  },
 });
 
 
