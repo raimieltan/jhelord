@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 import CreateEditUnit from './CreateUnit';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
 
 const ProfileDriver = () => {
   const [username, setUsername] = useState('');
@@ -78,7 +79,7 @@ const ProfileDriver = () => {
 
       if(driver){
         setProfile(driver)
-       
+    
       }
 
 
@@ -106,6 +107,18 @@ const ProfileDriver = () => {
     navigation.navigate('CreateProfile');
   };
 
+  const calculateAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) {
+        return 0; // Return 0 if there are no reviews
+    }
+
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = totalRating / reviews.length;
+
+    return averageRating;
+};
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -119,6 +132,11 @@ const ProfileDriver = () => {
           <Text style={styles.username}>{username}</Text>
           <Text style={styles.email}>{email}</Text>
           <Text style={styles.email}>{role}</Text>
+          <StarRatingDisplay
+                    starSize={16}
+                    color='green'
+                    rating={calculateAverageRating(profile.driverReview)}
+                />
         </View>
       </View>
 
@@ -127,6 +145,9 @@ const ProfileDriver = () => {
           <Text style={styles.profileText}>First Name: {user.firstName}</Text>
           <Text style={styles.profileText}>Last Name: {user.lastName}</Text>
           <Text style={styles.profileText}>License Number: {profile.licenseNumber}</Text>
+       
+
+        
         </View>
       )}
 
@@ -175,6 +196,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 20,
     fontWeight: 'bold',
+
   },
   email: {
     fontSize: 16,
@@ -204,11 +226,15 @@ const styles = StyleSheet.create({
   profileInfo: {
     padding: 10,
     marginBottom: 20,
+    backgroundColor: '#a7a8a2',
+    borderRadius: 20
   },
   profileText: {
-    fontSize: 16,
-    color: 'black',
+    fontSize: 18,
+    color: 'white',
+    fontWeight: '500',
     marginBottom: 5,
+
   },
 });
 
