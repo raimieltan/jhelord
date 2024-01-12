@@ -33,8 +33,6 @@ const Dashboard = () => {
       const data = await response.json();
       setUnits(data);
 
-      console.log("UNITS: ", data)
-
     } catch (error: any) {
       console.log(error.message);
     }
@@ -46,8 +44,6 @@ const Dashboard = () => {
       const data = await response.json();
       setDrivers(data);
 
-      console.log("DRIVERS: ", data)
-
     } catch (error: any) {
       console.log(error.message);
     }
@@ -58,8 +54,6 @@ const Dashboard = () => {
       const response = await fetch('https://jhelord-backend.onrender.com/api/bookings');
       const data = await response.json();
       setBookings(data);
-
-      console.log("BOOKINGS: ", data);
 
     } catch (error: any) {
       console.log(error.message);
