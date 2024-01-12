@@ -76,17 +76,6 @@ export async function getUserProfile(req: Request, res: Response) {
     }
 }
 
-export async function updateUserProfile(req: Request, res: Response) {
-    const userId = parseInt(req.params.userId);
-    const profileData: UserProfileUpdateInput = req.body;
-    try {
-        const updatedProfile = await userService.updateUserProfile(userId, profileData);
-        res.status(200).json(updatedProfile);
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
-    }
-}
-
 export async function deleteUser(req: Request, res: Response) {
     const userId = parseInt(req.params.userId);
     try {
