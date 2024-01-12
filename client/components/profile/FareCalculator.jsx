@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import MapHeader from '../map/Header';
 
 const PlaceInput = ({ placeholder, onPress, query }) => {
     return (
@@ -76,63 +77,72 @@ const FareCalculator = () => {
     return (
         <View style={styles.container}>
 
-            <Text style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                marginBottom: 5
-            }}>Starting Location</Text>
-            <GooglePlacesAutocomplete
-                placeholder='Starting Location'
-                onPress={(data, details = null) => {
-                    getCoordinates(data.description).then(location => {
-                        setStartLocation(location);
-                    });
-                }}
-                query={{
-                    key: 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs',
-                    language: 'en',
-                }}
-                isRowScrollable
-                styles={{
-                    textInputContainer: styles.textInputContainer,
-                    textInput: styles.textInput,
-                }}
-            />
+            <View style={{
+                marginBottom: 24
+            }}>
+                <MapHeader title="Fare Calculator" subtext={"Quickly estimate your taxi fare with our real-time fare calculator. Just enter your starting point and destination to receive an instant, accurate estimate of your trip cost."} />
+            </View>
+
+            <View style={styles.container2}>
+                <Text style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    marginBottom: 5
+                }}>Starting Location</Text>
+                <GooglePlacesAutocomplete
+                    placeholder='Starting Location'
+                    onPress={(data, details = null) => {
+                        getCoordinates(data.description).then(location => {
+                            setStartLocation(location);
+                        });
+                    }}
+                    query={{
+                        key: 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs',
+                        language: 'en',
+                    }}
+                    isRowScrollable
+                    styles={{
+                        textInputContainer: styles.textInputContainer,
+                        textInput: styles.textInput,
+                    }}
+                />
 
 
 
 
-            <Text style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                marginBottom: 5
-            }}>Destination</Text>
-            <GooglePlacesAutocomplete
-                placeholder='Destination'
-                onPress={(data, details = null) => {
-                    getCoordinates(data.description).then(location => {
-                        setDestinationLocation(location);
+                <Text style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    marginBottom: 5
+                }}>Destination</Text>
+                <GooglePlacesAutocomplete
+                    placeholder='Destination'
+                    onPress={(data, details = null) => {
+                        getCoordinates(data.description).then(location => {
+                            setDestinationLocation(location);
 
-                    });
-                }}
-                isRowScrollable
-                query={{
-                    key: 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs',
-                    language: 'en',
-                }}
-                styles={{
-                    textInputContainer: styles.textInputContainer,
-                    textInput: styles.textInput,
-                }}
-            />
+                        });
+                    }}
+                    isRowScrollable
+                    query={{
+                        key: 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs',
+                        language: 'en',
+                    }}
+                    styles={{
+                        textInputContainer: styles.textInputContainer,
+                        textInput: styles.textInput,
+                    }}
+                />
 
 
 
-            {fare !== null && (
-                <View style={styles.fareContainer}>
-                    <Text style={styles.fareText}>Estimated Fare: ₱{fare.toFixed(2)}</Text>
-                </View>
-            )}
+                {fare !== null && (
+                    <View style={styles.fareContainer}>
+                        <Text style={styles.fareText}>Estimated Fare: ₱{fare.toFixed(2)}</Text>
+                    </View>
+                )}
+            </View>
+
         </View>
     );
 };
@@ -142,7 +152,13 @@ export default FareCalculator;
 const styles = StyleSheet.create({
     container: {
         display: 'flex',
-        padding: 10,
+
+        height: '80%',
+        width: '100%'
+    }, 
+    container2: {
+        display: 'flex',
+        padding: 20,
         height: '80%',
         width: '100%'
     },
@@ -161,9 +177,15 @@ const styles = StyleSheet.create({
         marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'green',
+        margin: 10,
+        padding: 20,
+        borderRadius: 20,
+ 
     },
     fareText: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: 'white'
     },
 });
