@@ -9,6 +9,7 @@ export const getAllDrivers = async () => {
     return prisma.driver.findMany({
         include: {
             unit: true, // Include the associated Unit data
+            driverReview: true,
         },
     });
 };
@@ -16,9 +17,11 @@ export const getAllDrivers = async () => {
 
 export const getDriverById = async (id: number) => {
     return prisma.driver.findUnique({
-        where: { userId: id },
+        where: { id: id },
         include: {
-            unit: true
+            unit: true,
+            driverReview: true,
+            booking: true,
         }
     });
 };

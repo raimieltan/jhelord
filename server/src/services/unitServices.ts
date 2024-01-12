@@ -6,7 +6,11 @@ export const createUnit = async (data: any) => {
 };
 
 export const getAllUnits = async () => {
-    return prisma.unit.findMany();
+    return prisma.unit.findMany({
+        include: {
+            driver: true
+        }
+    });
 };
 
 export const getUnitById = async (id: number) => {
