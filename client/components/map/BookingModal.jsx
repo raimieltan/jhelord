@@ -41,6 +41,8 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
     const [radius, setRadius] = useState(10); // default radius of 10 km
     const [bookingStatus, setBookingStatus] = useState(null); // New state for booking status
     const [bookingId, setBookingId] = useState(null);
+    const [bookedDriver, setBookedDriver] = useState(null)
+    const [user, setUser] = useState(null)
 
     useEffect(() => {
         const fetchBookingStatus = async () => {
@@ -67,14 +69,14 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
 
                     //     setBookingId(null)
                     //     setBookingStatus(null)
-         
-                    // }
-                    // if (bookingStatus === 'CANCELLED') {
 
-                    //     setBookingId(null)
-                    //     setBookingStatus(null)
-                
                     // }
+                    if (bookingStatus === 'CANCELLED') {
+
+                        setBookingId(null)
+                        setBookingStatus(null)
+
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching booking status:', error);
@@ -125,7 +127,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
             // Assume we have a token and user ID
             const token = 'yourAuthToken'; // Replace with actual token
             const userId = await AsyncStorage.getItem('userId'); // Replace with actual user ID from storage or state
-
+            setUser(userId)
             const response = await fetch('https://jhelord-backend.onrender.com/api/bookings', {
                 method: 'POST',
                 headers: {
@@ -200,7 +202,10 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                 <Text style={styles.driverName}>{driverName}</Text>
                 <Text style={styles.carPrice}>{`Plate: ${unit.plateNumber}`}</Text>
             </View>
-            <TouchableOpacity style={styles.bookButton} onPress={() => handleBooking(driver.id)} disabled={isLoading}>
+            <TouchableOpacity style={styles.bookButton} onPress={() => {
+                setBookedDriver(driver)
+                handleBooking(driver.id)
+            }} disabled={isLoading}>
                 <Text style={styles.bookButtonText}>Book</Text>
             </TouchableOpacity>
         </View>
@@ -222,17 +227,17 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                 Booking Status
                             </Text>
                             <Text style={{
-                                            fontSize: 16,
-                                            fontWeight: '500',
-                                            margin: 10
-                                        }}>
-                                            {`${bookingStatus}`}
-                                        </Text>
+                                fontSize: 16,
+                                fontWeight: '500',
+                                margin: 10
+                            }}>
+                                {`${bookingStatus}`}
+                            </Text>
                             {
                                 bookingStatus === 'PENDING' ? (
                                     <>
 
-                                 
+
                                         <ActivityIndicator style={{
                                             marginVertical: 10
                                         }} size="large" color="blue" />
@@ -254,15 +259,15 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                     </Text>
                                 ) : (
                                     <>
-                             
-                                    <Text style={{
-                                        fontSize: 14,
-                                        fontWeight: '400',
-                                        margin: 10
-                                    }}>
-                                        Booking has been completed. Thanks for trusting our company.
-                                    </Text>
-                                    <Rating />
+
+                                        <Text style={{
+                                            fontSize: 14,
+                                            fontWeight: '400',
+                                            margin: 10
+                                        }}>
+                                            Booking has been completed. Thanks for trusting our company.
+                                        </Text>
+                                        <Rating onClose={onClose} driver={bookedDriver} userId={user} setBookingId={setBookingId} setBookingStatus={setBookingStatus} />
                                     </>
                                 )
                             }
@@ -302,7 +307,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                             <CarItem
                                                 key={car.id}
                                                 unit={car}
-                                                driverName={`${item.firstName} ${item.lastName}`}
+                                                driverName={`${item.User.firstName} ${item.User.lastName}`}
                                                 driver={item}
                                             />
                                         ))}

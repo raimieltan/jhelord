@@ -1,11 +1,39 @@
-import React, {useState} from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import StarRating from 'react-native-star-rating-widget';
 
-const Rating = () => {
-    const [rating, setRating] = useState(0);
+const Rating = ({ 
+  onClose, 
+  driver, 
+  userId, 
+  setBookingId,
+  setBookingStatus }) => {
+  const [rating, setRating] = useState(0);
   // Handle the logic for selecting stars, giving compliments, adding tips, and pressing 'Done'
-  
+
+  const handleCreateReview = async () => {
+    try {
+
+      const response = await fetch(`https://jhelord-backend.onrender.com/api/reviews/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rating, driverId: Number(driver.id), userId: Number(userId) }),
+      });
+
+
+      const data = await response.json();
+
+      Alert.alert('Success', 'You have submitted a rating.');
+      setBookingId(null)
+      setBookingStatus(null)
+    } catch (error) {
+      console.error('Error submitting rating:', error.message);
+      Alert.alert('Rating Creation Failed', 'Failed to create rating');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -13,17 +41,23 @@ const Rating = () => {
           source={{ uri: 'https://c8.alamy.com/zooms/9/80d94c5b96c54446b2dc609a62b9f61b/2c5xkmf.jpg' }} // Replace with actual image link
           style={styles.profileImage}
         />
+        <Text>
+          {driver.User.firstName + " " + driver.User.lastName}
+        </Text>
       </View>
       <View style={styles.starContainer}>
-      <StarRating
-        rating={rating}
-        onChange={setRating}
-      />
+        <StarRating
+          rating={rating}
+          onChange={setRating}
+        />
       </View>
       <TouchableOpacity style={styles.complimentButton}>
         <Text style={styles.complimentText}>Give a compliment</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.doneButton}>
+      <TouchableOpacity style={styles.doneButton} onPress={() => {
+        handleCreateReview()
+        onClose()
+      }}>
         <Text style={styles.doneButtonText}>DONE</Text>
       </TouchableOpacity>
     </View>

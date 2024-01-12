@@ -10,6 +10,7 @@ export const getAllDrivers = async () => {
         include: {
             unit: true,
             User: true,
+            driverReview: true
         },
     });
 };
@@ -21,6 +22,7 @@ export const getDriverById = async (id: number) => {
         include: {
             unit: true,
             User: true,
+            driverReview: true
         }
     });
 };
