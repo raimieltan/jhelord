@@ -16,7 +16,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.seanraimiel.taxiapp"
+      "bundleIdentifier": "com.seanraimiel.taxiapp",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app uses the photo library to let users pick their profile pictures."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +31,8 @@
           "apiKey": "AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs"
         }
       },
-      "package": "com.seanraimiel.taxiapp"
+      "package": "com.seanraimiel.taxiapp",
+      "permissions": ["READ_EXTERNAL_STORAGE"]
     },
 
     

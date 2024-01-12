@@ -58,7 +58,7 @@ const Rating = ({
         handleCreateReview()
         onClose()
       }}>
-        <Text style={styles.doneButtonText}>DONE</Text>
+        <Text style={styles.doneButtonText}>Rate</Text>
       </TouchableOpacity>
     </View>
   );

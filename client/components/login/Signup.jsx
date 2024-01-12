@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Logo from '../../assets/images/logo/logo.png';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -17,36 +18,77 @@ const Signup = () => {
 
   const navigation = useNavigation();
 
-  const handleSignup = async () => {
-    try {
 
-      setIsLoading(true)
-      await AsyncStorage.removeItem('accessToken');
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firstName, lastName, profileImage, username, email, phoneNumber, role: 'USER', password }),
-      });
-
-      Alert.alert('Signup Successful', 'You have successfully signed up.');
-
-      // Assuming your signup API returns user data including a token
-      const data = await response.json();
-
-      // Store the JWT token in AsyncStorage
-      await AsyncStorage.setItem('accessToken', data.token);
-
-      // Navigate to the home or profile screen
-      navigation.navigate('Profile'); // or 'Profile'
-
-    } catch (error) {
-      Alert.alert('Signup Failed', error.message);
-    } finally {
-      setIsLoading(false)
+  const handleImagePick = async () => {
+    // Request permission to access media library
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  
+    if (permissionResult.granted === false) {
+      Alert.alert("Permission Required", "You need to grant permission to access your photos.");
+      return;
     }
+  
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+  
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+  
+    // Set the image URI state
+    setProfileImage(pickerResult.uri);
   };
+
+const handleSignup = async () => {
+  if (!firstName || !lastName || !username || !email || !phoneNumber || !password) {
+    Alert.alert('Error', 'Please fill all the fields');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('firstName', firstName);
+  formData.append('lastName', lastName);
+  formData.append('username', username);
+  formData.append('email', email);
+  formData.append('phoneNumber', phoneNumber);
+  formData.append('password', password);
+  formData.append('role', 'USER');
+  // Append the profile image if it has been picked
+  if (profileImage) {
+    formData.append('profileImage', {
+      uri: profileImage,
+      type: 'image/jpeg', // or your image type
+      name: profileImage.split('/').pop(),
+    });
+  }
+
+  try {
+    setIsLoading(true);
+    const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to sign up');
+    }
+
+    await AsyncStorage.setItem('accessToken', data.token);
+    navigation.navigate('Profile');
+  } catch (error) {
+    Alert.alert('Signup Failed', error.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleNavigateToLogin = () => {
     navigation.navigate('Login');
@@ -66,6 +108,11 @@ const Signup = () => {
       <ScrollView style={{
         width: '100%'
       }}>
+
+<TouchableOpacity style={styles.button} onPress={handleImagePick}>
+      <Text style={styles.buttonText}>Pick Profile Image</Text>
+    </TouchableOpacity>
+
         <View style={styles.inputContainer}>
           <Icon name="user" size={20} style={styles.icon} />
           <TextInput
