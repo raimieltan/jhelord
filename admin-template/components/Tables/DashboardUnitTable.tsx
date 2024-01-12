@@ -87,7 +87,7 @@ const DashboardUnitTable = ({
               <Image src={unit.logo} alt="Brand" width={48} height={48} />
             </div> */}
             <p className="text-black dark:text-white">
-              {unit.driver.firstName} {unit.driver.lastName}
+              {unit.driver.User.firstName} {unit.driver.User.lastName}
             </p>
           </div>
 
@@ -102,7 +102,7 @@ const DashboardUnitTable = ({
           </div>
 
           <div className="flex items-center justify-center p-2.5 xl:p-5">
-            <p className={`${unit.status === 'Active' ? "text-meta-3" : "text-meta-1"}`}>{unit.status}</p>
+            <p className={`${unit.status === 'ACTIVE' ? "text-meta-3" : "text-meta-1"}`}>{unit.status}</p>
           </div>
         </div>
 

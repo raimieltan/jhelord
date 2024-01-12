@@ -60,7 +60,7 @@ const DriverTable = () => {
               />
             </div> */}
             <p className="text-md text-black dark:text-white">
-              {driver.firstName} {driver.lastName}
+              {driver.User.firstName} {driver.User.lastName}
             </p>
           </div>
         </div>

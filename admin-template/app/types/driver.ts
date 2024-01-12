@@ -1,4 +1,5 @@
 import { Unit } from "./unit";
+import { User } from "./user";
 
 export interface Driver {
   id: number;
@@ -12,4 +13,5 @@ export interface Driver {
   updatedAt?: Date;
   unit: Unit[];
   driverReview: any[];
+  User: User;
 }

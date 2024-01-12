@@ -51,16 +51,9 @@ const BookingTable = () => {
       >
         <div className="col-span-2 flex items-center">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            {/* <div className="h-12.5 w-15 rounded-md">
-              <Image
-                src={booking.image}
-                width={60}
-                height={50}
-                alt="Product"
-              />
-            </div> */}
+
             <p className="text-md text-black dark:text-white">
-              {booking.driver.firstName} {booking.driver.lastName}
+              {booking.driver.User.firstName} {booking.driver.User.lastName}
             </p>
           </div>
         </div>

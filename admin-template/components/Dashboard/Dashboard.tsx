@@ -55,6 +55,7 @@ const Dashboard = () => {
       const response = await fetch('http://localhost:8000/api/bookings');
       const data = await response.json();
       setBookings(data);
+      console.log("BOOKINGS", data);
 
     } catch (error: any) {
       console.log(error.message);
@@ -78,18 +79,18 @@ const Dashboard = () => {
         />
 
         <CardDataStats
-          title="Active Drivers"
+          title="Active Units"
           total={units ? units.filter(unit =>
-            unit.status === "Active" && unit.driver.status === "ACTIVE"
+            unit.status === "ACTIVE"
           ).length : 0}
           status="Active"
           icon={<BsPersonFillCheck />}
         />
 
         <CardDataStats
-          title="Inactive Drivers"
+          title="Inactive Units"
           total={units ? units.filter(unit =>
-            unit.status === "Active" && unit.driver.status === "INACTIVE"
+            unit.status === "INACTIVE"
           ).length : 0}
           status="Inactive"
           icon={<BsPersonFillX />}
@@ -143,9 +144,6 @@ const Dashboard = () => {
         <DashboardUnitTable units={units} />
       </div>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <ChartOne />
-        <ChartTwo />
-        
         <div className="flex flex-row col-span-8 gap-x-4 xl:col-span-12">
           <UnitChart units={units}/>
           <BookingChart bookings={bookings} />

@@ -10,7 +10,6 @@ const UnitTable = () => {
   const fetchUnits = async () => {
     const response = await fetch('http://localhost:8000/api/units');
     const data = await response.json();
-    console.log(data);
     setUnits(data);
   }
 
@@ -81,7 +80,7 @@ const UnitTable = () => {
           </div>
           <div className="col-span-1 items-center">
             <p className="text-md text-meta-3">
-              {unit.driver.firstName} {unit.driver.firstName}
+              {unit.driver.User.firstName} {unit.driver.User.lastName}
             </p>
           </div>
         </div>

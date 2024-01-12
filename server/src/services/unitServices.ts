@@ -8,7 +8,11 @@ export const createUnit = async (data: any) => {
 export const getAllUnits = async () => {
     return prisma.unit.findMany({
         include: {
-            driver: true
+            driver: {
+                include: {
+                    User: true,
+                }
+            }
         }
     });
 };

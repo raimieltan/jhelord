@@ -8,14 +8,15 @@ export const createBooking = async (data: any) => {
 export const getAllBookings = async () => {
   return prisma.booking.findMany({
     include: {
-      User: true,
       driver: {
         include: {
+          User: true,
           unit: true,
-        },
+        }
       },
-    },
-  })
+      User: true,
+    }
+  });
 }
 
 export const getBookingById = async (id: number) => {
