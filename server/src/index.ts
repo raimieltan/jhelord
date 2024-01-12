@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import multer from 'multer';
+import path from 'path';
 
 // Importing the route modules
 import userRouter from '../src/routes/userRoutes';
@@ -25,12 +27,35 @@ app.use((req, res, next) => {
   next();
 }).use(cors());
 
+const storage = multer.diskStorage({
+  destination: function (req: any, file: any, cb: any) {
+    cb(null, 'src/uploads'); // Make sure this folder exists
+  },
+  filename: function (req: any, file: any, cb: any) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+
 // Using the route modules
+app.post('/api/upload', upload.single('image'), (req: any, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+  return res.status(200).send({
+    message: 'File uploaded successfully',
+    filename: req.file.filename
+  });
+});
+
 app.use('/api/users', userRouter);
 app.use('/api/bookings', bookingRouter);
 app.use('/api/drivers', driverRouter);
 app.use('/api/units', unitRouter);
 app.use('/api/reviews', reviewRouter)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

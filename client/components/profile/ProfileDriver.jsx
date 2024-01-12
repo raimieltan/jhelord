@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 import CreateEditUnit from './CreateUnit';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
 
 const ProfileDriver = () => {
   const [username, setUsername] = useState('');
@@ -14,6 +15,7 @@ const ProfileDriver = () => {
   const [profile, setProfile] = useState({})
   const navigation = useNavigation();
   const [user, setUser] = useState(null)
+  const [imageUrl, setImageUrl] = useState('')
 
   useEffect(() => {
     fetchUserProfile();
@@ -56,6 +58,7 @@ const ProfileDriver = () => {
       setRole(userProfile.role)
       setId(userProfile.id)
       setUser(userProfile)
+      setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
 
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
@@ -76,7 +79,7 @@ const ProfileDriver = () => {
 
       if(driver){
         setProfile(driver)
-       
+    
       }
 
 
@@ -104,19 +107,36 @@ const ProfileDriver = () => {
     navigation.navigate('CreateProfile');
   };
 
+  const calculateAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) {
+        return 0; // Return 0 if there are no reviews
+    }
+
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = totalRating / reviews.length;
+
+    return averageRating;
+};
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Avatar
           size="large"
           rounded
-          source={{ uri: 'https://placekitten.com/200/200' }} // Replace with the user's profile picture URL
+          source={{ uri: imageUrl }} // Replace with the user's profile picture URL
           containerStyle={styles.avatar}
         />
         <View style={styles.userInfo}>
           <Text style={styles.username}>{username}</Text>
           <Text style={styles.email}>{email}</Text>
           <Text style={styles.email}>{role}</Text>
+          <StarRatingDisplay
+                    starSize={16}
+                    color='green'
+                    rating={calculateAverageRating(profile.driverReview)}
+                />
         </View>
       </View>
 
@@ -125,6 +145,9 @@ const ProfileDriver = () => {
           <Text style={styles.profileText}>First Name: {user.firstName}</Text>
           <Text style={styles.profileText}>Last Name: {user.lastName}</Text>
           <Text style={styles.profileText}>License Number: {profile.licenseNumber}</Text>
+       
+
+        
         </View>
       )}
 
@@ -173,6 +196,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 20,
     fontWeight: 'bold',
+
   },
   email: {
     fontSize: 16,
@@ -202,11 +226,15 @@ const styles = StyleSheet.create({
   profileInfo: {
     padding: 10,
     marginBottom: 20,
+    backgroundColor: '#a7a8a2',
+    borderRadius: 20
   },
   profileText: {
-    fontSize: 16,
-    color: 'black',
+    fontSize: 18,
+    color: 'white',
+    fontWeight: '500',
     marginBottom: 5,
+
   },
 });
 

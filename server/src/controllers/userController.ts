@@ -4,14 +4,23 @@ import { UserCreateInput, UserProfileUpdateInput } from '../../types/user'
 
 export async function signup(req: Request, res: Response) {
   try {
-    const user = await userService.signupUser(req.body)
-    res.status(201).json({ user })
-  } catch (error: any) {
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message })
-    } else {
-      res.status(500).json({ message: 'An unexpected error occurred' })
+    let profileImagePath = '';
+    if (req.file) {
+      profileImagePath = req.file.path;
     }
+
+
+      const token = await userService.signupUser({
+      ...req.body,
+      profileImage: profileImagePath // Add the image path to the user data
+    });
+      res.status(201).json({ token });
+  } catch (error:any) {
+      if (error instanceof Error) {
+          res.status(400).json({ message: error.message });
+      } else {
+          res.status(500).json({ message: 'An unexpected error occurred' });
+      }
   }
 }
 

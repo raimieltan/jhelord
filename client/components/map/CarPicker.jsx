@@ -37,7 +37,7 @@ const filterCarsWithinRadius = (carOptions, currentLocation, radius) => {
 
 const CarOption = ({ car, isSelected, onSelect, currentLocation }) => {
 
-    console.log(car)
+
     const distance = calculateDistance(
         parseFloat(currentLocation.coords.latitude),
         parseFloat(currentLocation.coords.longitude),

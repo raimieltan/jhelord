@@ -36,7 +36,7 @@ const Login = () => {
 
       // Store the JWT token in AsyncStorage
       await AsyncStorage.setItem('accessToken', data.token);
-      console.log(data.token)
+
       // Navigate to the "Map" screen
       navigation.navigate('Home');
 
@@ -69,7 +69,10 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={Logo} />
+      <Image style={{
+        width: 300,
+        height: 300
+      }} source={Logo} />
 
       <View style={styles.termsContainer}>
         <Text style={styles.termsText}>

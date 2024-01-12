@@ -13,11 +13,12 @@ import CreateDriverProfile from '../components/profile/CreateDriverProfile';
 import ProfileDriver from '../components/profile/ProfileDriver';
 import CreateEditUnit from '../components/profile/CreateUnit';
 import MainProfile from '../components/profile/MainProfile';
+import FareCalculator from '../components/profile/FareCalculator';
 const Stack = createStackNavigator();
 
-const MainStackNavigator = ( {location}) => {
+const MainStackNavigator = ({ location }) => {
 
-  
+
 
 
     return (
@@ -125,7 +126,7 @@ const MainStackNavigator = ( {location}) => {
             <Stack.Screen
                 name="ManageUnit"
                 component={CreateEditUnit}
-       
+
                 options={{
                     title: 'Manage Unit',
                     headerStyle: {
@@ -140,6 +141,23 @@ const MainStackNavigator = ( {location}) => {
                 }}
             />
 
+            <Stack.Screen
+                name="FareCalculator"
+                component={FareCalculator}
+
+                options={{
+                    title: 'Fare Calculator',
+                    headerStyle: {
+                        backgroundColor: '#039043',
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    headerTitleAlign: 'center',
+                    headerShown: true
+                }}
+            />
         </Stack.Navigator>
     );
 };

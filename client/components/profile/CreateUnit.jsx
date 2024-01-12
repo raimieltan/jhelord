@@ -129,8 +129,6 @@ const CreateEditUnit = ({ route }) => {
           longitude: location?.coords.longitude
         }
 
-
-        console.log(newlocation)
         const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
           method: method, // Change to 'PUT' and add an ID for editing an existing unit
           headers: {
@@ -145,7 +143,7 @@ const CreateEditUnit = ({ route }) => {
 
         const data = await response.json();
         if (data.id) {
-          console.log(data)
+
           Alert.alert('Success', 'Unit has been successfully created/updated.');
           navigation.navigate('Profile')
 

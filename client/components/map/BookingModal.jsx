@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
-    View, Text, TouchableOpacity, StyleSheet, Modal, Alert, SafeAreaView, FlatList, StatusBar, Image, ActivityIndicator
+    View, Text, TouchableOpacity, StyleSheet, Modal, Alert, SafeAreaView, FlatList, StatusBar, Image, ActivityIndicator, ScrollView
 } from 'react-native';
 import * as Location from 'expo-location';
 import Slider from '@react-native-community/slider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Rating from '../profile/Rating';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
 
 // Functions for calculating distance and filtering cars
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -26,7 +27,7 @@ const filterCarsWithinRadius = (carOptions, currentLocation, radius) => {
             car.unit[0]?.location?.latitude, car.unit[0]?.location?.longitude
         );
 
-        console.log(distance)
+
         return distance <= radius;
     });
 };
@@ -193,14 +194,34 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
         }
     };
 
+    const calculateAverageRating = (reviews) => {
+        if (!reviews || reviews.length === 0) {
+            return 0; // Return 0 if there are no reviews
+        }
+
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        const averageRating = totalRating / reviews.length;
+
+        return averageRating;
+    };
+
 
     const CarItem = ({ unit, driverName, driver }) => (
         <View style={styles.itemContainer}>
-            <Image source={{ uri: carPlaceholderImage }} style={styles.carImage} />
+            <Image source={{ uri: `https://jhelord-backend.onrender.com/uploads/${driver.User.profileImage.split("/")[2]}` }} style={styles.carImage} />
             <View style={styles.carDetails}>
-                <Text style={styles.carModel}>{`${unit.make} ${unit.model}`}</Text>
-                <Text style={styles.driverName}>{driverName}</Text>
+                <Text style={styles.carModel}>{`${unit.model} ${unit.make} `}</Text>
                 <Text style={styles.carPrice}>{`Plate: ${unit.plateNumber}`}</Text>
+                <Text style={styles.driverName}>{driverName}</Text>
+                <Text style={styles.driverName}>{calculateDistance(pickupLocation.lat, pickupLocation.lng,
+                    driver.unit[0]?.location?.latitude, driver.unit[0]?.location?.longitude).toFixed(2) + ' km away'}</Text>
+                <StarRatingDisplay
+                    starSize={16}
+                    color='green'
+                    rating={calculateAverageRating(driver.driverReview)}
+                />
+
+
             </View>
             <TouchableOpacity style={styles.bookButton} onPress={() => {
                 setBookedDriver(driver)
@@ -213,6 +234,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
 
     return (
         <Modal animationType="slide" transparent={true} visible={isVisible} onRequestClose={onClose}>
+
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -257,7 +279,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                     }}>
                                         Your driver is on the way.
                                     </Text>
-                                ) : (
+                                ) : bookingStatus === 'COMPLETED' ? (
                                     <>
 
                                         <Text style={{
@@ -269,6 +291,14 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                         </Text>
                                         <Rating onClose={onClose} driver={bookedDriver} userId={user} setBookingId={setBookingId} setBookingStatus={setBookingStatus} />
                                     </>
+                                ) : (
+                                    <Text style={{
+                                        fontSize: 14,
+                                        fontWeight: '400',
+                                        margin: 10
+                                    }}>
+                                        Booking has been cancelled
+                                    </Text>
                                 )
                             }
 
@@ -297,6 +327,8 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
 
                             </View>
 
+
+
                             <SafeAreaView style={styles.safeAreaView}>
                                 {error ? (
                                     <Text style={styles.errorText}>{error}</Text>
@@ -317,6 +349,9 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                     <Text style={styles.noDriversText}>There are no drivers near you</Text>
                                 )}
                             </SafeAreaView>
+
+
+
                         </>
                     )}
 
@@ -361,7 +396,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         width: '95%',
-        height: '80%',
+        height: '90%',
         backgroundColor: 'white',
         borderRadius: 20,
         paddingVertical: 50,
@@ -382,6 +417,7 @@ const styles = StyleSheet.create({
     },
     safeAreaView: {
         width: '100%',
+        height: '60%'
 
     },
     itemContainer: {
@@ -398,9 +434,12 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     carImage: {
-        width: 100,
-        height: 60,
+        width: 80,
+        height: 80,
         resizeMode: 'contain',
+        borderRadius: 120,
+        borderWidth: 1,
+        borderColor: 'green'
     },
     carDetails: {
         flex: 1,
