@@ -20,11 +20,10 @@ const Map = ({
         });
 
         await loader.importLibrary('maps');
-
-        const initialCenter = units[0].location || { lat: 0, lng: 0 };
+        const initialCenter = {lat: 10.746494047397272, lng: 122.55620305514289};
         const map = new google.maps.Map(mapRef.current as HTMLDivElement, {
           center: initialCenter,
-          zoom: 12
+          zoom: 13
         });
 
         // URL of the taxi car image

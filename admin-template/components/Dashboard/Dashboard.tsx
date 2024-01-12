@@ -20,6 +20,7 @@ import Map from '../Map/map';
 import UnitChart from '../Charts/UnitChart';
 import BookingChart from '../Charts/BookingChart';
 import DashboardUnitTable from '../Tables/DashboardUnitTable';
+import UnitMap from '../Map/unitMap';
 
 const Dashboard = () => {
   const [units, setUnits] = useState<Unit[]>([]);
@@ -28,11 +29,11 @@ const Dashboard = () => {
 
   const fetchUnits = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/units');
+      const response = await fetch('https://jhelord-backend.onrender.com/api/units');
       const data = await response.json();
       setUnits(data);
 
-      console.log(data);
+      console.log("UNITS: ", data)
 
     } catch (error: any) {
       console.log(error.message);
@@ -41,9 +42,11 @@ const Dashboard = () => {
 
   const fetchDrivers = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/drivers');
+      const response = await fetch('https://jhelord-backend.onrender.com/api/drivers');
       const data = await response.json();
       setDrivers(data);
+
+      console.log("DRIVERS: ", data)
 
     } catch (error: any) {
       console.log(error.message);
@@ -52,10 +55,11 @@ const Dashboard = () => {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/bookings');
+      const response = await fetch('https://jhelord-backend.onrender.com/api/bookings');
       const data = await response.json();
       setBookings(data);
-      console.log("BOOKINGS", data);
+
+      console.log("BOOKINGS: ", data);
 
     } catch (error: any) {
       console.log(error.message);
@@ -63,9 +67,20 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    fetchUnits();
-    fetchDrivers();
-    fetchBookings();
+    const startFetching = () => {
+      fetchUnits();
+      fetchDrivers();
+      fetchBookings();
+    };
+
+    // Start fetching immediately on component mount
+    startFetching();
+
+    // Set an interval to fetch data every 30 seconds
+    const intervalId = setInterval(startFetching, 30000);
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, [])
 
   return (
@@ -138,6 +153,7 @@ const Dashboard = () => {
 
       <div className="flex h-[600px] bg-white w-full my-4">
         <Map units={units} />
+        {/* <UnitMap /> */}
       </div>
 
       <div className="col-span-8 xl:col-span-full">
@@ -145,7 +161,7 @@ const Dashboard = () => {
       </div>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="flex flex-row col-span-8 gap-x-4 xl:col-span-12">
-          <UnitChart units={units}/>
+          <UnitChart units={units} />
           <BookingChart bookings={bookings} />
         </div>
       </div>

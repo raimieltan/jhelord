@@ -1,9 +1,7 @@
 "use client"
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { accountGenerator } from "@/helpers/accountGenerator";
 import { useState } from "react";
-import { Driver } from "../types/driver";
 import { User } from "../types/user";
 import { useRouter } from "next/navigation";
 
@@ -53,7 +51,7 @@ const Register = () => {
 
     try {
       // const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', options);
-      const response = await fetch('http://localhost:8000/api/users/signup', {
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +65,7 @@ const Register = () => {
         userId: userData.user.id,
       }
 
-      const driverResponse = await fetch('http://localhost:8000/api/drivers', {
+      const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,12 +79,12 @@ const Register = () => {
         driverId: driverData.id,
         status: 'ACTIVE',
         location: {
-          lat: 122.55620305514289,
-          lng: 10.746494047397272,
+          lat: 10.746494047397272,
+          lng: 122.55620305514289,
         }
       }
 
-      const unitResponse = await fetch('http://localhost:8000/api/units', {
+      const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,55 +98,6 @@ const Register = () => {
       console.log(error.message);
     }
   };
-
-  // const handleSubmit = async () => {
-  //   if (!personalFormData.firstName || !personalFormData.lastName || 
-  //     !personalFormData.username || !personalFormData.email || !personalFormData.phoneNumber 
-  //     || !personalFormData.password) {
-  //   }
-
-  //   const formData = new FormData();
-
-  //   formData.append('firstName', personalFormData.firstName);
-  //   formData.append('lastName', personalFormData.lastName);
-  //   formData.append('username', personalFormData.username);
-  //   formData.append('email', personalFormData.email);
-  //   formData.append('phoneNumber', personalFormData.phoneNumber);
-  //   formData.append('password', personalFormData.password);
-  //   formData.append('role', 'DRIVER');
-  //   // Append the profile image if it has been picked
-  //   // if (profileImage) {
-  //   //   formData.append('profileImage', {
-  //   //     uri: profileImage,
-  //   //     type: 'image/jpeg', // or your image type
-  //   //     name: profileImage.split('/').pop(),
-  //   //   });
-  //   // }
-
-  //   try {
-  //     // setIsLoading(true);
-
-  //     const response = await fetch('http://localhost:8000/api/users/signup', {
-  //       method: 'POST',
-  //       body: formData,
-  //     });
-
-  //     const data = await response.json();
-
-  //     console.log(data);
-
-  //     if (!response.ok) {
-  //       throw new Error(data.message || 'Failed to sign up');
-  //     }
-
-  //   } catch (error: any) {
-  //     // Alert.alert('Signup Failed', error.message);
-  //     console.log(error.message);
-  //   } finally {
-  //     // setIsLoading(false);
-  //   }
-  // };
-
 
   return (
     <>

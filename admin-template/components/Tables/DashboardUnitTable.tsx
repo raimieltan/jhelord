@@ -87,7 +87,7 @@ const DashboardUnitTable = ({
               <Image src={unit.logo} alt="Brand" width={48} height={48} />
             </div> */}
             <p className="text-black dark:text-white">
-              {unit.driver.User.firstName} {unit.driver.User.lastName}
+              {/* {unit.driver.User.firstName} {unit.driver.User.lastName} */}
             </p>
           </div>
 
