@@ -5,7 +5,16 @@ import { UserCreateInput, UserProfileUpdateInput } from '../../types/user';
 
 export async function signup(req: Request, res: Response) {
   try {
-      const token = await userService.signupUser(req.body);
+    let profileImagePath = '';
+    if (req.file) {
+      profileImagePath = req.file.path;
+    }
+
+
+      const token = await userService.signupUser({
+      ...req.body,
+      profileImage: profileImagePath // Add the image path to the user data
+    });
       res.status(201).json({ token });
   } catch (error:any) {
       if (error instanceof Error) {

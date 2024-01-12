@@ -71,7 +71,7 @@ const Signup = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
+      const response = await fetch('http://localhost:8000/api/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
