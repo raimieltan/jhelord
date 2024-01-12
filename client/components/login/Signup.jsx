@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Logo from '../../assets/images/logo/logo.png';
 import { useNavigation } from '@react-navigation/native';
@@ -12,14 +12,15 @@ const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [profileImage, setProfileImage] = useState('')
-
+  const [profileImage, setProfileImage] = useState('https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg')
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigation = useNavigation();
 
   const handleSignup = async () => {
     try {
 
+      setIsLoading(true)
       await AsyncStorage.removeItem('accessToken');
       const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
         method: 'POST',
@@ -42,6 +43,8 @@ const Signup = () => {
 
     } catch (error) {
       Alert.alert('Signup Failed', error.message);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -123,6 +126,9 @@ const Signup = () => {
         </View>
       </ScrollView>
 
+{
+  !isLoading ? (
+    <>
       <TouchableOpacity style={styles.button} onPress={handleSignup}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
@@ -130,6 +136,14 @@ const Signup = () => {
       <TouchableOpacity style={styles.button} onPress={handleNavigateToLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+    </>
+  ) : (
+    <>
+    <ActivityIndicator size={"large"} color={'blue'} />
+    </>
+  )
+}
+    
     </View>
   );
 };

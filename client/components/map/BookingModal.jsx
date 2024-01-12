@@ -26,6 +26,7 @@ const filterCarsWithinRadius = (carOptions, currentLocation, radius) => {
             car.unit[0]?.location?.latitude, car.unit[0]?.location?.longitude
         );
 
+        console.log(distance)
         return distance <= radius;
     });
 };
@@ -294,7 +295,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                             <SafeAreaView style={styles.safeAreaView}>
                                 {error ? (
                                     <Text style={styles.errorText}>{error}</Text>
-                                ) : (
+                                ) : filteredDrivers.length > 0 ? (
                                     <FlatList
                                         data={filteredDrivers}
                                         renderItem={({ item }) => item.unit.map(car => (
@@ -307,6 +308,8 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                         ))}
                                         keyExtractor={item => item.id.toString()}
                                     />
+                                ) : (
+                                    <Text style={styles.noDriversText}>There are no drivers near you</Text>
                                 )}
                             </SafeAreaView>
                         </>
@@ -322,7 +325,6 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
 const styles = StyleSheet.create({
     // ... existing styles
     slider: {
-        borderWidth: 2,
         width: '100%',
         height: 40,
         marginVertical: 10,
@@ -435,6 +437,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
         padding: 10,
         borderRadius: 5,
+    },
+    noDriversText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 20, // Adjust as needed
+        // Add other styling as needed
     },
     // ... rest of your styles
 });
