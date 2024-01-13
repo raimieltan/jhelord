@@ -77,7 +77,7 @@ const Register = () => {
         licenseNumber,
         userId: userData.id,
       }
-      const driverResponse = await fetch('http://localhost:8000/api/drivers', {
+      const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ const Register = () => {
         }
       }
 
-      const unitResponse = await fetch('http://localhost:8000/api/units', {
+      const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
