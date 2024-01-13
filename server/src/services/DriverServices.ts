@@ -18,7 +18,7 @@ export const getAllDrivers = async () => {
 
 export const getDriverById = async (id: number) => {
     return prisma.driver.findUnique({
-        where: { id: id },
+        where: { userId: id },
         include: {
             unit: true,
             User: true,
