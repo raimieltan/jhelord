@@ -85,6 +85,7 @@ const Map = () => {
     const [directions, setDirections] = useState([]);
     const [destinationLatLng, setDestinationLatLang] = useState();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isDriverModalVisible, setIsDriverModalVisible] = useState(false);
     const [selectedDriver, setSelectedDriver] = useState(carOptions[0]);
     const [drivers, setDrivers] = useState(carOptions)
     const [role, setRole] = useState(null)
@@ -93,8 +94,9 @@ const Map = () => {
     const mapViewRef = React.useRef(null);
 
     const handleMarkerPress = (driver) => {
+
         setSelectedDriver(driver);
-        setIsModalVisible(true);
+        setIsDriverModalVisible(true);
     };
 
 
@@ -314,12 +316,12 @@ const Map = () => {
                             <MapHeader title={role === 'USER' ? "Book a taxi" : "Bookings"} subtext={role === 'USER' ? "We have provided taxis near your location. Tap and hold an area in the map to choose your pickup location" : "Wait for bookings at the bookings tab. Please accept only one booking at a time"} />
                         </View>
 
-                        {/* 
+                        
                         <DriverInfoModal
-                            isVisible={isModalVisible}
-                            onClose={() => setIsModalVisible(false)}
+                            isVisible={isDriverModalVisible}
+                            onClose={() => setIsDriverModalVisible(false)}
                             driver={selectedDriver}
-                        /> */}
+                        />
 
 
                         {
@@ -411,6 +413,7 @@ const Map = () => {
                                     <Marker
                                         key={index}
                                         coordinate={{ latitude: car.unit[0]?.location?.latitude, longitude: car.unit[0]?.location?.longitude }}
+                                        onPress={() => handleMarkerPress(car)}
 
                                     >
                                         <CustomMarker />

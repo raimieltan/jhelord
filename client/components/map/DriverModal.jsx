@@ -1,115 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert, Image } from 'react-native';
 import * as Location from 'expo-location';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
 
 const DriverInfoModal = ({ isVisible, onClose, driver }) => {
-    const [loading, setLoading] = useState(false);
-    const [bookingStatus, setBookingStatus] = useState(null);
-    const [bookingId, setBookingId] = useState(null);
-
-    useEffect(() => {
-        const fetchBookingStatus = async () => {
-            try {
-                if (bookingId) {
-          
-                    const token = 'yourAuthToken'; // Replace with the actual authentication token
-                    const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${bookingId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: token,
-                        },
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Error fetching booking status');
-                    }
-
-                    const data = await response.json();
-                    // Update booking status
-                    setBookingStatus(data[0].status);
-                    console.log(data[0].status)
-                }
-            } catch (error) {
-                console.error('Error fetching booking status:', error);
-            }
-        };
-
-        const intervalId = setInterval(() => {
-            fetchBookingStatus();
-
-        }, 5000);
-
-        return () => clearInterval(intervalId);
-    }, [bookingId]);
-
-    const handleNewBooking = async () => {
-        try {
-            setLoading(true);
-
-            const userId = await AsyncStorage.getItem('userId'); // Replace with the actual userId
-            const token = 'yourAuthToken'; // Replace with the actual authentication token
-
-            let location = await Location.getCurrentPositionAsync({
-                enableHighAccuracy: true,
-                accuracy: Location.Accuracy.High,
-            });
-
-            const newlocation = {
-                latitude: location?.coords.latitude,
-                longitude: location?.coords.longitude,
-            };
-
-            if (driver) {
-                const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: token,
-                    },
-                    body: JSON.stringify({
-                        driverId: driver.id,
-                        userId: Number(userId),
-                        status: 'PENDING',
-                        location: newlocation,
-                    }),
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error creating booking');
-                }
-
-                const data = await response.json();
-                // Handle success (e.g., update UI, set booking status and ID)
-                console.log('Booking created successfully:', data);
-                setBookingId(data.id);
-                setBookingStatus(data.status);
-
-            }
-        } catch (error) {
-            console.error('Error creating booking:', error);
-        } finally {
-            setLoading(false);
-
+    const calculateAverageRating = (reviews) => {
+        if (!reviews || reviews.length === 0) {
+            return 0; // Return 0 if there are no reviews
         }
+
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        const averageRating = totalRating / reviews.length;
+
+        return averageRating;
     };
 
-    const renderStatusMessage = () => {
-        switch (bookingStatus) {
-            case 'PENDING':
-                return 'Awaiting for driver to accept';
-            case 'ACCEPTED':
-                return 'Booking accepted. The driver is on the way.';
-            case 'COMPLETED':
-                setBookingStatus(null)
-                setBookingId(null)
-                onClose(); // Automatically close the modal when booking is completed
-                return 'Booking completed. Thank you!';
-            default:
-                return ''; // Add default message if needed
-        }
-    };
+
 
 
     return (
@@ -121,26 +28,33 @@ const DriverInfoModal = ({ isVisible, onClose, driver }) => {
                         top: 10,
                         right: 10,
                         backgroundColor: 'transparent',
-                        display: `${(bookingStatus === 'PENDING' || bookingStatus === 'ACCEPTED') ? 'none' : ''}`
                     }} onPress={onClose}>
                         <Text style={styles.closeButtonText}>X</Text>
                     </TouchableOpacity>
-                    <Text style={styles.modalText}>Driver Name: {driver.firstName}</Text>
-                    <Text style={styles.modalText}>Unit: {driver.unit[0].model + ' ' + driver.unit[0].make}</Text>
-                    <Text style={styles.modalText}>Plate Number: {driver.unit[0].plateNumber}</Text>
-                    <Text style={styles.modalText}>
-                        Location: {driver.unit[0].location.latitude + ' ' + driver.unit[0].location.longitude}
-                    </Text>
-                    <TouchableOpacity
-                        style={{ paddingVertical: 10, paddingHorizontal: 20, borderRadius: 5, backgroundColor: 'green', display: `${(bookingStatus === 'PENDING' || bookingStatus === 'ACCEPTED') ? 'none' : ''}` }}
-                        onPress={handleNewBooking}
-                        disabled={loading}
-                    >
-                        <Text style={{ color: 'white' }}>{loading ? 'Booking...' : 'BOOK'}</Text>
-                    </TouchableOpacity>
-                    {bookingStatus && <Text style={styles.statusMessage}>{renderStatusMessage()}</Text>}
+
+
+                    <View style={styles.itemContainer}>
+                
+                        <Image source={{ uri: `https://jhelord-backend.onrender.com/uploads/${driver.User?.profileImage.split("/")[2]}` }} style={styles.carImage} />
+                        <View style={styles.carDetails}>
+                            <Text style={styles.carModel}>{driver.unit[0].model + ' ' + driver.unit[0].make}</Text>
+                            <Text style={styles.carPrice}>{driver.unit[0].plateNumber}</Text>
+                            <Text style={styles.driverName}>{driver.User?.firstName} {driver.User?.lastName}</Text>
+
+                            <StarRatingDisplay
+                                starSize={16}
+                                color='green'
+                                rating={calculateAverageRating(driver.driverReview)}
+                            />
+
+
+                        </View>
+                    </View>
                 </View>
+
             </View>
+
+
         </Modal>
     );
 };
@@ -191,5 +105,41 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'blue', // Change color as needed
         fontStyle: 'italic',
+    },
+    itemContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#dedad5',
+        borderRadius: 10,
+        padding: 10,
+        marginVertical: 8,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3,
+    },
+    carImage: {
+        width: 80,
+        height: 80,
+        resizeMode: 'contain',
+        borderRadius: 120,
+        borderWidth: 1,
+        borderColor: 'green'
+    },
+    carDetails: {
+        flex: 1,
+        marginLeft: 10,
+    },
+    carModel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    carPrice: {
+        fontSize: 14,
+        color: 'green',
+    },
+    carSeats: {
+        fontSize: 14,
     },
 });

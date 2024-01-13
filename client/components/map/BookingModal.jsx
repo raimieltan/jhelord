@@ -99,6 +99,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
             try {
                 const response = await fetch('https://jhelord-backend.onrender.com/api/drivers/');
                 const data = await response.json();
+           
                 setDriversData(data);
                 setFilteredDrivers(data); // Initially, don't filter drivers
             } catch (err) {
