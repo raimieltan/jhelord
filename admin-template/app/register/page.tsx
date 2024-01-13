@@ -1,7 +1,7 @@
 "use client"
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { User } from "../types/user";
 import { useRouter } from "next/navigation";
 
@@ -27,6 +27,15 @@ const Register = () => {
     number: '',
     plateNumber: '',
   });
+  const [profileImage, setProfileImage] = useState<any>(null);
+  const fileInputRef = useRef();
+
+  const handleImageChange = (e: any) => {
+    if (e.target.files && e.target.files[0]) {
+      setProfileImage(e.target.files[0]);
+    }
+  };
+
 
   // Handle input changes
   const personalFormHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,30 +57,52 @@ const Register = () => {
   };
   // Handle form submission
   const handleSubmit = async () => {
+    // Create an instance of FormData
+    const formData = new FormData();
+
+    // Append all text fields from personalFormData to formData
+    for (const [key, value] of Object.entries(personalFormData)) {
+      formData.append(key, value);
+    }
+
+    // Append the image file to formData
+    if (profileImage) {
+      formData.append("profileImage", profileImage);
+    }
 
     try {
-      // const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', options);
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
+      // First, submit the user data
+      const userResponse = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(personalFormData),
+        body: formData, // Send the formData
       });
-      const userData = await response.json();
+
+      // Handle the response for user data
+      if (!userResponse.ok) {
+        throw new Error(`HTTP error! status: ${userResponse.status}`);
+      }
+
+      const userData = await userResponse.json();
 
       const driver = {
         licenseNumber,
         userId: userData.user.id,
-      }
+      };
 
+      // Submit the driver data
       const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(driver),
-      })
+      });
+
+      // Handle the response for driver data
+      if (!driverResponse.ok) {
+        throw new Error(`HTTP error! status: ${driverResponse.status}`);
+      }
+
       const driverData = await driverResponse.json();
 
       const unit = {
@@ -81,23 +112,32 @@ const Register = () => {
         location: {
           lat: 10.746494047397272,
           lng: 122.55620305514289,
-        }
-      }
+        },
+      };
 
+      // Submit the unit data
       const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(unit),
-      })
-      const unitData = await unitResponse.json()
-      router.push('/')
+      });
 
-    } catch (error: any) {
-      console.log(error.message);
+      // Handle the response for unit data
+      if (!unitResponse.ok) {
+        throw new Error(`HTTP error! status: ${unitResponse.status}`);
+      }
+
+      const unitData = await unitResponse.json();
+
+      // Redirect to home or another page on successful registration
+      router.push('/');
+    } catch (error) {
+      console.error('Registration failed:', error);
     }
   };
+
 
   return (
     <>
@@ -115,7 +155,25 @@ const Register = () => {
                 </div>
                 <div className="p-7">
                   <form>
+                  <label
+                          className="mb-3 block text-sm font-medium text-black dark:text-white"
+                          htmlFor="profileImage"
+                        >
+                          Profile Image
+                        </label>
+                        <input
+                          className="w-full file:rounded file:border file:border-stroke file:bg-gray file:py-3 file:px-4.5 file:text-black focus:border-primary focus-visible:outline-none dark:file:border-strokedark dark:file:bg-meta-4 dark:file:text-white dark:focus:border-primary"
+                          type="file"
+                          name="profileImage"
+                          id="profileImage"
+                          ref={fileInputRef}
+                          onChange={handleImageChange}
+                          accept="image/*"
+                        />
                     <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                   
+                       
+                  
                       <div className="w-full sm:w-1/2">
                         <label
                           className="mb-3 block text-sm font-medium text-black dark:text-white"
