@@ -35,8 +35,12 @@ const Map = ({
         }
 
         units.forEach(unit => {
+          const unitLocation = {
+            lat: unit.location.latitude,
+            lng: unit.location.longitude,
+          }
           new google.maps.Marker({
-            position: unit.location,
+            position: unitLocation,
             map: map,
             title: `Unit ${unit.number}` || '',
             icon: taxiIcon,  // Setting the custom icon
