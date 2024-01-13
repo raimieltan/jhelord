@@ -81,8 +81,8 @@ const Register = () => {
         driverId: driverData.id,
         status: 'ACTIVE',
         location: {
-          lat: 10.746494047397272,
-          lng: 122.55620305514289,
+          latitude: 10.746494047397272,
+          longitude: 122.55620305514289,
         }
       }
 
