@@ -28,6 +28,7 @@ const ProfileDriver = () => {
     }, 5000); // Set the interval time in milliseconds (e.g., 1000ms = 1 second)
 
     // Cleanup function to clear the interval
+    console.log("Fetched driver profile")
     return () => clearInterval(interval);
 }, [id]); // Dependencies array, the interval will reset if `id` changes
 
@@ -60,6 +61,7 @@ const ProfileDriver = () => {
       setUser(userProfile)
       setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
 
+
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
@@ -70,6 +72,7 @@ const ProfileDriver = () => {
   const fetchDriverProfile = async () => {
     try {
 
+      console.log(id)
       const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
         method: 'GET',
 
@@ -77,11 +80,11 @@ const ProfileDriver = () => {
 
       const driver = await response.json();
 
+      console.log({driver})
       if(driver){
         setProfile(driver)
     
       }
-
 
       await AsyncStorage.setItem("driverId", String(driver.userId))
 
