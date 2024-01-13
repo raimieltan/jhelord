@@ -65,11 +65,7 @@ const Register = () => {
         },
         body: JSON.stringify({
           ...personalFormData,
-          profileImage: {
-            uri: profileImage,
-            type: 'image/jpeg',
-            name: profileImage.name,
-          },
+          profileImage: '',
         }),
       });
       const userData = await response.json();
