@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 
 const Register = () => {
   const router = useRouter();
-  // State to hold the form data
   const [personalFormData, setPersonalFormData] = useState<User>({
     firstName: '',
     lastName: '',
@@ -59,14 +58,18 @@ const Register = () => {
   const handleSubmit = async () => {
 
     try {
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
+      const response = await fetch('http://localhost:8000/api/users/signup-driver', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...personalFormData,
-          profileImage: profileImage,
+          profileImage: {
+            uri: profileImage,
+            type: 'image/jpeg',
+            name: profileImage.name,
+          },
         }),
       });
       const userData = await response.json();
@@ -91,8 +94,8 @@ const Register = () => {
         driverId: driverData.id,
         status: 'ACTIVE',
         location: {
-          latitude: "10.746494047397272",
-          longitude: "122.55620305514289",
+          latitude: 10.746494047397272,
+          longitude: 122.55620305514289,
         }
       }
 

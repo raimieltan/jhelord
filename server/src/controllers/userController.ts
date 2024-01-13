@@ -24,7 +24,6 @@ export async function signup(req: any, res: any) {
 }
 
 export async function signupDriver(req: any, res: any) {
-  console.log("REQ BODY: ", req.body);
   try {
     let profileImagePath = ''
     if (req.file) {

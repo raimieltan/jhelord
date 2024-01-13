@@ -36,8 +36,8 @@ const Map = ({
 
         units.forEach(unit => {
           const unitLocation = {
-            lat: unit.location.latitude,
-            lng: unit.location.longitude,
+            lat: Number(unit.location.latitude),
+            lng: Number(unit.location.longitude),
           }
           new google.maps.Marker({
             position: unitLocation,
