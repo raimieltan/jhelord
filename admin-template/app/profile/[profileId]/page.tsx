@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 const Profile = () => {
   const [driver, setDriver] = useState<Driver>();
   const driverId = usePathname().split("/")[2]
-  
+
   const fetchDriver = async () => {
     const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${driverId}`)
     const data = await response.json();
@@ -66,7 +66,7 @@ const Profile = () => {
               </div>
               <div className="flex flex-col items-center justify-center gap-1 px-4 xsm:flex-row">
                 <span className="font-semibold text-black dark:text-white">
-                  {driver?.driverReview[0].rating}/5
+                  {driver?.driverReview.length !== 0 ? driver?.driverReview[0].rating : 0}/5
                 </span>
                 <span className="text-sm">Ratings</span>
               </div>
