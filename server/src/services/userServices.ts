@@ -21,7 +21,7 @@ export async function signupUser(userData: UserCreateInput) {
     });
 
     const token = jwt.sign({ userId: newUser.id, username: newUser.username }, process.env.JWT_SECRET as string);
-    return newUser;
+    return token;
 }
 
 export async function loginUser(username: string, password: string): Promise<string> {
