@@ -8,7 +8,7 @@ const UnitTable = () => {
   const [units, setUnits] = useState<Unit[]>([])
 
   const fetchUnits = async () => {
-    const response = await fetch('http://localhost:8000/api/units');
+    const response = await fetch('https://jhelord-backend.onrender.com/api/units');
     const data = await response.json();
     setUnits(data);
   }

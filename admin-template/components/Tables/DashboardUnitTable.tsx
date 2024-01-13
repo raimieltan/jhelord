@@ -2,6 +2,7 @@
 
 import { Unit } from "@/app/types/unit";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 
@@ -16,6 +17,7 @@ const DashboardUnitTable = ({
   const ITEMS_PER_PAGE = 4; // Set the number of items you want per page
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [paginatedData, setPaginatedData] = useState<Unit[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     // Calculate the index of the first and last items on the current page
@@ -81,7 +83,10 @@ const DashboardUnitTable = ({
             }`}
           key={key}
         >
-          <div className="flex items-center justify-start p-2.5 xl:p-5 sm:justify-start">
+          <div 
+            className="flex items-center justify-start p-2.5 xl:p-5 sm:justify-start"
+            onClick={() => {router.push(`profile/${unit.driver.User.id}`)}}
+          >
             {/* TODO: Driver Image */}
             {/* <div className="flex-shrink-0">
               <Image src={unit.logo} alt="Brand" width={48} height={48} />

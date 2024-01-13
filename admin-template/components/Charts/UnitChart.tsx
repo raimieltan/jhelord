@@ -57,7 +57,7 @@ const UnitChart = ({
 
   const calculateStatusPercentage = (units: Unit[]) => {
     const totalCount = units.length;
-    const activeCount = units.filter(unit => unit.status === "ACTIVE").length;
+    const activeCount = units.filter(unit => unit.status === "active").length;
     const inactiveCount = totalCount - activeCount;
 
     const activePercentage = Math.round((activeCount / totalCount) * 100);

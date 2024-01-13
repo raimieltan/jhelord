@@ -71,23 +71,25 @@ const Register = () => {
     }
 
     try {
-      // First, submit the user data
-      const userResponse = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
+      // const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', options);
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
         method: "POST",
         body: formData, // Send the formData
       });
 
       // Handle the response for user data
-      if (!userResponse.ok) {
-        throw new Error(`HTTP error! status: ${userResponse.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const userData = await userResponse.json();
+      const userData = await response.json();
+
+      console.log("USER DATA: ", userData);
 
       const driver = {
         licenseNumber,
-        userId: userData.user.id,
-      };
+        userId: userData.id,
+      }
 
       // Submit the driver data
       const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
@@ -110,10 +112,10 @@ const Register = () => {
         driverId: driverData.id,
         status: 'ACTIVE',
         location: {
-          lat: 10.746494047397272,
-          lng: 122.55620305514289,
-        },
-      };
+          latitude: 10.746494047397272,
+          longitude: 122.55620305514289,
+        }
+      }
 
       // Submit the unit data
       const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
