@@ -12,6 +12,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enum for user roles
 enum UserRole {
   USER
   DRIVER
@@ -25,7 +26,10 @@ enum BookingStatus {
   COMPLETED
 }
 
-
+enum DriverStatus {
+  ACTIVE
+  INACTIVE
+}
 
 model User {
   id           Int            @id @default(autoincrement())
@@ -61,7 +65,7 @@ model Unit {
   make        String
   number      String
   plateNumber String
-  runTime     DateTime?     @default(now())
+  runTime     DateTime? @default(now())
   status      String
   location    Json
 
