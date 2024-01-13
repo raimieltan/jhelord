@@ -70,8 +70,6 @@ const Register = () => {
       });
       const userData = await response.json();
 
-      console.log("USER DATA: ", userData);
-
       const driver = {
         licenseNumber,
         userId: userData.id,

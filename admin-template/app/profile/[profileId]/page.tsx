@@ -66,7 +66,7 @@ const Profile = () => {
               </div>
               <div className="flex flex-col items-center justify-center gap-1 px-4 xsm:flex-row">
                 <span className="font-semibold text-black dark:text-white">
-                  {driver?.driverReview.length !== 0 ? driver?.driverReview[0].rating : 0}/5
+                  {calculateRating(driver?.driverReview)}/5
                 </span>
                 <span className="text-sm">Ratings</span>
               </div>
