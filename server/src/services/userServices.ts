@@ -23,6 +23,26 @@ export async function signupUser(userData: UserCreateInput) {
     const token = jwt.sign({ userId: newUser.id, username: newUser.username }, process.env.JWT_SECRET as string);
     return token;
 }
+export async function signupDriver(userData: UserCreateInput) {
+    const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+    const newUser = await prisma.user.create({
+        data: {
+            ...userData,
+            password: hashedPassword,
+        },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+            phoneNumber: true,
+            profileImage: true,
+        }
+    });
+
+    return newUser;
+}
 
 export async function loginUser(username: string, password: string): Promise<string> {
     const user = await prisma.user.findUnique({ where: { username } });

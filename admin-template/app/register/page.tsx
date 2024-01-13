@@ -51,7 +51,7 @@ const Register = () => {
 
     try {
       // const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', options);
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', {
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,9 +60,11 @@ const Register = () => {
       });
       const userData = await response.json();
 
+      console.log("USER DATA: ", userData);
+
       const driver = {
         licenseNumber,
-        userId: userData.user.id,
+        userId: userData.id,
       }
 
       const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
