@@ -74,6 +74,17 @@ export async function createUser(req: Request, res: Response) {
   }
 }
 
+export async function signupDriver(req: Request, res: Response) {
+  const userData: UserCreateInput = req.body
+  try {
+    console.log("DRIVER REQ: ", req.body)
+    const user = await userService.signupDriver(userData)
+    res.status(201).json(user)
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}
+
 export async function getUserProfile(req: Request, res: Response) {
   const userId = parseInt(req.params.userId)
   try {
