@@ -8,7 +8,7 @@ const DriverTable = () => {
   const [drivers, setDrivers] = useState<Driver[]>([])
 
   const fetchDrivers = async () => {
-    const response = await fetch('http://localhost:8000/api/drivers');
+    const response = await fetch('https://jhelord-backend.onrender.com/api/drivers');
     const data = await response.json();
     console.log(data);
     setDrivers(data);
