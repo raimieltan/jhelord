@@ -1,7 +1,7 @@
 "use client"
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { User } from "../types/user";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,6 @@ const Register = () => {
     phoneNumber: '',
     email: '',
     role: 'DRIVER',
-    profileImage: '',
   });
 
   const [licenseNumber, setLicenseNumber] = useState('')
@@ -27,6 +26,16 @@ const Register = () => {
     number: '',
     plateNumber: '',
   });
+
+  const [profileImage, setProfileImage] = useState<any>(null);
+  const fileInputRef = useRef();
+
+  const handleImageChange = (e: any) => {
+    if (e.target.files && e.target.files[0]) {
+      console.log("profile Image: ", e.target.files[0]);
+      setProfileImage(e.target.files[0]);
+    }
+  };
 
   // Handle input changes
   const personalFormHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,13 +59,15 @@ const Register = () => {
   const handleSubmit = async () => {
 
     try {
-      // const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', options);
       const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(personalFormData),
+        body: JSON.stringify({
+          ...personalFormData,
+          profileImage: profileImage,
+        }),
       });
       const userData = await response.json();
 
@@ -66,8 +77,7 @@ const Register = () => {
         licenseNumber,
         userId: userData.id,
       }
-
-      const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
+      const driverResponse = await fetch('http://localhost:8000/api/drivers', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,12 +91,12 @@ const Register = () => {
         driverId: driverData.id,
         status: 'ACTIVE',
         location: {
-          latitude: 10.746494047397272,
-          longitude: 122.55620305514289,
+          lat: 10.746494047397272,
+          lng: 122.55620305514289,
         }
       }
 
-      const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
+      const unitResponse = await fetch('http://localhost:8000/api/units', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -119,6 +129,21 @@ const Register = () => {
                   <form>
                     <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
                       <div className="w-full sm:w-1/2">
+                        <label
+                          className="mb-3 block text-sm font-medium text-black dark:text-white"
+                          htmlFor="profileImage"
+                        >
+                          Profile Image
+                        </label>
+                        <input
+                          className="w-full file:rounded file:border file:border-stroke file:bg-gray file:py-3 file:px-4.5 file:text-black focus:border-primary focus-visible:outline-none dark:file:border-strokedark dark:file:bg-meta-4 dark:file:text-white dark:focus:border-primary"
+                          type="file"
+                          name="profileImage"
+                          id="profileImage"
+                          ref={fileInputRef}
+                          onChange={handleImageChange}
+                          accept="image/*"
+                        />
                         <label
                           className="mb-3 block text-sm font-medium text-black dark:text-white"
                           htmlFor="fullName"

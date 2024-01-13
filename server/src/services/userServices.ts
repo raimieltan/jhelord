@@ -24,6 +24,8 @@ export async function signupUser(userData: UserCreateInput) {
     return token;
 }
 export async function signupDriver(userData: UserCreateInput) {
+    console.log("USERDATA: ", userData);
+
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
     const newUser = await prisma.user.create({
         data: {
