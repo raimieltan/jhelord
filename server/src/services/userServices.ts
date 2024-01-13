@@ -12,15 +12,15 @@ const saltRounds = 10; // for bcrypt
 
 
 export async function signupUser(userData: UserCreateInput) {
-    // const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
     const newUser = await prisma.user.create({
         data: {
             ...userData,
-            // password: hashedPassword,
+            password: hashedPassword,
         }
     });
 
-    // const token = jwt.sign({ userId: newUser.id, username: newUser.username }, process.env.JWT_SECRET as string);
+    const token = jwt.sign({ userId: newUser.id, username: newUser.username }, process.env.JWT_SECRET as string);
     return newUser;
 }
 
@@ -37,9 +37,7 @@ export async function loginUser(username: string, password: string): Promise<str
         throw new Error('Invalid username or password');
     }
 
-    const token = jwt.sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET as string, {
-        expiresIn: '1h',
-    });
+    const token = jwt.sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET as string);
 
     return token;
 }

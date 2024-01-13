@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import * as userService from '../services/userServices'
 import { UserCreateInput, UserProfileUpdateInput } from '../../types/user'
 
-export async function signup(req: Request, res: Response) {
+export async function signup(req: any, res: any) {
   try {
     let profileImagePath = '';
     if (req.file) {
