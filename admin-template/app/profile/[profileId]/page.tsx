@@ -66,7 +66,7 @@ const Profile = () => {
         },
         body: JSON.stringify(currentDriver),
       })
-      router.push('/')
+      router.push(`/profile/${driver?.User.id}`)
 
     } catch (error: any) {
       console.log(error.message);
