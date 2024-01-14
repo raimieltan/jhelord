@@ -18,6 +18,7 @@ const storage = multer.diskStorage({
 
 router.post('/signup', upload.single('profileImage'), userController.signup);
 router.post('/signup-driver', upload.single('profileImage'), userController.signupDriver);
+router.put('/update-driver/:id', upload.single('profileImage'), userController.updateDriver);
 router.post('/login', userController.login);
 router.post('/users', userController.createUser);
 router.get('/:userId/profile', authMiddleware.authenticateToken, userController.getUserProfile);

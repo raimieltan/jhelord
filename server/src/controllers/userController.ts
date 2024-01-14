@@ -40,6 +40,23 @@ export async function signupDriver(req: any, res: any) {
   }
 }
 
+export async function updateDriver(req: any, res: any) {
+  try {
+    let profileImagePath = ''
+    if (req.file) {
+      profileImagePath = req.file.path
+    }
+    const driverId = req.params.id;
+    const user = await userService.editUser(parseInt(driverId), {
+      ...req.body,
+      profileImage: profileImagePath,
+    })
+    res.status(201).json(user)
+  } catch (error: any) {
+    console.log(error.message)
+  }
+}
+
 export async function login(req: Request, res: Response) {
   try {
     const { username, password } = req.body

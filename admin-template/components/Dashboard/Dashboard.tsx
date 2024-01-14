@@ -10,9 +10,6 @@ import { LuClipboardCheck } from "react-icons/lu";
 import { LuClipboardPaste } from "react-icons/lu";
 import { LuClipboardX } from "react-icons/lu";
 
-import ChartOne from "../Charts/ChartOne";
-import ChartThree from "../Charts/ChartThree";
-import ChartTwo from "../Charts/ChartTwo";
 import CardDataStats from "../CardDataStats";
 import { Unit } from '@/app/types/unit';
 import { Driver } from '@/app/types/driver';
@@ -20,7 +17,6 @@ import Map from '../Map/map';
 import UnitChart from '../Charts/UnitChart';
 import BookingChart from '../Charts/BookingChart';
 import DashboardUnitTable from '../Tables/DashboardUnitTable';
-import UnitMap from '../Map/unitMap';
 
 const Dashboard = () => {
   const [units, setUnits] = useState<Unit[]>([]);
@@ -29,8 +25,10 @@ const Dashboard = () => {
 
   const fetchUnits = async () => {
     try {
+      // const response = await fetch('https://jhelord-backend.onrender.com/api/units');
       const response = await fetch('https://jhelord-backend.onrender.com/api/units');
       const data = await response.json();
+      console.log(data)
       setUnits(data);
 
     } catch (error: any) {
@@ -40,6 +38,7 @@ const Dashboard = () => {
 
   const fetchDrivers = async () => {
     try {
+      // const response = await fetch('https://jhelord-backend.onrender.com/api/drivers');
       const response = await fetch('https://jhelord-backend.onrender.com/api/drivers');
       const data = await response.json();
       setDrivers(data);
@@ -51,6 +50,7 @@ const Dashboard = () => {
 
   const fetchBookings = async () => {
     try {
+      // const response = await fetch('https://jhelord-backend.onrender.com/api/bookings');
       const response = await fetch('https://jhelord-backend.onrender.com/api/bookings');
       const data = await response.json();
       setBookings(data);

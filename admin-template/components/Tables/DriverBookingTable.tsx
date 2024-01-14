@@ -59,12 +59,13 @@ const DriverBookingTable = ({
           </div>
           <div className="col-span-2 hidden sm:flex">
             <p className="text-md text-black dark:text-white">
-              {booking.driver.unit[0].make} {booking.driver.unit[0].model}
+              {booking.driver.unit.length ? booking.driver.unit[0].make : ''} 
+              {booking.driver.unit.length ? booking.driver.unit[0].model : ''}
             </p>
           </div>
           <div className="col-span-1 flex items-center">
             <p className="text-md text-black dark:text-white">
-              {booking.driver.unit[0].number}
+              {booking.driver.unit.length ? booking.driver.unit[0].number : 'None'}
             </p>
           </div>
           <div className="col-span-2 flex items-center">

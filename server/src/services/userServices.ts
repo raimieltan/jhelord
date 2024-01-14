@@ -62,6 +62,14 @@ export async function loginUser(username: string, password: string): Promise<str
     return token;
 }
 
+export async function editUser(userId: number, userData: UserCreateInput) {
+    return await prisma.user.update({
+        where: {
+            id: userId,
+        },
+        data: userData,
+    })
+}
 
 export async function createUser(userData: UserCreateInput) {
     return await prisma.user.create({

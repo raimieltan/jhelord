@@ -1,4 +1,4 @@
-function calculateRating(driverReview: any) {
+const calculateRating  = (driverReview: any) => {
   let totalRating = 0
   for (const review of driverReview) {
     totalRating += review.rating
@@ -6,3 +6,5 @@ function calculateRating(driverReview: any) {
 
   return totalRating / driverReview.length
 }
+
+export default calculateRating;

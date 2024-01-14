@@ -20,7 +20,16 @@ export const getDriverById = async (id: number) => {
     where: { userId: id },
     include: {
       unit: true,
-      User: true,
+      User: {
+        select: {
+          username: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
+          email: true,
+          profileImage: true,
+        }
+      },
       driverReview: true,
       booking: {
         include: {
