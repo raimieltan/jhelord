@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost', 'jhelord-taxi.vercel.app'],
+    domains: ['localhost', 'jhelord-backend.onrender.com'],
   },
   typescript: {
     // !! WARN !!

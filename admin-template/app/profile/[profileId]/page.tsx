@@ -66,7 +66,6 @@ const Profile = () => {
         },
         body: JSON.stringify(currentDriver),
       })
-      const driverData = await driverResponse.json();
       router.push('/')
 
     } catch (error: any) {
