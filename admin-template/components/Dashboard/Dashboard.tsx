@@ -28,7 +28,6 @@ const Dashboard = () => {
       // const response = await fetch('https://jhelord-backend.onrender.com/api/units');
       const response = await fetch('https://jhelord-backend.onrender.com/api/units');
       const data = await response.json();
-      console.log(data)
       setUnits(data);
 
     } catch (error: any) {

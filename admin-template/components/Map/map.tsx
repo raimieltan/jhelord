@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { Unit } from '@/app/types/unit';
+import Modal from './markerModal';
 
 interface MapProps {
   units: Unit[];
@@ -10,6 +11,18 @@ const Map = ({
   units
 }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
+
+  const showModal = (unit: Unit) => {
+    setModalVisible(true);
+    setSelectedUnit(unit);
+  }
+
+  const hideModal = () => {
+    setModalVisible(false);
+    setSelectedUnit(null);
+  };
 
   useEffect(() => {
     const initMap = async () => {
@@ -20,7 +33,10 @@ const Map = ({
         });
 
         await loader.importLibrary('maps');
-        const initialCenter = {lat: 10.746494047397272, lng: 122.55620305514289};
+        const initialCenter = {
+          lat: Number(units[0].location.latitude),
+          lng: Number(units[0].location.longitude),
+        };
         const map = new google.maps.Map(mapRef.current as HTMLDivElement, {
           center: initialCenter,
           zoom: 13
@@ -39,12 +55,14 @@ const Map = ({
             lat: Number(unit.location.latitude),
             lng: Number(unit.location.longitude),
           }
-          new google.maps.Marker({
+          const marker = new google.maps.Marker({
             position: unitLocation,
             map: map,
             title: `Unit ${unit.number}` || '',
             icon: taxiIcon,  // Setting the custom icon
           });
+
+          marker.addListener('click', () => showModal(unit))
         });
       } catch (error: any) {
         console.log(error.message);
@@ -56,7 +74,17 @@ const Map = ({
     }
   }, [units]);
 
-  return <div className='w-full rounded-xl' ref={mapRef} />;
+  return (
+    <>
+      <div className='w-full h-full rounded-xl' ref={mapRef} />
+      {modalVisible && (
+        <Modal 
+          unit={selectedUnit} 
+          onClose={hideModal} 
+        />
+      )}
+    </>
+  );
 };
 
 export default Map;
