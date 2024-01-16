@@ -115,7 +115,7 @@ const Register = () => {
   };
 
   const fetchUsers = async () => {
-    const response = await fetch('http://localhost:8000/api/users/username')
+    const response = await fetch('https://jhelord-backend.onrender.com/api/users/username')
     const data = await response.json();
     setUsers(data);
 
