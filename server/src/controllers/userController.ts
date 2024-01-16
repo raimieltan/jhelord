@@ -117,6 +117,15 @@ export async function getUserProfile(req: Request, res: Response) {
   }
 }
 
+export async function getUserNames(req: Request, res: Response) {
+  try {
+    const users = await userService.retrieveUserNames()
+    res.status(200).json(users)
+  } catch (error: any) {
+    res.status(404).json({ message: error.message })
+  }
+}
+
 export async function deleteUser(req: Request, res: Response) {
   const userId = parseInt(req.params.userId)
   try {

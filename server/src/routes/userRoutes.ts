@@ -24,4 +24,5 @@ router.post('/users', userController.createUser);
 router.get('/:userId/profile', authMiddleware.authenticateToken, userController.getUserProfile);
 router.delete('/users/:userId', authMiddleware.authenticateToken, userController.deleteUser);
 router.get('/profile', authMiddleware.authenticateToken, userController.getUserFromToken);
+router.get('/username', userController.getUserNames);
 export default router;

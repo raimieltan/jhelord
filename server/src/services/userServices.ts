@@ -90,3 +90,12 @@ export async function deleteUser(userId: number) {
         where: { id: userId },
     });
 }
+
+export async function retrieveUserNames() {
+    return await prisma.user.findMany({
+        where: { role: 'DRIVER'},
+        select: {
+            username: true,
+        }
+    })
+}

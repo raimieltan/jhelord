@@ -5,12 +5,23 @@ import { useEffect, useRef, useState } from "react";
 import { User } from "../types/user";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
+import { MdOutlineMail } from "react-icons/md";
+import { MdOutlineSmartphone } from "react-icons/md";
+import ErrorAlert from "@/components/Alerts/ErrorAlert";
+import SuccessAlert from "@/components/Alerts/SuccessAlert";
 
 const Register = () => {
   const router = useRouter();
   const fileInputRef = useRef();
 
+  const [users, setUsers] = useState<User[]>([]);
+  const [validationMessages, setValidationMessages] = useState({
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    email: '',
+    username: '',
+  });
   const [personalFormData, setPersonalFormData] = useState<User>({
     firstName: '',
     lastName: '',
@@ -27,8 +38,10 @@ const Register = () => {
     number: '',
     plateNumber: '',
   });
-  const [profileImage, setProfileImage] = useState<any>();
-  const [imagePreview, setImagePreview] = useState('/taxi-driver.webp'); // Default image
+  const [profileImage, setProfileImage] = useState<any>('/taxi-driver.webp');
+  const [imagePreview, setImagePreview] = useState('/taxi-driver.webp');
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
 
   const handleImageChange = (e: any) => {
     if (e.target.files && e.target.files[0]) {
@@ -40,9 +53,53 @@ const Register = () => {
 
   // Handle input changes
   const personalFormHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setPersonalFormData({
       ...personalFormData,
-      [e.target.name]: e.target.value,
+      [name]: value,
+    });
+
+    let message = '';
+
+    if (name === "email") {
+      const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!re.test(value.toLowerCase())) {
+        message = 'Invalid Email Address';
+      }
+    }
+
+    if (name === "firstName") {
+      const re = /^[a-zA-Z]*$/
+      if (!re.test(value.toLowerCase())) {
+        message = 'Invalid First Name'
+      }
+    }
+
+    if (name === "lastName") {
+      const re = /^[a-zA-Z]*$/
+      if (!re.test(value.toLowerCase())) {
+        message = 'Invalid Last Name'
+      }
+    }
+
+    if (name === "username") {
+      if (users.some(user => user.username === value)) {
+        message = "Username already exists"
+      } else {
+        message = ''
+      }
+    }
+
+    if (name === "phoneNumber") {
+      const re = /^\d*$/
+      if (!re.test(value)) {
+        message = "Please enter a valid Phone Number"
+      }
+    }
+
+    setValidationMessages({
+      ...validationMessages,
+      [name]: message,
     });
   };
 
@@ -56,72 +113,94 @@ const Register = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const fetchUsers = async () => {
+    const response = await fetch('http://localhost:8000/api/users/username')
+    const data = await response.json();
+    setUsers(data);
+
+  }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
   // Handle form submission
   const handleSubmit = async () => {
+    const hasErrors = Object.values(validationMessages).some(message => message !== '');
 
-    try {
+    if (hasErrors) {
+      setShowErrorToast(true);
+      setTimeout(() => setShowErrorToast(false), 5000);
+    } else {
+      try {
+        const formData = new FormData();
 
-      const formData = new FormData();
-      
-      // Append all fields from personalFormData to formData
-      Object.keys(personalFormData).forEach(key => {
-        formData.append(key, personalFormData[key]);
-      });
-      
-      // Append profileImage file to formData
-      // const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
-      if (profileImage) {
-        formData.append('profileImage', profileImage);
-      }
+        Object.keys(personalFormData).forEach(key => {
+          formData.append(key, personalFormData[key]);
+        });
 
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
-        method: "POST",
-        body: formData
-      });
-      const userData = await response.json();
-
-      const driver = {
-        licenseNumber,
-        userId: userData.id,
-      }
-      // const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
-      const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(driver),
-      })
-      const driverData = await driverResponse.json();
-
-      const unit = {
-        ...unitFormData,
-        driverId: driverData.id,
-        status: 'ACTIVE',
-        location: {
-          latitude: 10.746494047397272,
-          longitude: 122.55620305514289,
+        if (profileImage) {
+          formData.append('profileImage', profileImage);
         }
+
+        const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
+          method: "POST",
+          body: formData
+        });
+        const userData = await response.json();
+
+        const driver = {
+          licenseNumber,
+          userId: userData.id,
+        }
+        
+        const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(driver),
+        })
+        const driverData = await driverResponse.json();
+
+        const unit = {
+          ...unitFormData,
+          driverId: driverData.id,
+          status: 'ACTIVE',
+          location: {
+            latitude: 10.746494047397272,
+            longitude: 122.55620305514289,
+          }
+        }
+
+        const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(unit),
+        })
+        setShowSuccessToast(true);
+
+        setTimeout(() => {
+          setShowSuccessToast(false)
+          router.push('/')
+        }, 5000);
+      } catch (error: any) {
+        setShowErrorToast(true);
+        setTimeout(() => setShowErrorToast(false), 5000);
+        console.log(error.message);
       }
-
-      // const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
-      const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(unit),
-      })
-      const unitData = await unitResponse.json()
-      router.push('/')
-
-    } catch (error: any) {
-      console.log(error.message);
     }
   };
 
   return (
     <>
+      {showErrorToast && <ErrorAlert />}
+
+      {showSuccessToast && <SuccessAlert />}
+
       <div className="mx-auto max-w-270">
         <Breadcrumb pageName="Register Driver" />
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -130,7 +209,7 @@ const Register = () => {
               Personal Information
             </h3>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-x-4">
             <div className="p-7">
               <form>
@@ -143,29 +222,36 @@ const Register = () => {
                       Full Name
                     </label>
                     <div className="relative">
-                      <span className="absolute left-4.5 top-4">
-                        {/* TODO ICON */}
-                      </span>
                       <div className="flex flex-r gap-x-4">
-                        <input
-                          className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                          type="text"
-                          name="firstName"
-                          id="firstName"
-                          value={personalFormData.firstName}
-                          onChange={personalFormHandleChange}
-                          placeholder="Input First Name"
-                        />
-                        <input
-                          className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                          type="text"
-                          name="lastName"
-                          id="lastName"
-                          value={personalFormData.lastName}
-                          onChange={personalFormHandleChange}
-                          placeholder="Input Last Name"
-                          defaultValue=""
-                        />
+                        <div className="w-full flex flex-col">
+                          <input
+                            className="w-full rounded border border-stroke bg-gray p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                            type="text"
+                            name="firstName"
+                            id="firstName"
+                            value={personalFormData.firstName}
+                            onChange={personalFormHandleChange}
+                            placeholder="Input First Name"
+                          />
+                          <div>
+                            {validationMessages.firstName && <p className="mt-2 text-sm text-meta-1">{validationMessages.firstName}</p>}
+                          </div>
+                        </div>
+                        <div className="w-full flex flex-col">
+                          <input
+                            className="w-full rounded border border-stroke bg-gray p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                            type="text"
+                            name="lastName"
+                            id="lastName"
+                            value={personalFormData.lastName}
+                            onChange={personalFormHandleChange}
+                            placeholder="Input Last Name"
+                            defaultValue=""
+                          />
+                          <div>
+                            {validationMessages.lastName && <p className="mt-2 text-sm text-meta-1">{validationMessages.lastName}</p>}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -178,16 +264,27 @@ const Register = () => {
                   >
                     Phone Number
                   </label>
-                  <input
-                    className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    type="text"
-                    name="phoneNumber"
-                    id="phoneNumber"
-                    value={personalFormData.phoneNumber}
-                    onChange={personalFormHandleChange}
-                    placeholder="Input Phone Number"
-                    defaultValue=""
-                  />
+                  <div className="relative">
+                    <div className="w-full flex flex-col">
+                      <span className="absolute left-3.5 top-3.5 text-xl">
+                        <MdOutlineSmartphone />
+                      </span>
+                      <input
+                        className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        type="text"
+                        name="phoneNumber"
+                        id="phoneNumber"
+                        value={personalFormData.phoneNumber}
+                        onChange={personalFormHandleChange}
+                        placeholder="Input Phone Number"
+                        defaultValue=""
+                      />
+                      <div>
+                        {validationMessages.phoneNumber && <p className="mt-2 text-sm text-meta-1">{validationMessages.phoneNumber}</p>}
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
 
                 <div className="mb-5.5">
@@ -198,15 +295,24 @@ const Register = () => {
                     Email Address
                   </label>
                   <div className="relative">
-                    <input
-                      className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                      type="email"
-                      name="email"
-                      id="email"
-                      value={personalFormData.email}
-                      onChange={personalFormHandleChange}
-                      placeholder="Enter Email"
-                    />
+                    <div className="w-full flex flex-col">
+                      <span className="absolute left-3.5 top-3.5 text-xl">
+                        <MdOutlineMail />
+                      </span>
+                      <input
+                        className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        type="email"
+                        name="email"
+                        id="email"
+                        value={personalFormData.email}
+                        onChange={personalFormHandleChange}
+                        placeholder="Input Email"
+                      />
+                      <div>
+                        {validationMessages.email && <p className="mt-2 text-sm text-meta-1">{validationMessages.email}</p>}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
@@ -217,15 +323,20 @@ const Register = () => {
                   >
                     Username
                   </label>
-                  <input
-                    className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    type="text"
-                    name="username"
-                    id="Username"
-                    value={personalFormData.username}
-                    onChange={personalFormHandleChange}
-                    placeholder="Enter Username"
-                  />
+                  <div className="w-full flex flex-col">
+                    <input
+                      className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      type="text"
+                      name="username"
+                      id="Username"
+                      value={personalFormData.username}
+                      onChange={personalFormHandleChange}
+                      placeholder="Create Username"
+                    />
+                    <div>
+                      {validationMessages.username && <p className="mt-2 text-sm text-meta-1">{validationMessages.username}</p>}
+                    </div>
+                  </div>
                 </div>
                 <div className="mb-5.5">
                   <label
@@ -236,12 +347,12 @@ const Register = () => {
                   </label>
                   <input
                     className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    type="text"
                     name="password"
+                    type="password"
                     id="Password"
                     value={personalFormData.password}
                     onChange={personalFormHandleChange}
-                    placeholder="Enter Password"
+                    placeholder="Create Password"
                   />
                 </div>
                 <div className="mb-5.5">
