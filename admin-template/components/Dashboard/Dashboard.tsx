@@ -35,21 +35,9 @@ const Dashboard = () => {
     }
   }
 
-  // const fetchDrivers = async () => {
-  //   try {
-  //     const response = await fetch('https://jhelord-backend.onrender.com/api/drivers');
-  //     const data = await response.json();
-  //     setDrivers(data);
-
-  //   } catch (error: any) {
-  //     console.log(error.message);
-  //   }
-  // }
-
   const fetchUsers = async () => {
     try {
-      // const response = await fetch('https://jhelord-backend.onrender.com/api/drivers');
-      const response = await fetch('http://localhost:8000/api/users');
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users');
       const data = await response.json();
       console.log(data);
       setUsers(data);
