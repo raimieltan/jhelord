@@ -9,7 +9,14 @@ export const getAllDrivers = async () => {
   return prisma.driver.findMany({
     include: {
       unit: true,
-      User: true,
+      User: {
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          phoneNumber: true,
+        }
+      },
       driverReview: true,
     },
   })

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import * as userService from '../services/userServices'
 import { UserCreateInput, UserProfileUpdateInput } from '../../types/user'
+import { Prisma } from '@prisma/client'
 
 export async function signup(req: any, res: any) {
   try {
@@ -131,6 +132,15 @@ export async function deleteUser(req: Request, res: Response) {
   try {
     await userService.deleteUser(userId)
     res.status(204).send()
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}
+
+export async function getUsers(req: Request, res: Response) {
+  try {
+    const users = await userService.retrieveUsers();
+    res.json(users);
   } catch (error: any) {
     res.status(400).json({ message: error.message })
   }

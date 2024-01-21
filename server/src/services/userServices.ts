@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import { Prisma, PrismaClient, UserRole } from '@prisma/client';
 import { UserCreateInput, UserProfileUpdateInput } from '../../types/user';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -96,6 +96,18 @@ export async function retrieveUserNames() {
         where: { role: 'DRIVER'},
         select: {
             username: true,
+        }
+    })
+}
+
+export async function retrieveUsers() {
+    return await prisma.user.findMany({
+        select: {
+            username: true,
+            email: true,
+            phoneNumber: true,
+            driver: true,
+            role: true,
         }
     })
 }
