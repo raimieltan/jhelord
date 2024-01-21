@@ -9,6 +9,8 @@ import { MdOutlineMail } from "react-icons/md";
 import { MdOutlineSmartphone } from "react-icons/md";
 import ErrorAlert from "@/components/Alerts/ErrorAlert";
 import SuccessAlert from "@/components/Alerts/SuccessAlert";
+import { FaRegEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 const Register = () => {
   const router = useRouter();
@@ -42,6 +44,7 @@ const Register = () => {
   const [imagePreview, setImagePreview] = useState('/taxi-driver.webp');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleImageChange = (e: any) => {
     if (e.target.files && e.target.files[0]) {
@@ -103,6 +106,10 @@ const Register = () => {
     });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const licenseNumberHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLicenseNumber(e.target.value);
   };
@@ -154,7 +161,7 @@ const Register = () => {
           licenseNumber,
           userId: userData.id,
         }
-        
+
         const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
           method: "POST",
           headers: {
@@ -345,15 +352,30 @@ const Register = () => {
                   >
                     Password
                   </label>
-                  <input
-                    className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    name="password"
-                    type="password"
-                    id="Password"
-                    value={personalFormData.password}
-                    onChange={personalFormHandleChange}
-                    placeholder="Create Password"
-                  />
+                  <div className="relative">
+                    <div className="w-full flex flex-col">
+                      <input
+                        className="w-full rounded border border-stroke bg-gray py-3 pr-11.5 pl-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        id="Password"
+                        value={personalFormData.password}
+                        onChange={personalFormHandleChange}
+                        placeholder="Create Password"
+                        onFocus={() => setShowPassword(false)}
+                      />
+                      <span 
+                        className="absolute right-3.5 top-3.5 text-xl"
+                        onClick={togglePasswordVisibility}
+                      >
+                        {
+                          showPassword ? <FaEyeSlash /> : <FaRegEye />
+                        }
+                        
+                        
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <div className="mb-5.5">
                   <label
@@ -432,7 +454,7 @@ const Register = () => {
                     <div className="relative">
                       <div className="flex flex-col gap-y-4">
                         <input
-                          className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke bg-gray py-3 pl-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                           type="text"
                           name="model"
                           id="model"
@@ -452,7 +474,7 @@ const Register = () => {
                       Make
                     </label>
                     <input
-                      className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke bg-gray py-3 pl-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                       type="text"
                       name="make"
                       id="make"
