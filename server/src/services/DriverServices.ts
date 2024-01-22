@@ -16,6 +16,8 @@ export const getAllDrivers = async () => {
           email: true,
           phoneNumber: true,
           profileImage: true,
+          firstName: true,
+          lastName: true
         }
       },
       driverReview: true,
