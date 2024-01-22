@@ -17,10 +17,13 @@ const storage = multer.diskStorage({
 
 
 router.post('/signup', upload.single('profileImage'), userController.signup);
-router.post('/signup-driver', userController.signupDriver);
+router.post('/signup-driver', upload.single('profileImage'), userController.signupDriver);
+router.put('/update-driver/:id', upload.single('profileImage'), userController.updateDriver);
 router.post('/login', userController.login);
 router.post('/users', userController.createUser);
 router.get('/:userId/profile', authMiddleware.authenticateToken, userController.getUserProfile);
 router.delete('/users/:userId', authMiddleware.authenticateToken, userController.deleteUser);
 router.get('/profile', authMiddleware.authenticateToken, userController.getUserFromToken);
+router.get('/username', userController.getUserNames);
+router.get('/', userController.getUsers);
 export default router;

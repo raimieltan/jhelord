@@ -79,18 +79,25 @@ const DashboardUnitTable = ({
         <div
           className={`grid grid-cols-4 sm:grid-cols-4 ${key === units.length - 1
             ? ""
-            : "border-b border-stroke dark:border-strokedark"
+            : "border-b border-stroke dark:border-strokedark hover:bg-meta-4 transition-all"
             }`}
           key={key}
+          onClick={() => { router.push(`profile/${unit.driver.User.id}`) }}
         >
-          <div 
-            className="flex items-center justify-start p-2.5 xl:p-5 sm:justify-start"
-            onClick={() => {router.push(`profile/${unit.driver.User.id}`)}}
+          <div
+            className="flex items-center justify-between p-2.5 xl:p-5 sm:justify-start"
           >
             {/* TODO: Driver Image */}
-            {/* <div className="flex-shrink-0">
-              <Image src={unit.logo} alt="Brand" width={48} height={48} />
-            </div> */}
+            <div className="overflow-hidden mr-4">
+              <Image
+                src={`https://jhelord-backend.onrender.com/${unit.driver.User.profileImage?.slice(4)}`}
+                alt="Driver" 
+                width={40} 
+                height={10} 
+                // layout="fill" 
+                // objectFit="cover" 
+              />
+            </div>
             <p className="text-black dark:text-white">
               {unit.driver.User.firstName} {unit.driver.User.lastName}
             </p>
