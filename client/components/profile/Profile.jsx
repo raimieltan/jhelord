@@ -1,20 +1,70 @@
 // components/profile/Profile.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
+import BottomNavBar from '../nav/BottomNav';
 
 
 const Profile = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [imageUrl, setImageUrl] = useState('')
+  const [userId, setUserId] = useState(null)
+  const [recentBookings, setRecentBookings] = useState([]);
+  const [activeBooking, setActiveBooking] = useState(null);
+
   const navigation = useNavigation();
 
   useEffect(() => {
     fetchUserProfile();
-  }, []);
+    fetchBookings()
+  }, [userId]);
+
+  const fetchBookings = async () => {
+    try {
+      if (userId) {
+        console.log(userId)
+        const response = await fetch(`http://192.168.1.101:8000/api/bookings/user/${userId}`, {
+          method: 'GET',
+
+        });
+
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch bookings');
+        }
+
+        const bookings = await response.json();
+        console.log(bookings)
+        processBookings(bookings);
+
+      }
+
+    } catch (error) {
+      console.error('Error fetching bookings:', error.message);
+      Alert.alert('Error', 'Failed to fetch bookings');
+    }
+  };
+
+  const processBookings = (bookings) => {
+    const active = bookings.find(booking => booking.status === 'ACCEPTED' || booking.status === 'PENDING');
+    const recent = bookings.filter(booking => booking.status !== 'ACCEPTED' && booking.status !== 'PENDING');
+
+    setActiveBooking(active);
+    setRecentBookings(recent);
+    console.log(activeBooking)
+  };
+
+  const renderBookingDetails = (booking) => (
+    <View key={booking.id} style={styles.bookingContainer}>
+      <Text style={styles.bookingText}>Driver: {booking.driver.User.firstName} {booking.driver.User.lastName}</Text>
+      <Text style={styles.bookingText}>Status: {booking.status}</Text>
+    </View>
+  );
+
+
 
   const fetchUserProfile = async () => {
     try {
@@ -37,16 +87,17 @@ const Profile = () => {
       }
 
       const userProfile = await response.json();
-   
-      await AsyncStorage.setItem("userId", userProfile.id+"")
+
+      await AsyncStorage.setItem("userId", userProfile.id + "")
+      setUserId(userProfile.id)
       setUsername(userProfile.username);
       setEmail(userProfile.email);
 
- 
+
       setImageUrl(`http://192.168.1.101:8000/uploads/${userProfile.profileImage.split("/")[2]}`)
 
       await AsyncStorage.setItem("userRole", userProfile.role)
-   
+
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
@@ -81,7 +132,7 @@ const Profile = () => {
           <Text style={styles.email}>{email}</Text>
         </View>
       </View>
-   
+
       <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
         <Text style={styles.mapButtonText}>Go to Map</Text>
       </TouchableOpacity>
@@ -94,7 +145,85 @@ const Profile = () => {
 
 
 
-   
+      <View style={
+        {
+          borderWidth: 0.5,
+          borderColor: 'gray',
+          marginVertical: 20,
+          width: '100%'
+        }
+      }>
+
+      </View>
+      <View>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 24,
+          color: '#737272'
+        }}>
+          Active Booking
+        </Text>
+
+        {activeBooking && (
+          <View>
+       
+            {renderBookingDetails(activeBooking)}
+          </View>
+        )}
+
+
+        <View style={
+          {
+            borderWidth: 0.5,
+            borderColor: 'gray',
+            marginVertical: 20,
+            width: '100%'
+          }
+        }>
+
+        </View>
+
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 24,
+          color: '#737272'
+        }}>
+          Recent Bookings
+        </Text>
+        <ScrollView style={{
+          height: '30%'
+        }}>
+        {recentBookings.map(booking => renderBookingDetails(booking))}
+        </ScrollView>
+     
+      </View>
+
+
+
+      <View style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+
+
+
+      }}>
+        <View style={{
+          position: 'absolute',
+          bottom: 0,
+          width: '100vw',
+          justifyContent: 'center',
+          alignContent: 'center',
+          alignItems: 'center'
+        }}>
+
+          <BottomNavBar />
+        </View>
+
+      </View>
+
+
     </View>
   );
 };
@@ -118,6 +247,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#737272'
   },
   email: {
     fontSize: 16,
@@ -143,6 +273,24 @@ const styles = StyleSheet.create({
   logoutButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  heading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  bookingContainer: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    marginBottom: 10,
+    backgroundColor: 'white'
+  },
+  bookingText: {
+    fontSize: 16,
+    color: '#555',
   },
 });
 

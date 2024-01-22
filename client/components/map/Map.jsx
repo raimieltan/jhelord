@@ -550,15 +550,25 @@ const Map = () => {
                                                 </TouchableOpacity>
                                             </View>
                                         </View>) : (
-                                            <View> 
+                                            <View style={{
+                                                margin: 20
+                                            }}> 
                                                 <TouchableOpacity
                                                 onPress={() => {
                                                     setIsModalVisible(true)
                                                 }}
                                                  style={{
-                                                    backgroundColor: 'green'
+                                                    backgroundColor: 'green',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    padding: 5,
+                                                    borderRadius: 10
+                                            
                                                 }}>
-                                                    <Text>Active Booking</Text>
+                                                    <Text style={{
+                                                        color: 'white',
+                                                        fontWeight: 'bold'
+                                                    }}>You have an active Booking</Text>
                                                 </TouchableOpacity>
                                             </View>
                                         )
