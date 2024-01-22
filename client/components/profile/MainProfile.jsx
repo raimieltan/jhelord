@@ -16,7 +16,7 @@ const MainProfile = () => {
                 return;
             }
 
-            const response = await fetch('https://jhelord-backend.onrender.com/api/users/profile', {
+            const response = await fetch('http://192.168.1.101:8000/api/users/profile', {
                 method: 'GET',
                 headers: {
                     Authorization: token,

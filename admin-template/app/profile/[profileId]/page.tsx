@@ -11,7 +11,7 @@ const Profile = () => {
   const driverId = usePathname().split("/")[2]
 
   const fetchDriver = async () => {
-    const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${driverId}`)
+    const response = await fetch(`http://192.168.1.101:8000/api/drivers/${driverId}`)
     const data = await response.json();
     setDriver(data);
     console.log("RPOFLE: ", data)

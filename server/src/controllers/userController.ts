@@ -78,6 +78,7 @@ export async function signupDriver(req: Request, res: Response) {
   const userData: UserCreateInput = req.body
   try {
     console.log("DRIVER REQ: ", req.body)
+    console.log(req.body)
     const user = await userService.signupDriver(userData)
     res.status(201).json(user)
   } catch (error: any) {

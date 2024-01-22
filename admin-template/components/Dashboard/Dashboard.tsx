@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   const fetchUnits = async () => {
     try {
-      const response = await fetch('https://jhelord-backend.onrender.com/api/units');
+      const response = await fetch('http://192.168.1.101:8000/api/units');
       const data = await response.json();
       setUnits(data);
       console.log(units)
@@ -41,7 +41,7 @@ const Dashboard = () => {
 
   const fetchDrivers = async () => {
     try {
-      const response = await fetch('https://jhelord-backend.onrender.com/api/drivers');
+      const response = await fetch('http://192.168.1.101:8000/api/drivers');
       const data = await response.json();
       setDrivers(data);
 
@@ -52,7 +52,7 @@ const Dashboard = () => {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch('https://jhelord-backend.onrender.com/api/bookings');
+      const response = await fetch('http://192.168.1.101:8000/api/bookings');
       const data = await response.json();
       setBookings(data);
 

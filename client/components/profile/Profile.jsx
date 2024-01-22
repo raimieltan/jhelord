@@ -25,7 +25,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/profile', {
+      const response = await fetch('http://192.168.1.101:8000/api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -43,7 +43,7 @@ const Profile = () => {
       setEmail(userProfile.email);
 
  
-      setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
+      setImageUrl(`http://192.168.1.101:8000/uploads/${userProfile.profileImage.split("/")[2]}`)
 
       await AsyncStorage.setItem("userRole", userProfile.role)
    

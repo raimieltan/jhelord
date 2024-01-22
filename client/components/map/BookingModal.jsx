@@ -32,7 +32,7 @@ const filterCarsWithinRadius = (carOptions, currentLocation, radius) => {
     });
 };
 
-const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => {
+const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIsActiveBooking, bookedId, currentDriver }) => {
     const carPlaceholderImage = "https://cdn-icons-png.flaticon.com/512/55/55283.png";
 
     const [driversData, setDriversData] = useState([]);
@@ -41,17 +41,56 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
     const [error, setError] = useState(null);
     const [radius, setRadius] = useState(10); // default radius of 10 km
     const [bookingStatus, setBookingStatus] = useState(null); // New state for booking status
-    const [bookingId, setBookingId] = useState(null);
-    const [bookedDriver, setBookedDriver] = useState(null)
+    const [bookingId, setBookingId] = useState(bookedId);
+    const [bookedDriver, setBookedDriver] = useState(currentDriver)
     const [user, setUser] = useState(null)
 
+    function getPendingOrAcceptedBookings(bookings) {
+        return bookings.filter(booking => booking.status === "PENDING" || booking.status === "ACCEPTED");
+      }
+    const fetchUserBookings = async () => {
+        try {
+           
+            if(user){
+                const response = await fetch(`http://192.168.1.101:8000/api/bookings/user/${user}`, {
+                    method: 'GET',
+    
+                });
+                const bookings = await response.json();
+                const pending = getPendingOrAcceptedBookings(bookings)
+                if(pending.length > 0) {
+                  
+                    setBookingId(pending[0].id)
+            
+                }
+                else{
+                    setBookingId(null)
+          
+                }
+            
+            } 
+        
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    
+    const fetchuserId = async () => {
+        const id = await AsyncStorage.getItem("userId")
+        setUser(id)
+    }
+
+
+
     useEffect(() => {
+
         const fetchBookingStatus = async () => {
             try {
                 if (bookingId) {
-                    console.log(bookingId)
+                 
                     const token = 'yourAuthToken'; // Replace with the actual authentication token
-                    const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${bookingId}`, {
+                    const response = await fetch(`http://192.168.1.101:8000/api/bookings/${bookingId}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -74,10 +113,14 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                     // }
                     if (bookingStatus === 'CANCELLED') {
 
+                        console.log(bookingStatus)
                         setBookingId(null)
                         setBookingStatus(null)
 
                     }
+                }  else {
+                    console.log("waay")
+                    console.log(bookedId)
                 }
             } catch (error) {
                 console.error('Error fetching booking status:', error);
@@ -86,18 +129,18 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
 
         const intervalId = setInterval(() => {
             fetchBookingStatus();
-
-        }, 5000);
+         fetchuserId()
+        }, 1200);
 
         return () => clearInterval(intervalId);
-    }, [bookingId, bookingStatus]);
+    }, [bookingId, bookingStatus, user]);
 
 
     useEffect(() => {
         const fetchDrivers = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('https://jhelord-backend.onrender.com/api/drivers/');
+                const response = await fetch('http://192.168.1.101:8000/api/drivers/');
                 const data = await response.json();
            
                 setDriversData(data);
@@ -117,7 +160,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
     useEffect(() => {
         if (pickupLocation && driversData.length > 0) {
             const filtered = filterCarsWithinRadius(driversData, pickupLocation, radius);
-            console.log(filtered)
+ 
             setFilteredDrivers(filtered);
         }
     }, [driversData, pickupLocation, radius]);
@@ -130,7 +173,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
             const token = 'yourAuthToken'; // Replace with actual token
             const userId = await AsyncStorage.getItem('userId'); // Replace with actual user ID from storage or state
             setUser(userId)
-            const response = await fetch('https://jhelord-backend.onrender.com/api/bookings', {
+            const response = await fetch('http://192.168.1.101:8000/api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -170,7 +213,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                 return;
             }
 
-            const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${bookingId}/status`, {
+            const response = await fetch(`http://192.168.1.101:8000/api/bookings/${bookingId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -209,7 +252,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
 
     const CarItem = ({ unit, driverName, driver }) => (
         <View style={styles.itemContainer}>
-            <Image source={{ uri: `https://jhelord-backend.onrender.com/uploads/${driver.User.profileImage.split("/")[2]}` }} style={styles.carImage} />
+            <Image source={{ uri: `http://192.168.1.101:8000/uploads/${driver.User.profileImage.split("/")[2]}` }} style={styles.carImage} />
             <View style={styles.carDetails}>
                 <Text style={styles.carModel}>{`${unit.model} ${unit.make} `}</Text>
                 <Text style={styles.carPrice}>{`Plate: ${unit.plateNumber}`}</Text>
@@ -227,6 +270,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
             <TouchableOpacity style={styles.bookButton} onPress={() => {
                 setBookedDriver(driver)
                 handleBooking(driver.id)
+                setIsActiveBooking(true)
             }} disabled={isLoading}>
                 <Text style={styles.bookButtonText}>Book</Text>
             </TouchableOpacity>
@@ -290,7 +334,10 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress }) => 
                                         }}>
                                             Booking has been completed. Thanks for trusting our company.
                                         </Text>
-                                        <Rating onClose={onClose} driver={bookedDriver} userId={user} setBookingId={setBookingId} setBookingStatus={setBookingStatus} />
+                                        {
+                                            user &&  (<Rating onClose={onClose} driver={bookedDriver} userId={user} setBookingId={setBookingId} setBookingStatus={setBookingStatus} />)
+                                        }
+                                        
                                     </>
                                 ) : (
                                     <Text style={{

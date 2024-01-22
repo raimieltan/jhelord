@@ -26,7 +26,11 @@ export const getBookingById = async (id: number) => {
 export const getBookingByUserId = async (id: number) => {
   return prisma.booking.findMany({
     where: { userId: id },
-    include: { driver: true },
+    include: { driver: {
+      include: {
+        User: true
+      }
+    } },
   })
 }
 

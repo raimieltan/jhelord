@@ -46,7 +46,7 @@ const ProfileDriver = () => {
         return;
       }
 
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/profile', {
+      const response = await fetch('http://192.168.1.101:8000/api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -59,7 +59,7 @@ const ProfileDriver = () => {
       setRole(userProfile.role)
       setId(userProfile.id)
       setUser(userProfile)
-      setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
+      setImageUrl(`http://192.168.1.101:8000/uploads/${userProfile.profileImage.split("/")[2]}`)
 
 
     } catch (error) {
@@ -73,7 +73,7 @@ const ProfileDriver = () => {
     try {
 
       console.log(id)
-      const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
+      const response = await fetch(`http://192.168.1.101:8000/api/drivers/${id}`, {
         method: 'GET',
 
       });

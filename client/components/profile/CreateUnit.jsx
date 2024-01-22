@@ -18,7 +18,7 @@ const CreateEditUnit = ({ route }) => {
   const [id, setId] = useState()
   const [unit, setUnit] = useState({})
   const [status, setStatus] = useState(unit?.status ?? 'Active');
-  const statuses = ["active", "inactive", "maintenance"];
+  const statuses = ["ACTIVE", "INACTIVE", "MAINTENANCE"];
   const [driver, setDriver] = useState({})
 
   const navigation = useNavigation()
@@ -59,7 +59,7 @@ const CreateEditUnit = ({ route }) => {
 
 
   useEffect(() => {
-    setStatus(unit?.status ?? 'active')
+    setStatus(unit?.status ?? 'ACTIVE')
     setMake(unit?.make ?? 'Make')
     setModel(unit?.model ?? 'Model')
     setPlateNumber(unit?.plateNumber ?? 'Plate Number')
@@ -82,7 +82,7 @@ const CreateEditUnit = ({ route }) => {
 
       if (id) {
 
-        const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
+        const response = await fetch(`http://192.168.1.101:8000/api/drivers/${id}`, {
           method: 'GET',
 
         });
@@ -129,7 +129,7 @@ const CreateEditUnit = ({ route }) => {
           longitude: location?.coords.longitude
         }
 
-        const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
+        const response = await fetch(`http://192.168.1.101:8000/api/units${unit ? '/' + unit.id : ''}`, {
           method: method, // Change to 'PUT' and add an ID for editing an existing unit
           headers: {
             'Content-Type': 'application/json',

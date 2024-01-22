@@ -91,6 +91,11 @@ const Map = () => {
     const [role, setRole] = useState(null)
     const [pickupLocation, setPickupLocation] = useState(null)
     const [pickupAddress, setPickUpAddress] = useState(null)
+    const [isActiveBooking, setIsActiveBooking] = useState(false)
+    const [userId, setUserId] = useState(null)
+    const [currentBooking, setCurrentBooking] = useState(0)
+    const [currentDriver, setCurrentDriver] = useState(null)
+    const [isBooking, setIsBooking] = useState(false)
     const mapViewRef = React.useRef(null);
 
     const handleMarkerPress = (driver) => {
@@ -105,14 +110,77 @@ const Map = () => {
         setRole(role)
     }
 
+    const fetchuserId = async () => {
+        const id = await AsyncStorage.getItem("userId")
+       setUserId(id)
+    }
+
     useEffect(() => {
         fetchRole()
+        fetchuserId()
     }, [])
+
+    function getPendingOrAcceptedBookings(bookings) {
+        return bookings.filter(booking => booking.status === "PENDING" || booking.status === "ACCEPTED");
+      }
+
+
+    const fetchUserBookings = async () => {
+        try {
+    
+            if(userId){
+                const response = await fetch(`http://192.168.1.101:8000/api/bookings/user/${userId}`, {
+                    method: 'GET',
+    
+                });
+                const bookings = await response.json();
+                const pending = getPendingOrAcceptedBookings(bookings)
+                if(pending.length > 0) {
+                  
+                    setCurrentBooking(pending[0].id)
+                    setCurrentDriver(pending[0].driver)
+                    setIsBooking(true)
+                    setPickupLocation({"lat": 10.761488062748754, "lng": 122.49605119228364})
+                    setPickUpAddress("PHF5+J27, Jaro, Iloilo City, Iloilo, Philippines")
+                   
+                   
+                }
+                else{
+                    setCurrentBooking(null)
+                    setIsBooking(false)
+          
+                }
+            
+            } else {
+                console.log("no user")
+            }
+         
+        
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+
+
+        // Set up the interval
+        const intervalId = setInterval(() => {
+           
+            fetchUserBookings()
+            
+           console.log(currentBooking)
+        }, 1000);
+
+        // Clear the interval when the component unmounts or dependencies change
+        return () => clearInterval(intervalId);
+    }, [userId, isBooking, currentBooking])
+
 
 
     const fetchDrivers = async () => {
         try {
-            const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers`, {
+            const response = await fetch(`http://192.168.1.101:8000/api/drivers`, {
                 method: 'GET',
 
             });
@@ -138,7 +206,7 @@ const Map = () => {
         // Set up the interval
         const intervalId = setInterval(() => {
             fetchDrivers()
-            console.log("fetched drivers")
+     
         }, 10000);
 
         // Clear the interval when the component unmounts or dependencies change
@@ -247,6 +315,7 @@ const Map = () => {
         const { latitude, longitude } = event.nativeEvent.coordinate;
         if (role === 'USER') {
             setPickupLocation({ lat: latitude, lng: longitude });
+     
 
             try {
                 const geocodeResponse = await fetch(
@@ -259,7 +328,7 @@ const Map = () => {
                     return;
                 }
                 setPickUpAddress(geocodeJson.results[0].formatted_address)
-
+                console.log(pickupAddress)
 
             } catch (error) {
                 console.log('Geocoding error:', error);
@@ -302,6 +371,8 @@ const Map = () => {
         fetchLocation();
     }, []);
 
+
+
     return (
         <View style={styles.container}>
             <View style={styles.container}>
@@ -316,7 +387,7 @@ const Map = () => {
                             <MapHeader title={role === 'USER' ? "Book a taxi" : "Bookings"} subtext={role === 'USER' ? "We have provided taxis near your location. Tap and hold an area in the map to choose your pickup location" : "Wait for bookings at the bookings tab. Please accept only one booking at a time"} />
                         </View>
 
-                        
+
                         <DriverInfoModal
                             isVisible={isDriverModalVisible}
                             onClose={() => setIsDriverModalVisible(false)}
@@ -331,6 +402,9 @@ const Map = () => {
 
                                 pickupLocation={pickupLocation}
                                 pickupAddress={`Near ${pickupAddress.split(",").slice(0, 2)}`}
+                                setIsActiveBooking={setIsActiveBooking}
+                                bookedId={currentBooking}
+                                currentDriver={currentDriver}
                             />
                         }
 
@@ -388,7 +462,7 @@ const Map = () => {
                                     </Marker>
                                 )}
 
-                                {pickupLocation && (
+                                {pickupLocation && !isActiveBooking && (
                                     <Marker
                                         coordinate={{
                                             latitude: pickupLocation.lat,
@@ -408,7 +482,7 @@ const Map = () => {
                                     />
                                 )}
 
-                                {role === 'USER' && drivers?.map((car, index) => (
+                                {/* {role === 'USER' && drivers?.map((car, index) => (
 
                                     <Marker
                                         key={index}
@@ -418,65 +492,90 @@ const Map = () => {
                                     >
                                         <CustomMarker />
                                     </Marker>
-                                ))}
+                                ))} */}
 
                             </MapView>
                         </View>
 
                         {
-                            pickupLocation && pickupAddress && role === 'USER' && (
+                            (pickupLocation && pickupAddress && role === 'USER') && (
                                 <View style={{
                                     backgroundColor: 'white',
                                     width: '100%'
                                 }}>
 
-                                    <View style={{
-                                        backgroundColor: '#a1a1a1',
-                                        marginVertical: 10,
-                                        marginHorizontal: 10,
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        color: 'white'
-                                    }}>
-                                        <Text style={{
-                                            color: 'white',
-                                            fontSize: 18
-                                        }}>
-                                            Near {pickupAddress.split(",").slice(0, 2)}
-                                        </Text>
-                                        <Text>
-                                            {pickupAddress}
-                                        </Text>
-                                    </View>
-
-                                    <View style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center'
-                                    }}>
-                                        <TouchableOpacity
-                                            onPress={() => setIsModalVisible(true)}
-                                            style={{
-                                                backgroundColor: 'green',
-                                                margin: 10,
-                                                width: '90%',
+                                    {
+                                        !currentBooking ? (<View >
+                                            <View style={{
+                                                backgroundColor: '#a1a1a1',
+                                                marginVertical: 10,
+                                                marginHorizontal: 10,
                                                 padding: 10,
-                                                alignItems: 'center',
-                                                borderRadius: 10
-
-                                            }}>
-                                            <Text style={{
+                                                borderRadius: 10,
                                                 color: 'white'
                                             }}>
-                                                Confirm Pickup Location
-                                            </Text>
+                                                <Text style={{
+                                                    color: 'white',
+                                                    fontSize: 18
+                                                }}>
+                                                    Near {pickupAddress.split(",").slice(0, 2)}
+                                                </Text>
+                                                <Text>
+                                                    {pickupAddress}
+                                                </Text>
+                                            </View>
 
-                                        </TouchableOpacity>
-                                    </View>
+                                            <View style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}>
+                                                <TouchableOpacity
+                                                    onPress={() => setIsModalVisible(true)}
+                                                    style={{
+                                                        backgroundColor: 'green',
+                                                        margin: 10,
+                                                        width: '90%',
+                                                        padding: 10,
+                                                        alignItems: 'center',
+                                                        borderRadius: 10
+
+                                                    }}>
+                                                    <Text style={{
+                                                        color: 'white'
+                                                    }}>
+                                                        Confirm Pickup Location
+                                                    </Text>
+
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>) : (
+                                            <View> 
+                                                <TouchableOpacity
+                                                onPress={() => {
+                                                    setIsModalVisible(true)
+                                                }}
+                                                 style={{
+                                                    backgroundColor: 'green'
+                                                }}>
+                                                    <Text>Active Booking</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )
+                                    }
+
+                                    
+
+
+
+
                                 </View>
 
                             )
                         }
+
+    
+
 
 
 
@@ -487,6 +586,7 @@ const Map = () => {
                             currentLocation={location} // Your user's current location
                             fetchDirections={fetchDirections}
                             setDirections={setDirections}
+
                         />}
 
                     </>

@@ -71,18 +71,20 @@ const Register = () => {
     }
 
     try {
-      // const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup', options);
-      const response = await fetch('https://jhelord-backend.onrender.com/api/users/signup-driver', {
+      // const response = await fetch('http://192.168.1.101:8000/api/users/signup', options);
+      const response = await fetch('http://192.168.1.101:8000/api/users/signup-driver', {
         method: "POST",
         body: formData, // Send the formData
       });
 
+      console.log(response)
       // Handle the response for user data
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`HTTP error! status: ${response.status}`);
+      // }
 
       const userData = await response.json();
+      console.log(userData)
 
       console.log("USER DATA: ", userData);
 
@@ -92,13 +94,15 @@ const Register = () => {
       }
 
       // Submit the driver data
-      const driverResponse = await fetch('https://jhelord-backend.onrender.com/api/drivers', {
+      const driverResponse = await fetch('http://192.168.1.101:8000/api/drivers', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(driver),
       });
+
+    
 
       // Handle the response for driver data
       if (!driverResponse.ok) {
@@ -118,7 +122,7 @@ const Register = () => {
       }
 
       // Submit the unit data
-      const unitResponse = await fetch('https://jhelord-backend.onrender.com/api/units', {
+      const unitResponse = await fetch('http://192.168.1.101:8000/api/units', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
