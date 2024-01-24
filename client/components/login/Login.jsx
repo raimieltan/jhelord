@@ -14,6 +14,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       // Assume you have an authentication API endpoint
+      console.log("test")
       const response = await fetch('https://jhelord-backend.onrender.com/api/users/login', {
         method: 'POST',
         headers: {
@@ -21,6 +22,8 @@ const Login = () => {
         },
         body: JSON.stringify({ username, password }),
       });
+
+      
 
 
 
@@ -67,13 +70,17 @@ const Login = () => {
     fetchUserProfile();
   }, []);
 
+  
+
   return (
     <View style={styles.container}>
-      <Image style={{
-        width: 300,
-        height: 300
-      }} source={Logo} />
-
+    <Text style={{
+      fontWeight: 'bold',
+      fontSize: 24,
+      marginBottom: 20
+    }}>
+         LOGIN
+        </Text>
       <View style={styles.termsContainer}>
         <Text style={styles.termsText}>
           By signing in you are agreeing to our Terms and privacy policy
@@ -104,7 +111,7 @@ const Login = () => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={handleNavigateToSignup}>
-        <Text style={styles.buttonText}>Signup</Text>
+        <Text style={styles.buttonText}>Go to signup</Text>
       </TouchableOpacity>
 
 

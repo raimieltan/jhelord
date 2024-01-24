@@ -15,6 +15,7 @@ const Signup = () => {
   const [lastName, setLastName] = useState('')
   const [profileImage, setProfileImage] = useState('https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg')
   const [isLoading, setIsLoading] = useState(false)
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -100,10 +101,14 @@ const Signup = () => {
 
   return (
     <View style={styles.container}>
-      <Image style={{
-        width: 200,
-        height: 200
-      }} source={Logo} />
+
+      <Text style={{
+        fontWeight: 'bold',
+        fontSize: 24,
+        marginBottom: 20
+      }}>
+        SIGNUP
+      </Text>
 
       <View style={styles.termsContainer}>
         <Text style={styles.termsText}>
@@ -118,7 +123,7 @@ const Signup = () => {
 
         {
           profileImage && (
-            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <Image
                 source={{ uri: profileImage }}
                 style={styles.pickedImage}
@@ -187,8 +192,15 @@ const Signup = () => {
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            secureTextEntry={!passwordVisible}
           />
+          <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+            <Icon
+              name={passwordVisible ? "eyeo" : "eye"}
+              size={20}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
       </ScrollView>
 

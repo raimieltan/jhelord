@@ -21,10 +21,8 @@ export default function App() {
 
  
       <View style={{ flex: 1 }}>
-        <View style={{ padding: 10, margintop: 10, backgroundColor: isConnected ? 'green' : 'red', position: 'relative', top: 10, zIndex: 10 }}>
-          <Text style={{ color: 'white' }}>
-            {isConnected ? 'Online' : 'Offline'}
-          </Text>
+        <View style={{ padding: 10, margintop: 10, backgroundColor:'white', position: 'relative', top: 10, zIndex: 10 }}>
+        
         </View>
         <NavigationContainer>
           <MainStackNavigator />

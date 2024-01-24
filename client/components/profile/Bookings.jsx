@@ -193,6 +193,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         // const originLongitude = location.coords.longitude;
         fetchDirections(location)
       }
+    
       Alert.alert('Success', `Booking has been ${newStatus.toLowerCase()}.`);
 
       // Update the local state to reflect the change
@@ -231,12 +232,15 @@ const BookingList = ({ fetchDirections, setDirections }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.rejectButton}
-                onPress={() => changeBookingStatus(item.id, 'CANCELLED')}>
+                onPress={() => {
+                  setDirections([]);
+                  changeBookingStatus(item.id, 'CANCELLED')}}>
                 <Text style={styles.buttonText}>Cancel</Text>
               </TouchableOpacity>
             </>
           ) : (
-            <TouchableOpacity
+            <>
+             <TouchableOpacity
               style={styles.completeButton}
               onPress={() => {
                 setDirections([]);
@@ -244,6 +248,14 @@ const BookingList = ({ fetchDirections, setDirections }) => {
               }}>
               <Text style={styles.buttonText}>Complete</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.rejectButton}
+                onPress={() => changeBookingStatus(item.id, 'CANCELLED')}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </>
+           
+            
           )}
         </View>
       </View>
