@@ -40,7 +40,7 @@ const Profile = () => {
     try {
       if (userId) {
         console.log(userId)
-        const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/user/${userId}`, {
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/user/${userId}`, {
           method: 'GET',
 
         });
@@ -89,7 +89,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('https://jhelord-backend.onrender.com//api/users/profile', {
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -111,7 +111,7 @@ const Profile = () => {
       setUserId(userId);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
-      setImageUrl(`https://jhelord-backend.onrender.com//uploads/${userProfile.profileImage.split("/")[2]}`)
+      setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
 
       await AsyncStorage.setItem("userRole", userProfile.role)
 

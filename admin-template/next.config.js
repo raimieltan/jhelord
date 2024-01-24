@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['localhost', 'jhelord-backend.onrender.com'],
+  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if

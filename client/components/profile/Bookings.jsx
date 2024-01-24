@@ -16,7 +16,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         return;
       }
 
-      const response = await fetch('https://jhelord-backend.onrender.com//api/users/profile', {
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -29,7 +29,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
 
       const userProfile = await response.json();
       if (userProfile) {
-        const response = await fetch(`https://jhelord-backend.onrender.com//api/drivers/${userProfile.id}`, {
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${userProfile.id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         longitude: location?.coords.longitude
       }
 
-      const response = await fetch(`https://jhelord-backend.onrender.com//api/units/${driver?.unit[0].id}/location`, {
+      const response = await fetch(`https://jhelord-backend.onrender.com/api/units/${driver?.unit[0].id}/location`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
     try {
 
       if (driver) {
-        const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/driver/${driver?.id}`);
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/driver/${driver?.id}`);
         if (!response.ok) {
           throw new Error('Error fetching bookings');
         }
@@ -165,7 +165,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         return;
       }
 
-      const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${bookingId}/status`, {
+      const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${bookingId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
     <TouchableOpacity>
       <View style={styles.itemContainer}>
         <Image
-          source={{ uri:`https://jhelord-backend.onrender.com//uploads/${item.User.profileImage.split("/")[2]}` }} // Replace with the actual user profile image URI
+          source={{ uri:`https://jhelord-backend.onrender.com/uploads/${item.User.profileImage.split("/")[2]}` }} // Replace with the actual user profile image URI
           style={styles.profileImage}
         />
         <View style={styles.textContainer}>

@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import { Prisma, PrismaClient, UserRole } from '@prisma/client';
 import { UserCreateInput, UserProfileUpdateInput } from '../../types/user';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -62,6 +62,14 @@ export async function loginUser(username: string, password: string): Promise<str
     return token;
 }
 
+export async function editUser(userId: number, userData: UserCreateInput) {
+    return await prisma.user.update({
+        where: {
+            id: userId,
+        },
+        data: userData,
+    })
+}
 
 export async function createUser(userData: UserCreateInput) {
     return await prisma.user.create({
@@ -81,4 +89,25 @@ export async function deleteUser(userId: number) {
     return await prisma.user.delete({
         where: { id: userId },
     });
+}
+
+export async function retrieveUserNames() {
+    return await prisma.user.findMany({
+        where: { role: 'DRIVER'},
+        select: {
+            username: true,
+        }
+    })
+}
+
+export async function retrieveUsers() {
+    return await prisma.user.findMany({
+        select: {
+            username: true,
+            email: true,
+            phoneNumber: true,
+            driver: true,
+            role: true,
+        }
+    })
 }

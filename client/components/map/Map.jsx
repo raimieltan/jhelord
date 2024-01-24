@@ -130,7 +130,7 @@ const Map = () => {
         try {
 
             if (userId) {
-                const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/user/${userId}`, {
+                const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/user/${userId}`, {
                     method: 'GET',
 
                 });
@@ -185,7 +185,7 @@ const Map = () => {
         try {
 
             if(userId){
-                const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${currentBooking}`, {
+                const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${currentBooking}`, {
                     method: 'GET',
     
                 });
@@ -212,7 +212,7 @@ const Map = () => {
 
     const fetchDrivers = async () => {
         try {
-            const response = await fetch(`https://jhelord-backend.onrender.com//api/drivers`, {
+            const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers`, {
                 method: 'GET',
 
             });

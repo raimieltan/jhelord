@@ -10,9 +10,6 @@ import { LuClipboardCheck } from "react-icons/lu";
 import { LuClipboardPaste } from "react-icons/lu";
 import { LuClipboardX } from "react-icons/lu";
 
-import ChartOne from "../Charts/ChartOne";
-import ChartThree from "../Charts/ChartThree";
-import ChartTwo from "../Charts/ChartTwo";
 import CardDataStats from "../CardDataStats";
 import { Unit } from '@/app/types/unit';
 import { Driver } from '@/app/types/driver';
@@ -20,16 +17,16 @@ import Map from '../Map/map';
 import UnitChart from '../Charts/UnitChart';
 import BookingChart from '../Charts/BookingChart';
 import DashboardUnitTable from '../Tables/DashboardUnitTable';
-import UnitMap from '../Map/unitMap';
+import { User } from '@/app/types/user';
 
 const Dashboard = () => {
   const [units, setUnits] = useState<Unit[]>([]);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
 
   const fetchUnits = async () => {
     try {
-      const response = await fetch('https://jhelord-backend.onrender.com//api/units');
+      const response = await fetch('https://jhelord-backend.onrender.com/api/units');
       const data = await response.json();
       setUnits(data);
       console.log(units)
@@ -39,11 +36,12 @@ const Dashboard = () => {
     }
   }
 
-  const fetchDrivers = async () => {
+  const fetchUsers = async () => {
     try {
-      const response = await fetch('https://jhelord-backend.onrender.com//api/drivers');
+      const response = await fetch('https://jhelord-backend.onrender.com/api/users');
       const data = await response.json();
-      setDrivers(data);
+      console.log(data);
+      setUsers(data);
 
     } catch (error: any) {
       console.log(error.message);
@@ -52,7 +50,7 @@ const Dashboard = () => {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch('https://jhelord-backend.onrender.com//api/bookings');
+      const response = await fetch('https://jhelord-backend.onrender.com/api/bookings');
       const data = await response.json();
       setBookings(data);
 
@@ -64,7 +62,8 @@ const Dashboard = () => {
   useEffect(() => {
     const startFetching = () => {
       fetchUnits();
-      fetchDrivers();
+      // fetchDrivers();
+      fetchUsers();
       fetchBookings();
     };
 
@@ -83,9 +82,20 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <CardDataStats
           title="Registered Drivers"
-          total={drivers ? drivers.length : 0}
+          total={users ? users.filter(user =>
+            user.role === "DRIVER"
+          ).length : 0}
           status="Active"
           icon={<BsFillPersonVcardFill />}
+        />
+
+        <CardDataStats
+          title="Active Users"
+          total={users ? users.filter(user =>
+            user.role === "USER"
+          ).length : 0}
+          status="Active"
+          icon={<BsPersonFillCheck />}
         />
 
         <CardDataStats
@@ -94,7 +104,7 @@ const Dashboard = () => {
             unit.status === "active"
           ).length : 0}
           status="Active"
-          icon={<BsPersonFillCheck />}
+          icon={<FaCarSide />}
         />
 
         <CardDataStats
@@ -103,15 +113,9 @@ const Dashboard = () => {
             unit.status === "INACTIVE"
           ).length : 0}
           status="Inactive"
-          icon={<BsPersonFillX />}
-        />
-
-        <CardDataStats
-          title="Total Units"
-          total={units.length}
-          status="Active"
           icon={<FaCarSide />}
         />
+
 
         <CardDataStats
           title="Total Bookings"

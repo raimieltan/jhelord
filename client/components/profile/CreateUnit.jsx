@@ -82,7 +82,7 @@ const CreateEditUnit = ({ route }) => {
 
       if (id) {
 
-        const response = await fetch(`https://jhelord-backend.onrender.com//api/drivers/${id}`, {
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/drivers/${id}`, {
           method: 'GET',
 
         });
@@ -129,7 +129,7 @@ const CreateEditUnit = ({ route }) => {
           longitude: location?.coords.longitude
         }
 
-        const response = await fetch(`https://jhelord-backend.onrender.com//api/units${unit ? '/' + unit.id : ''}`, {
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/units${unit ? '/' + unit.id : ''}`, {
           method: method, // Change to 'PUT' and add an ID for editing an existing unit
           headers: {
             'Content-Type': 'application/json',

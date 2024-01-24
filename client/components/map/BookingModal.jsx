@@ -52,7 +52,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
         try {
            
             if(user){
-                const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/user/${user}`, {
+                const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/user/${user}`, {
                     method: 'GET',
     
                 });
@@ -90,7 +90,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
                 if (bookingId) {
                  
                     const token = 'yourAuthToken'; // Replace with the actual authentication token
-                    const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${bookingId}`, {
+                    const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${bookingId}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
         const fetchDrivers = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('https://jhelord-backend.onrender.com//api/drivers/');
+                const response = await fetch('https://jhelord-backend.onrender.com/api/drivers/');
                 const data = await response.json();
     
                 // Filter drivers based on online user IDs
@@ -160,7 +160,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
         // Helper function to fetch online user IDs
         const fetchOnlineUserIds = async () => {
             try {
-                const response = await fetch('https://jhelord-backend.onrender.com//api/onlineUsers');
+                const response = await fetch('https://jhelord-backend.onrender.com/api/onlineUsers');
                 const onlineUserIds = await response.json();
                 return onlineUserIds;
             } catch (error) {
@@ -189,7 +189,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
             const token = 'yourAuthToken'; // Replace with actual token
             const userId = await AsyncStorage.getItem('userId'); // Replace with actual user ID from storage or state
             setUser(userId)
-            const response = await fetch('https://jhelord-backend.onrender.com//api/bookings', {
+            const response = await fetch('https://jhelord-backend.onrender.com/api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -229,7 +229,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
                 return;
             }
 
-            const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${bookingId}/status`, {
+            const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/${bookingId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -268,7 +268,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
 
     const CarItem = ({ unit, driverName, driver }) => (
         <View style={styles.itemContainer}>
-            <Image source={{ uri: `https://jhelord-backend.onrender.com//uploads/${driver.User.profileImage.split("/")[2]}` }} style={styles.carImage} />
+            <Image source={{ uri: `https://jhelord-backend.onrender.com/uploads/${driver.User.profileImage.split("/")[2]}` }} style={styles.carImage} />
             <View style={styles.carDetails}>
                 <Text style={styles.carModel}>{`${unit.model} ${unit.make} `}</Text>
                 <Text style={styles.carPrice}>{`Plate: ${unit.plateNumber}`}</Text>
