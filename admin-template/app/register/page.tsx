@@ -71,8 +71,8 @@ const Register = () => {
     }
 
     try {
-      // const response = await fetch('http://192.168.1.101:8000/api/users/signup', options);
-      const response = await fetch('http://192.168.1.101:8000/api/users/signup-driver', {
+      // const response = await fetch('https://jhelord-backend.onrender.com//api/users/signup', options);
+      const response = await fetch('https://jhelord-backend.onrender.com//api/users/signup-driver', {
         method: "POST",
         body: formData, // Send the formData
       });
@@ -94,7 +94,7 @@ const Register = () => {
       }
 
       // Submit the driver data
-      const driverResponse = await fetch('http://192.168.1.101:8000/api/drivers', {
+      const driverResponse = await fetch('https://jhelord-backend.onrender.com//api/drivers', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const Register = () => {
       }
 
       // Submit the unit data
-      const unitResponse = await fetch('http://192.168.1.101:8000/api/units', {
+      const unitResponse = await fetch('https://jhelord-backend.onrender.com//api/units', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

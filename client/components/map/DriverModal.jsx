@@ -35,7 +35,7 @@ const DriverInfoModal = ({ isVisible, onClose, driver }) => {
 
                     <View style={styles.itemContainer}>
                 
-                        <Image source={{ uri: `http://192.168.1.101:8000/uploads/${driver.User?.profileImage.split("/")[2]}` }} style={styles.carImage} />
+                        <Image source={{ uri: `https://jhelord-backend.onrender.com//uploads/${driver.User?.profileImage.split("/")[2]}` }} style={styles.carImage} />
                         <View style={styles.carDetails}>
                             <Text style={styles.carModel}>{driver.unit[0].model + ' ' + driver.unit[0].make}</Text>
                             <Text style={styles.carPrice}>{driver.unit[0].plateNumber}</Text>

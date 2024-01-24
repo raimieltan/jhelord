@@ -15,7 +15,7 @@ const Login = () => {
     try {
       // Assume you have an authentication API endpoint
       console.log("test")
-      const response = await fetch('http://192.168.1.101:8000/api/users/login', {
+      const response = await fetch('https://jhelord-backend.onrender.com//api/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

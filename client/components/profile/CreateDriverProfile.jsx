@@ -25,7 +25,7 @@ const CreateDriverProfile = () => {
         return;
       }
 
-      const response = await fetch('http://192.168.1.101:8000/api/users/profile', {
+      const response = await fetch('https://jhelord-backend.onrender.com//api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -53,7 +53,7 @@ const CreateDriverProfile = () => {
       await fetchUserProfile();
 
 
-      const response = await fetch(`http://192.168.1.101:8000/api/drivers/`, {
+      const response = await fetch(`https://jhelord-backend.onrender.com//api/drivers/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

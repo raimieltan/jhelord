@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 import BottomNavBar from '../nav/BottomNav';
+import io from 'socket.io-client';
+
 
 
 const Profile = () => {
@@ -17,16 +19,28 @@ const Profile = () => {
 
   const navigation = useNavigation();
 
+
+  const socket = io('https://jhelord-backend.onrender.com/');
+
+
   useEffect(() => {
-    fetchUserProfile();
-    fetchBookings()
+
+
+
+    const intervalId = setInterval(() => {
+      fetchUserProfile();
+      fetchBookings()
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, [userId]);
+
 
   const fetchBookings = async () => {
     try {
       if (userId) {
         console.log(userId)
-        const response = await fetch(`http://192.168.1.101:8000/api/bookings/user/${userId}`, {
+        const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/user/${userId}`, {
           method: 'GET',
 
         });
@@ -37,7 +51,7 @@ const Profile = () => {
         }
 
         const bookings = await response.json();
-        console.log(bookings)
+
         processBookings(bookings);
 
       }
@@ -75,7 +89,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('http://192.168.1.101:8000/api/users/profile', {
+      const response = await fetch('https://jhelord-backend.onrender.com//api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -88,13 +102,16 @@ const Profile = () => {
 
       const userProfile = await response.json();
 
-      await AsyncStorage.setItem("userId", userProfile.id + "")
-      setUserId(userProfile.id)
+      // Emit 'login' event to notify the server
+      const userId = userProfile.id.toString(); // Convert to string if not already
+      socket.emit('login', userId);
+  
+      // Update state and AsyncStorage
+      await AsyncStorage.setItem('userId', userId);
+      setUserId(userId);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
-
-
-      setImageUrl(`http://192.168.1.101:8000/uploads/${userProfile.profileImage.split("/")[2]}`)
+      setImageUrl(`https://jhelord-backend.onrender.com//uploads/${userProfile.profileImage.split("/")[2]}`)
 
       await AsyncStorage.setItem("userRole", userProfile.role)
 
@@ -107,6 +124,10 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('accessToken');
+      const userId = await AsyncStorage.getItem('userId');
+
+      // Emit 'logout' event to notify the server
+      socket.emit('logout', userId);
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error during logout:', error.message);
@@ -143,19 +164,9 @@ const Profile = () => {
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
 
-
-
-      <View style={
-        {
-          borderWidth: 0.5,
-          borderColor: 'gray',
-          marginVertical: 20,
-          width: '100%'
-        }
-      }>
-
-      </View>
-      <View>
+      <View style={{
+        marginTop: 20
+      }}>
         <Text style={{
           fontWeight: 'bold',
           fontSize: 24,
@@ -166,7 +177,7 @@ const Profile = () => {
 
         {activeBooking && (
           <View>
-       
+
             {renderBookingDetails(activeBooking)}
           </View>
         )}
@@ -193,9 +204,9 @@ const Profile = () => {
         <ScrollView style={{
           height: '30%'
         }}>
-        {recentBookings.map(booking => renderBookingDetails(booking))}
+          {recentBookings.map(booking => renderBookingDetails(booking))}
         </ScrollView>
-     
+
       </View>
 
 

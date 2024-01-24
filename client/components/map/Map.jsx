@@ -96,6 +96,7 @@ const Map = () => {
     const [currentBooking, setCurrentBooking] = useState(0)
     const [currentDriver, setCurrentDriver] = useState(null)
     const [isBooking, setIsBooking] = useState(false)
+    const [bookedDriver, setBookedDriver] = useState(null)
     const mapViewRef = React.useRef(null);
 
     const handleMarkerPress = (driver) => {
@@ -112,7 +113,7 @@ const Map = () => {
 
     const fetchuserId = async () => {
         const id = await AsyncStorage.getItem("userId")
-       setUserId(id)
+        setUserId(id)
     }
 
     useEffect(() => {
@@ -122,40 +123,40 @@ const Map = () => {
 
     function getPendingOrAcceptedBookings(bookings) {
         return bookings.filter(booking => booking.status === "PENDING" || booking.status === "ACCEPTED");
-      }
+    }
 
 
     const fetchUserBookings = async () => {
         try {
-    
-            if(userId){
-                const response = await fetch(`http://192.168.1.101:8000/api/bookings/user/${userId}`, {
+
+            if (userId) {
+                const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/user/${userId}`, {
                     method: 'GET',
-    
+
                 });
                 const bookings = await response.json();
                 const pending = getPendingOrAcceptedBookings(bookings)
-                if(pending.length > 0) {
-                  
+                if (pending.length > 0) {
+
                     setCurrentBooking(pending[0].id)
                     setCurrentDriver(pending[0].driver)
                     setIsBooking(true)
-                    setPickupLocation({"lat": 10.761488062748754, "lng": 122.49605119228364})
+                    setPickupLocation({ "lat": 10.761488062748754, "lng": 122.49605119228364 })
                     setPickUpAddress("PHF5+J27, Jaro, Iloilo City, Iloilo, Philippines")
-                   
-                   
+
+
                 }
-                else{
+                else {
                     setCurrentBooking(null)
                     setIsBooking(false)
-          
+
                 }
-            
+
             } else {
                 console.log("no user")
             }
-         
-        
+
+
         } catch (error) {
             console.log(error)
         }
@@ -166,10 +167,13 @@ const Map = () => {
 
         // Set up the interval
         const intervalId = setInterval(() => {
-           
+
             fetchUserBookings()
-            
-           console.log(currentBooking)
+            fetchCurrentUserBooking()
+            if(bookedDriver){
+                console.log({"Booked driver": bookedDriver?.unit[0]})
+            }
+        
         }, 1000);
 
         // Clear the interval when the component unmounts or dependencies change
@@ -177,10 +181,38 @@ const Map = () => {
     }, [userId, isBooking, currentBooking])
 
 
+    const fetchCurrentUserBooking = async () => {
+        try {
+
+            if(userId){
+                const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${currentBooking}`, {
+                    method: 'GET',
+    
+                });
+
+                const bookings = await response.json();
+                if(bookings.length >= 0){
+                    const pending = getPendingOrAcceptedBookings(bookings)
+   
+                    setBookedDriver(pending[0].driver)
+                }
+                else {
+                    setBookedDriver(null)
+                }
+              
+           
+            }
+      
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
 
     const fetchDrivers = async () => {
         try {
-            const response = await fetch(`http://192.168.1.101:8000/api/drivers`, {
+            const response = await fetch(`https://jhelord-backend.onrender.com//api/drivers`, {
                 method: 'GET',
 
             });
@@ -206,7 +238,7 @@ const Map = () => {
         // Set up the interval
         const intervalId = setInterval(() => {
             fetchDrivers()
-     
+
         }, 10000);
 
         // Clear the interval when the component unmounts or dependencies change
@@ -315,7 +347,7 @@ const Map = () => {
         const { latitude, longitude } = event.nativeEvent.coordinate;
         if (role === 'USER') {
             setPickupLocation({ lat: latitude, lng: longitude });
-     
+
 
             try {
                 const geocodeResponse = await fetch(
@@ -462,7 +494,7 @@ const Map = () => {
                                     </Marker>
                                 )}
 
-                                {pickupLocation && !isActiveBooking && (
+                                {pickupLocation  && (
                                     <Marker
                                         coordinate={{
                                             latitude: pickupLocation.lat,
@@ -482,17 +514,17 @@ const Map = () => {
                                     />
                                 )}
 
-                                {/* {role === 'USER' && drivers?.map((car, index) => (
+                                { (role === 'USER' & bookedDriver !== null) ? (
 
                                     <Marker
-                                        key={index}
-                                        coordinate={{ latitude: car.unit[0]?.location?.latitude, longitude: car.unit[0]?.location?.longitude }}
-                                        onPress={() => handleMarkerPress(car)}
+                                   
+                                        coordinate={{ latitude: bookedDriver.unit[0]?.location?.latitude, longitude: bookedDriver.unit[0]?.location?.longitude }}
+                                        onPress={() => handleMarkerPress(bookedDriver)}
 
                                     >
                                         <CustomMarker />
                                     </Marker>
-                                ))} */}
+                                ) : <View></View>}
 
                             </MapView>
                         </View>
@@ -552,19 +584,19 @@ const Map = () => {
                                         </View>) : (
                                             <View style={{
                                                 margin: 20
-                                            }}> 
+                                            }}>
                                                 <TouchableOpacity
-                                                onPress={() => {
-                                                    setIsModalVisible(true)
-                                                }}
-                                                 style={{
-                                                    backgroundColor: 'green',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    padding: 5,
-                                                    borderRadius: 10
-                                            
-                                                }}>
+                                                    onPress={() => {
+                                                        setIsModalVisible(true)
+                                                    }}
+                                                    style={{
+                                                        backgroundColor: 'green',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        padding: 5,
+                                                        borderRadius: 10
+
+                                                    }}>
                                                     <Text style={{
                                                         color: 'white',
                                                         fontWeight: 'bold'
@@ -574,7 +606,7 @@ const Map = () => {
                                         )
                                     }
 
-                                    
+
 
 
 
@@ -584,7 +616,7 @@ const Map = () => {
                             )
                         }
 
-    
+
 
 
 

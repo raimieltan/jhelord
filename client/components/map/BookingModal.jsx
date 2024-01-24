@@ -52,7 +52,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
         try {
            
             if(user){
-                const response = await fetch(`http://192.168.1.101:8000/api/bookings/user/${user}`, {
+                const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/user/${user}`, {
                     method: 'GET',
     
                 });
@@ -90,7 +90,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
                 if (bookingId) {
                  
                     const token = 'yourAuthToken'; // Replace with the actual authentication token
-                    const response = await fetch(`http://192.168.1.101:8000/api/bookings/${bookingId}`, {
+                    const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${bookingId}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -140,11 +140,15 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
         const fetchDrivers = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('http://192.168.1.101:8000/api/drivers/');
+                const response = await fetch('https://jhelord-backend.onrender.com//api/drivers/');
                 const data = await response.json();
-           
-                setDriversData(data);
-                setFilteredDrivers(data); // Initially, don't filter drivers
+    
+                // Filter drivers based on online user IDs
+                const onlineUserIds = await fetchOnlineUserIds();
+                const onlineDrivers = data.filter(driver => onlineUserIds.includes(driver.User.id.toString()));
+             
+                setDriversData(onlineDrivers);
+                setFilteredDrivers(onlineDrivers); // Initially, don't filter drivers
             } catch (err) {
                 setError(err.message);
                 Alert.alert('Error', 'Could not fetch drivers');
@@ -152,7 +156,19 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
                 setIsLoading(false);
             }
         };
-
+    
+        // Helper function to fetch online user IDs
+        const fetchOnlineUserIds = async () => {
+            try {
+                const response = await fetch('https://jhelord-backend.onrender.com//api/onlineUsers');
+                const onlineUserIds = await response.json();
+                return onlineUserIds;
+            } catch (error) {
+                console.error('Error fetching online user IDs:', error);
+                return [];
+            }
+        };
+    
         fetchDrivers();
     }, []);
 
@@ -173,7 +189,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
             const token = 'yourAuthToken'; // Replace with actual token
             const userId = await AsyncStorage.getItem('userId'); // Replace with actual user ID from storage or state
             setUser(userId)
-            const response = await fetch('http://192.168.1.101:8000/api/bookings', {
+            const response = await fetch('https://jhelord-backend.onrender.com//api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -213,7 +229,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
                 return;
             }
 
-            const response = await fetch(`http://192.168.1.101:8000/api/bookings/${bookingId}/status`, {
+            const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${bookingId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -252,7 +268,7 @@ const BookingModal = ({ isVisible, onClose, pickupLocation, pickupAddress, setIs
 
     const CarItem = ({ unit, driverName, driver }) => (
         <View style={styles.itemContainer}>
-            <Image source={{ uri: `http://192.168.1.101:8000/uploads/${driver.User.profileImage.split("/")[2]}` }} style={styles.carImage} />
+            <Image source={{ uri: `https://jhelord-backend.onrender.com//uploads/${driver.User.profileImage.split("/")[2]}` }} style={styles.carImage} />
             <View style={styles.carDetails}>
                 <Text style={styles.carModel}>{`${unit.model} ${unit.make} `}</Text>
                 <Text style={styles.carPrice}>{`Plate: ${unit.plateNumber}`}</Text>

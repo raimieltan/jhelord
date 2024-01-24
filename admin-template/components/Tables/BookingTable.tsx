@@ -8,7 +8,7 @@ const BookingTable = () => {
   const [bookings, setBookings] = useState<Booking[]>([])
 
   const fetchBookings = async () => {
-    const response = await fetch('http://192.168.1.101:8000/api/bookings');
+    const response = await fetch('https://jhelord-backend.onrender.com//api/bookings');
     const data = await response.json();
     console.log(data);
     setBookings(data);

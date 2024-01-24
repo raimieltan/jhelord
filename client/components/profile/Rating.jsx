@@ -14,7 +14,7 @@ const Rating = ({
   const handleCreateReview = async () => {
     try {
 
-      const response = await fetch(`http://192.168.1.101:8000/api/reviews/`, {
+      const response = await fetch(`https://jhelord-backend.onrender.com//api/reviews/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const Rating = ({
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <Image
-          source={{ uri: `http://192.168.1.101:8000/uploads/${driver.User.profileImage.split("/")[2]}` }} // Replace with actual image link
+          source={{ uri: `https://jhelord-backend.onrender.com//uploads/${driver.User.profileImage.split("/")[2]}` }} // Replace with actual image link
           style={styles.profileImage}
         />
         <Text>

@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 import CreateEditUnit from './CreateUnit';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
+import io from 'socket.io-client';
 
 const ProfileDriver = () => {
   const [username, setUsername] = useState('');
@@ -16,6 +17,9 @@ const ProfileDriver = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null)
   const [imageUrl, setImageUrl] = useState('')
+
+
+  const socket = io('https://jhelord-backend.onrender.com/');
 
   useEffect(() => {
     fetchUserProfile();
@@ -46,7 +50,7 @@ const ProfileDriver = () => {
         return;
       }
 
-      const response = await fetch('http://192.168.1.101:8000/api/users/profile', {
+      const response = await fetch('https://jhelord-backend.onrender.com//api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -54,12 +58,18 @@ const ProfileDriver = () => {
       });
       const userProfile = await response.json();
 
+      // Emit 'login' event to notify the server
+      const userId = userProfile.id.toString(); // Convert to string if not already
+      socket.emit('login', userId);
+  
+      // Update state and AsyncStorage
+      await AsyncStorage.setItem('userId', userId);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
       setRole(userProfile.role)
       setId(userProfile.id)
       setUser(userProfile)
-      setImageUrl(`http://192.168.1.101:8000/uploads/${userProfile.profileImage.split("/")[2]}`)
+      setImageUrl(`https://jhelord-backend.onrender.com//uploads/${userProfile.profileImage.split("/")[2]}`)
 
 
     } catch (error) {
@@ -73,7 +83,7 @@ const ProfileDriver = () => {
     try {
 
       console.log(id)
-      const response = await fetch(`http://192.168.1.101:8000/api/drivers/${id}`, {
+      const response = await fetch(`https://jhelord-backend.onrender.com//api/drivers/${id}`, {
         method: 'GET',
 
       });
@@ -96,6 +106,11 @@ const ProfileDriver = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('accessToken');
+      const userId = await AsyncStorage.getItem('userId');
+
+      // Emit 'logout' event to notify the server
+      socket.emit('logout', userId);
+
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error during logout:', error.message);

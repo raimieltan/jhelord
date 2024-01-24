@@ -16,7 +16,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         return;
       }
 
-      const response = await fetch('http://192.168.1.101:8000/api/users/profile', {
+      const response = await fetch('https://jhelord-backend.onrender.com//api/users/profile', {
         method: 'GET',
         headers: {
           Authorization: token,
@@ -29,7 +29,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
 
       const userProfile = await response.json();
       if (userProfile) {
-        const response = await fetch(`http://192.168.1.101:8000/api/drivers/${userProfile.id}`, {
+        const response = await fetch(`https://jhelord-backend.onrender.com//api/drivers/${userProfile.id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         longitude: location?.coords.longitude
       }
 
-      const response = await fetch(`http://192.168.1.101:8000/api/units/${driver?.unit[0].id}/location`, {
+      const response = await fetch(`https://jhelord-backend.onrender.com//api/units/${driver?.unit[0].id}/location`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
     try {
 
       if (driver) {
-        const response = await fetch(`http://192.168.1.101:8000/api/bookings/driver/${driver?.id}`);
+        const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/driver/${driver?.id}`);
         if (!response.ok) {
           throw new Error('Error fetching bookings');
         }
@@ -165,7 +165,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         return;
       }
 
-      const response = await fetch(`http://192.168.1.101:8000/api/bookings/${bookingId}/status`, {
+      const response = await fetch(`https://jhelord-backend.onrender.com//api/bookings/${bookingId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -193,6 +193,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         // const originLongitude = location.coords.longitude;
         fetchDirections(location)
       }
+    
       Alert.alert('Success', `Booking has been ${newStatus.toLowerCase()}.`);
 
       // Update the local state to reflect the change
@@ -213,7 +214,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
     <TouchableOpacity>
       <View style={styles.itemContainer}>
         <Image
-          source={{ uri:`http://192.168.1.101:8000/uploads/${item.User.profileImage.split("/")[2]}` }} // Replace with the actual user profile image URI
+          source={{ uri:`https://jhelord-backend.onrender.com//uploads/${item.User.profileImage.split("/")[2]}` }} // Replace with the actual user profile image URI
           style={styles.profileImage}
         />
         <View style={styles.textContainer}>
@@ -231,12 +232,15 @@ const BookingList = ({ fetchDirections, setDirections }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.rejectButton}
-                onPress={() => changeBookingStatus(item.id, 'CANCELLED')}>
+                onPress={() => {
+                  setDirections([]);
+                  changeBookingStatus(item.id, 'CANCELLED')}}>
                 <Text style={styles.buttonText}>Cancel</Text>
               </TouchableOpacity>
             </>
           ) : (
-            <TouchableOpacity
+            <>
+             <TouchableOpacity
               style={styles.completeButton}
               onPress={() => {
                 setDirections([]);
@@ -244,6 +248,14 @@ const BookingList = ({ fetchDirections, setDirections }) => {
               }}>
               <Text style={styles.buttonText}>Complete</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.rejectButton}
+                onPress={() => changeBookingStatus(item.id, 'CANCELLED')}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </>
+           
+            
           )}
         </View>
       </View>
