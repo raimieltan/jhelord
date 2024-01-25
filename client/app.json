@@ -2,7 +2,7 @@
   "expo": {
     "name": "Jhelord Taxi Connect",
     "slug": "taxi-app",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -33,7 +33,7 @@
       },
       "package": "com.seanraimiel.taxiapp",
       "permissions": ["READ_EXTERNAL_STORAGE"],
-      "versionCode": 2 
+      "versionCode": 3 
     },
 
     

@@ -30,7 +30,7 @@ const Profile = () => {
     const intervalId = setInterval(() => {
       fetchUserProfile();
       fetchBookings()
-    }, 5000);
+    }, 2000);
 
     return () => clearInterval(intervalId);
   }, [userId]);
@@ -39,7 +39,7 @@ const Profile = () => {
   const fetchBookings = async () => {
     try {
       if (userId) {
-        console.log(userId)
+
         const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/user/${userId}`, {
           method: 'GET',
 
@@ -104,7 +104,7 @@ const Profile = () => {
 
       // Emit 'login' event to notify the server
       const userId = userProfile.id.toString(); // Convert to string if not already
-      socket.emit('login', userId);
+   
   
       // Update state and AsyncStorage
       await AsyncStorage.setItem('userId', userId);
@@ -112,8 +112,9 @@ const Profile = () => {
       setUsername(userProfile.username);
       setEmail(userProfile.email);
       setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
-
+      socket.emit('login', userId);
       await AsyncStorage.setItem("userRole", userProfile.role)
+      
 
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
