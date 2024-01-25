@@ -22,7 +22,14 @@ const ProfileDriver = () => {
   const socket = io('https://jhelord-backend.onrender.com/');
 
   useEffect(() => {
-    fetchUserProfile();
+  
+    const interval = setInterval(() => {
+      fetchUserProfile();
+  }, 2000); // Set the interval time in milliseconds (e.g., 1000ms = 1 second)
+
+  // Cleanup function to clear the interval
+  console.log("Fetched user profile")
+  return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
