@@ -111,3 +111,39 @@ export async function retrieveUsers() {
         }
     })
 }
+
+export async function changeUserPassword(userId: number, newPassword: string) {
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        // Update the user's password in the database
+        return await prisma.user.update({
+            where: { id: userId },
+            data: { password: hashedPassword },
+        });
+
+
+}
+
+    export async function deleteFunction(id: number) {
+
+        console.log(id)
+        await prisma.driverReview.deleteMany({
+            where: {
+                userId: id
+            }
+        })
+        await prisma.booking.deleteMany({
+            where: {
+            userId: id,
+            },
+        });
+
+
+        return await prisma.user.delete({
+            where: {
+                id: id
+            }
+        })
+    }
+
