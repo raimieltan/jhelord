@@ -41,7 +41,7 @@ const Login = () => {
       await AsyncStorage.setItem('accessToken', data.token);
 
       // Navigate to the "Map" screen
-      navigation.navigate('Home');
+      navigation.navigate('Profile');
 
 
     } catch (error) {

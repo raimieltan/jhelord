@@ -145,3 +145,25 @@ export async function getUsers(req: Request, res: Response) {
     res.status(400).json({ message: error.message })
   }
 }
+
+export async function changePassowrd(req: Request, res: Response) {
+  try {
+    const { id, password} = req.body
+    const users = await userService.changeUserPassword(id, password);
+    res.json(users);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}
+
+export async function deleteAccount(req: Request, res: Response) {
+  try {
+    const id  = req.params.id
+    console.log(id)
+    await userService.deleteFunction(Number(id))
+    res.json({message: "deleted account"})
+
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}

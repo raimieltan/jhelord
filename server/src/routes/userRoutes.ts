@@ -26,4 +26,6 @@ router.delete('/users/:userId', authMiddleware.authenticateToken, userController
 router.get('/profile', authMiddleware.authenticateToken, userController.getUserFromToken);
 router.get('/username', userController.getUserNames);
 router.get('/', userController.getUsers);
+router.post('/change-password', userController.changePassowrd);
+router.delete('/delete-account/:id', userController.deleteAccount);
 export default router;

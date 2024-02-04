@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import * as Location from 'expo-location';
+import { Linking } from 'react-native';
+
 
 const BookingList = ({ fetchDirections, setDirections }) => {
   const [bookings, setBookings] = useState([]);
@@ -219,7 +221,9 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         />
         <View style={styles.textContainer}>
           <Text style={styles.nameText}>{item.User.firstName + " " +item.User.lastName }</Text>
-          <Text style={styles.phoneText}>Phone Number: {item.User.phoneNumber}</Text>
+          <TouchableOpacity onPress={() => Linking.openURL(`tel:${item.User.phoneNumber}`)}>
+        <Text style={styles.phoneText}>Phone Number: {item.User.phoneNumber}</Text>
+      </TouchableOpacity>
           <Text style={styles.statusText}>{item.status}</Text>
         </View>
         <View style={styles.buttonContainer}>
@@ -323,7 +327,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   phoneText: {
-    color: 'grey',
+    color: '#5d7eb3',
   },
   statusText: {
     color: 'blue', // or any color that indicates status

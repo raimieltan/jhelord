@@ -79,6 +79,54 @@ const Profile = () => {
   );
 
 
+  const deleteUserProfile = async () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete this account?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('accessToken');
+              if (!token) {
+                console.error('Token not found');
+                return;
+              }
+              
+              const userId = await AsyncStorage.getItem('userId');
+              if (userId) {
+                const response = await fetch(`https://jhelord-backend.onrender.com/api/users/delete-account/${userId}`, { // Corrected URL
+                  method: 'DELETE',
+                  headers: {
+                    'Authorization': `Bearer ${token}`, // Added Authorization header
+                  },
+                });
+  
+                if (!response.ok) {
+                  throw new Error('Failed to delete account');
+                }
+  
+                // Assuming a successful response means the account was deleted
+                await AsyncStorage.removeItem('accessToken');
+                await AsyncStorage.removeItem('userId'); // Consider also removing userId from AsyncStorage
+                navigation.navigate('Login');
+                console.log('Account successfully deleted');
+              }
+            } catch (error) {
+              console.error('Error deleting user profile:', error.message);
+              Alert.alert('Error', 'Failed to delete your profile');
+            }
+          }
+        }
+      ]
+    );
+  };
+  
+  
 
   const fetchUserProfile = async () => {
     try {
@@ -164,10 +212,15 @@ const Profile = () => {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
+ 
+      <TouchableOpacity style={styles.deleteButton} onPress={deleteUserProfile}>
+        <Text style={styles.logoutButtonText}>DELETE ACCOUNT</Text>
+      </TouchableOpacity>
 
       <View style={{
         marginTop: 20
       }}>
+
         <Text style={{
           fontWeight: 'bold',
           fontSize: 24,
@@ -207,8 +260,9 @@ const Profile = () => {
         }}>
           {recentBookings.map(booking => renderBookingDetails(booking))}
         </ScrollView>
-
+    
       </View>
+
 
 
 
@@ -234,7 +288,6 @@ const Profile = () => {
         </View>
 
       </View>
-
 
     </View>
   );
@@ -281,6 +334,14 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 15
+  },
+  deleteButton: {
+    backgroundColor: 'purple',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+
   },
   logoutButtonText: {
     color: 'white',

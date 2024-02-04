@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "29547b31-4afb-4b96-b91d-742b9c3c44c6"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.seanraimiel.taxiapp"
+    }
+  }
+}
