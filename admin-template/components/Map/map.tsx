@@ -70,6 +70,7 @@ const Map = ({
     };
 
     if (units.length > 0) {
+      console.log(units)
       initMap();
     }
   }, [units]);

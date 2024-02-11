@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import * as Location from 'expo-location';
+import { Linking } from 'react-native';
+
 
 const BookingList = ({ fetchDirections, setDirections }) => {
   const [bookings, setBookings] = useState([]);
@@ -193,6 +195,7 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         // const originLongitude = location.coords.longitude;
         fetchDirections(location)
       }
+    
       Alert.alert('Success', `Booking has been ${newStatus.toLowerCase()}.`);
 
       // Update the local state to reflect the change
@@ -218,7 +221,9 @@ const BookingList = ({ fetchDirections, setDirections }) => {
         />
         <View style={styles.textContainer}>
           <Text style={styles.nameText}>{item.User.firstName + " " +item.User.lastName }</Text>
-          <Text style={styles.phoneText}>Phone Number: {item.User.phoneNumber}</Text>
+          <TouchableOpacity onPress={() => Linking.openURL(`tel:${item.User.phoneNumber}`)}>
+        <Text style={styles.phoneText}>Phone Number: {item.User.phoneNumber}</Text>
+      </TouchableOpacity>
           <Text style={styles.statusText}>{item.status}</Text>
         </View>
         <View style={styles.buttonContainer}>
@@ -231,12 +236,15 @@ const BookingList = ({ fetchDirections, setDirections }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.rejectButton}
-                onPress={() => changeBookingStatus(item.id, 'CANCELLED')}>
+                onPress={() => {
+                  setDirections([]);
+                  changeBookingStatus(item.id, 'CANCELLED')}}>
                 <Text style={styles.buttonText}>Cancel</Text>
               </TouchableOpacity>
             </>
           ) : (
-            <TouchableOpacity
+            <>
+             <TouchableOpacity
               style={styles.completeButton}
               onPress={() => {
                 setDirections([]);
@@ -244,6 +252,14 @@ const BookingList = ({ fetchDirections, setDirections }) => {
               }}>
               <Text style={styles.buttonText}>Complete</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.rejectButton}
+                onPress={() => changeBookingStatus(item.id, 'CANCELLED')}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </>
+           
+            
           )}
         </View>
       </View>
@@ -311,7 +327,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   phoneText: {
-    color: 'grey',
+    color: '#5d7eb3',
   },
   statusText: {
     color: 'blue', // or any color that indicates status

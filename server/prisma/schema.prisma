@@ -43,6 +43,8 @@ model User {
   firstName    String
   lastName     String
   profileImage String?
+  isOnline Boolean @default(false)
+  lastActive DateTime?
   booking      Booking[]
   driverReview DriverReview[]
   driver       Driver?

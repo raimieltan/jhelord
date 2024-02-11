@@ -1,20 +1,132 @@
 // components/profile/Profile.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
+import BottomNavBar from '../nav/BottomNav';
+import io from 'socket.io-client';
+
 
 
 const Profile = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [imageUrl, setImageUrl] = useState('')
+  const [userId, setUserId] = useState(null)
+  const [recentBookings, setRecentBookings] = useState([]);
+  const [activeBooking, setActiveBooking] = useState(null);
+
   const navigation = useNavigation();
 
+
+  const socket = io('https://jhelord-backend.onrender.com/');
+
+
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+
+
+
+    const intervalId = setInterval(() => {
+      fetchUserProfile();
+      fetchBookings()
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [userId]);
+
+
+  const fetchBookings = async () => {
+    try {
+      if (userId) {
+
+        const response = await fetch(`https://jhelord-backend.onrender.com/api/bookings/user/${userId}`, {
+          method: 'GET',
+
+        });
+
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch bookings');
+        }
+
+        const bookings = await response.json();
+
+        processBookings(bookings);
+
+      }
+
+    } catch (error) {
+      console.error('Error fetching bookings:', error.message);
+      Alert.alert('Error', 'Failed to fetch bookings');
+    }
+  };
+
+  const processBookings = (bookings) => {
+    const active = bookings.find(booking => booking.status === 'ACCEPTED' || booking.status === 'PENDING');
+    const recent = bookings.filter(booking => booking.status !== 'ACCEPTED' && booking.status !== 'PENDING');
+
+    setActiveBooking(active);
+    setRecentBookings(recent);
+    console.log(activeBooking)
+  };
+
+  const renderBookingDetails = (booking) => (
+    <View key={booking.id} style={styles.bookingContainer}>
+      <Text style={styles.bookingText}>Driver: {booking.driver.User.firstName} {booking.driver.User.lastName}</Text>
+      <Text style={styles.bookingText}>Status: {booking.status}</Text>
+    </View>
+  );
+
+
+  const deleteUserProfile = async () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete this account?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('accessToken');
+              if (!token) {
+                console.error('Token not found');
+                return;
+              }
+              
+              const userId = await AsyncStorage.getItem('userId');
+              if (userId) {
+                const response = await fetch(`https://jhelord-backend.onrender.com/api/users/delete-account/${userId}`, { // Corrected URL
+                  method: 'DELETE',
+                  headers: {
+                    'Authorization': `Bearer ${token}`, // Added Authorization header
+                  },
+                });
+  
+                if (!response.ok) {
+                  throw new Error('Failed to delete account');
+                }
+  
+                // Assuming a successful response means the account was deleted
+                await AsyncStorage.removeItem('accessToken');
+                await AsyncStorage.removeItem('userId'); // Consider also removing userId from AsyncStorage
+                navigation.navigate('Login');
+                console.log('Account successfully deleted');
+              }
+            } catch (error) {
+              console.error('Error deleting user profile:', error.message);
+              Alert.alert('Error', 'Failed to delete your profile');
+            }
+          }
+        }
+      ]
+    );
+  };
+  
+  
 
   const fetchUserProfile = async () => {
     try {
@@ -37,16 +149,21 @@ const Profile = () => {
       }
 
       const userProfile = await response.json();
+
+      // Emit 'login' event to notify the server
+      const userId = userProfile.id.toString(); // Convert to string if not already
    
-      await AsyncStorage.setItem("userId", userProfile.id+"")
+  
+      // Update state and AsyncStorage
+      await AsyncStorage.setItem('userId', userId);
+      setUserId(userId);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
-
- 
       setImageUrl(`https://jhelord-backend.onrender.com/uploads/${userProfile.profileImage.split("/")[2]}`)
-
+      socket.emit('login', userId);
       await AsyncStorage.setItem("userRole", userProfile.role)
-   
+      
+
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       Alert.alert('Error', 'Failed to fetch user profile');
@@ -56,6 +173,10 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('accessToken');
+      const userId = await AsyncStorage.getItem('userId');
+
+      // Emit 'logout' event to notify the server
+      socket.emit('logout', userId);
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error during logout:', error.message);
@@ -81,7 +202,7 @@ const Profile = () => {
           <Text style={styles.email}>{email}</Text>
         </View>
       </View>
-   
+
       <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
         <Text style={styles.mapButtonText}>Go to Map</Text>
       </TouchableOpacity>
@@ -91,10 +212,83 @@ const Profile = () => {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
+ 
+      <TouchableOpacity style={styles.deleteButton} onPress={deleteUserProfile}>
+        <Text style={styles.logoutButtonText}>DELETE ACCOUNT</Text>
+      </TouchableOpacity>
+
+      <View style={{
+        marginTop: 20
+      }}>
+
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 24,
+          color: '#737272'
+        }}>
+          Active Booking
+        </Text>
+
+        {activeBooking && (
+          <View>
+
+            {renderBookingDetails(activeBooking)}
+          </View>
+        )}
+
+
+        <View style={
+          {
+            borderWidth: 0.5,
+            borderColor: 'gray',
+            marginVertical: 20,
+            width: '100%'
+          }
+        }>
+
+        </View>
+
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 24,
+          color: '#737272'
+        }}>
+          Recent Bookings
+        </Text>
+        <ScrollView style={{
+          height: '30%'
+        }}>
+          {recentBookings.map(booking => renderBookingDetails(booking))}
+        </ScrollView>
+    
+      </View>
 
 
 
-   
+
+      <View style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+
+
+
+      }}>
+        <View style={{
+          position: 'absolute',
+          bottom: 0,
+          width: '100vw',
+          justifyContent: 'center',
+          alignContent: 'center',
+          alignItems: 'center'
+        }}>
+
+          <BottomNavBar />
+        </View>
+
+      </View>
+
     </View>
   );
 };
@@ -118,6 +312,7 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#737272'
   },
   email: {
     fontSize: 16,
@@ -139,10 +334,36 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 15
+  },
+  deleteButton: {
+    backgroundColor: 'purple',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+
   },
   logoutButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  heading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  bookingContainer: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    marginBottom: 10,
+    backgroundColor: 'white'
+  },
+  bookingText: {
+    fontSize: 16,
+    color: '#555',
   },
 });
 

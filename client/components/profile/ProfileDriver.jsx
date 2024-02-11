@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-elements';
 import CreateEditUnit from './CreateUnit';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
+import io from 'socket.io-client';
 
 const ProfileDriver = () => {
   const [username, setUsername] = useState('');
@@ -17,8 +18,18 @@ const ProfileDriver = () => {
   const [user, setUser] = useState(null)
   const [imageUrl, setImageUrl] = useState('')
 
+
+  const socket = io('https://jhelord-backend.onrender.com/');
+
   useEffect(() => {
-    fetchUserProfile();
+  
+    const interval = setInterval(() => {
+      fetchUserProfile();
+  }, 2000); // Set the interval time in milliseconds (e.g., 1000ms = 1 second)
+
+  // Cleanup function to clear the interval
+  console.log("Fetched user profile")
+  return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -54,6 +65,12 @@ const ProfileDriver = () => {
       });
       const userProfile = await response.json();
 
+      // Emit 'login' event to notify the server
+      const userId = userProfile.id.toString(); // Convert to string if not already
+      socket.emit('login', userId);
+  
+      // Update state and AsyncStorage
+      await AsyncStorage.setItem('userId', userId);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
       setRole(userProfile.role)
@@ -96,6 +113,11 @@ const ProfileDriver = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('accessToken');
+      const userId = await AsyncStorage.getItem('userId');
+
+      // Emit 'logout' event to notify the server
+      socket.emit('logout', userId);
+
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error during logout:', error.message);

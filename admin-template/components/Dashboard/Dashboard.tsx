@@ -29,6 +29,7 @@ const Dashboard = () => {
       const response = await fetch('https://jhelord-backend.onrender.com/api/units');
       const data = await response.json();
       setUnits(data);
+      console.log(units)
 
     } catch (error: any) {
       console.log(error.message);
@@ -100,7 +101,7 @@ const Dashboard = () => {
         <CardDataStats
           title="Active Units"
           total={units ? units.filter(unit =>
-            unit.status === "ACTIVE"
+            unit.status === "active"
           ).length : 0}
           status="Active"
           icon={<FaCarSide />}

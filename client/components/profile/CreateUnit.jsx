@@ -18,7 +18,7 @@ const CreateEditUnit = ({ route }) => {
   const [id, setId] = useState()
   const [unit, setUnit] = useState({})
   const [status, setStatus] = useState(unit?.status ?? 'Active');
-  const statuses = ["active", "inactive", "maintenance"];
+  const statuses = ["ACTIVE", "INACTIVE", "MAINTENANCE"];
   const [driver, setDriver] = useState({})
 
   const navigation = useNavigation()
@@ -59,7 +59,7 @@ const CreateEditUnit = ({ route }) => {
 
 
   useEffect(() => {
-    setStatus(unit?.status ?? 'active')
+    setStatus(unit?.status ?? 'ACTIVE')
     setMake(unit?.make ?? 'Make')
     setModel(unit?.model ?? 'Model')
     setPlateNumber(unit?.plateNumber ?? 'Plate Number')
