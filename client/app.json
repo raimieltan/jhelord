@@ -2,7 +2,7 @@
   "expo": {
     "name": "Jhelord Taxi Connect",
     "slug": "taxi-app",
-    "version": "1.0.3",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.seanraimiel.taxiapp",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "This app uses the photo library to let users pick their profile pictures."
+        "NSPhotoLibraryUsageDescription": "This app uses the photo library to let users pick their profile pictures.",
+        "NSLocationWhenInUseUsageDescription": "This app requires access to your location to allow taxi drivers to pinpoint your exact location once you have an accepted booking."
+      },
+      "config" : {
+        "googleMapsApiKey": "AIzaSyDsOdsDES2y_mjKCXywExCXK3JB7w84WiY"
       }
     },
     "android": {
@@ -29,11 +33,12 @@
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs"
+          
         }
       },
       "package": "com.seanraimiel.taxiapp",
       "permissions": ["READ_EXTERNAL_STORAGE"],
-      "versionCode": 4
+      "versionCode": 7
     },
 
     

@@ -57,7 +57,7 @@ export default function App() {
 
  
       <View style={{ flex: 1 }}>
-        <View style={{ padding: 10, margintop: 10, backgroundColor:'white', position: 'relative', top: 10, zIndex: 10 }}>
+        <View style={{ padding: 25, backgroundColor:'green', position: 'relative', zIndex: 10 }}>
         
         </View>
         <NavigationContainer>

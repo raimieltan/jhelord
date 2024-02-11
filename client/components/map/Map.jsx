@@ -251,7 +251,7 @@ const Map = () => {
 
         const originLatitude = location.coords.latitude;
         const originLongitude = location.coords.longitude;
-        const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs'; // Use your actual API key
+        const apiKey = 'AIzaSyAk6A4zr7QABD_5fQKL8KXJ8gA4vMQcs2U'; // Use your actual API key
 
         let destinationLatLng;
         console.log(destinationInput)
@@ -270,6 +270,7 @@ const Map = () => {
 
                 const geocodeJson = await geocodeResponse.json();
                 if (!geocodeJson.results.length) {
+                    console.log(geocodeJson)
                     setErrorMsg('Geocoding failed');
                     return;
                 }
@@ -343,7 +344,7 @@ const Map = () => {
     };
 
     const handleMapLongPress = async (event) => {
-        const apiKey = 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs';
+        const apiKey = 'AIzaSyAk6A4zr7QABD_5fQKL8KXJ8gA4vMQcs2U';
         const { latitude, longitude } = event.nativeEvent.coordinate;
         if (role === 'USER') {
             setPickupLocation({ lat: latitude, lng: longitude });

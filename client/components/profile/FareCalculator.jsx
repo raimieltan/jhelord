@@ -43,7 +43,7 @@ const FareCalculator = () => {
 
     const getCoordinates = async (address) => {
         try {
-            const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs`);
+            const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAk6A4zr7QABD_5fQKL8KXJ8gA4vMQcs2U`);
             const data = await response.json();
             console.log(data)
             return data.results[0].geometry.location;
@@ -55,7 +55,7 @@ const FareCalculator = () => {
 
     const calculateFare = async () => {
         try {
-            const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${startLocation.lat},${startLocation.lng}&destinations=${destinationLocation.lat},${destinationLocation.lng}&key=AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs`);
+            const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${startLocation.lat},${startLocation.lng}&destinations=${destinationLocation.lat},${destinationLocation.lng}&key=AIzaSyAk6A4zr7QABD_5fQKL8KXJ8gA4vMQcs2U`);
             const data = await response.json();
             const distance = data.rows[0].elements[0].distance.value / 1000; // distance in km
             const duration = data.rows[0].elements[0].duration.value / 60; // duration in minutes
@@ -97,7 +97,7 @@ const FareCalculator = () => {
                         });
                     }}
                     query={{
-                        key: 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs',
+                        key: 'AIzaSyAk6A4zr7QABD_5fQKL8KXJ8gA4vMQcs2U',
                         language: 'en',
                     }}
                     isRowScrollable
@@ -125,7 +125,7 @@ const FareCalculator = () => {
                     }}
                     isRowScrollable
                     query={{
-                        key: 'AIzaSyC3s4IIW2h7HEznfzDtg7RjpaGeFKBeGWs',
+                        key: 'AIzaSyAk6A4zr7QABD_5fQKL8KXJ8gA4vMQcs2U',
                         language: 'en',
                     }}
                     styles={{
